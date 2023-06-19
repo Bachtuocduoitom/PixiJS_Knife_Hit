@@ -1,5 +1,6 @@
 import { Application, Assets } from "pixi.js";
 import { GameConstant } from "./gameConstant";
+import { PlayScene } from "./objects/scenes/playScene";
 import { manifest } from "./manifest";
 
 export class Game {
@@ -12,6 +13,9 @@ export class Game {
         document.body.appendChild(this.app.view);
         this._loadGameAssets().then((bundle) => {
             this.bundle = bundle;
+
+            this._initScene();
+
             this.app.ticker.add(this.update, this);
         })
     }
@@ -22,7 +26,12 @@ export class Game {
     }
 
     static update(dt) {
+        this.playScene.update(dt);
+    }
 
+    static _initScene() {
+        this.playScene = new PlayScene();
+        this.app.stage.addChild(this.playScene);
     }
 }
 
