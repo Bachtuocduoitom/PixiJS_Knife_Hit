@@ -8,7 +8,7 @@ export const manifest = {
             },
             {
                 name: 'board',
-                srcs: 'assets/images/board.png'
+                srcs: 'assets/images/cat.png'
             },
             
         ],
