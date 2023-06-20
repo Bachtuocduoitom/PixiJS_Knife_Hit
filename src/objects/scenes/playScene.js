@@ -1,4 +1,5 @@
 import { Container, Sprite } from "pixi.js";
+import { Background } from "../backgrounds/background";
 
 export const GameState = Object.freeze({
     Lobby: "lobby",
@@ -17,7 +18,15 @@ export class PlayScene extends Container {
     _initGamePlay() {
         this.gameplay = new Container();
         this.addChild(this.gameplay);
+        this._initBackground();
         this._initBoard();
+    }
+
+    _initBackground() {
+        this.background = new Background();
+        this.background.x = 0;
+        this.background.y = 0;
+        this.gameplay.addChild(this.background);
     }
 
     _initBoard() {

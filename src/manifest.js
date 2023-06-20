@@ -7,10 +7,17 @@ export const manifest = {
                 srcs: 'assets/images/cat.png'
             },
             {
-                name: 'board',
-                srcs: 'assets/images/board.png'
+                name: 'board'
+                srcs: 'assets/images/bang1.png'
             },
-            
+            {
+                name: 'background',
+                srcs: 'assets/images/bg_clear.png'
+            },
+            {
+                name: 'knife',
+                srcs: 'assets/images/knife0.png'
+            },
         ],
     }],
 }
