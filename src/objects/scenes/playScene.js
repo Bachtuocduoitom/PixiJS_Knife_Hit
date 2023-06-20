@@ -2,6 +2,7 @@ import { Container, Sprite } from "pixi.js";
 import { Game } from "../../game";
 import { Background } from "../backgrounds/background";
 import { Knife } from "../knives/knife";
+import { Board } from "../boards/board";
 import { GameConstant } from "../../gameConstant";
 
 export const GameState = Object.freeze({
@@ -34,21 +35,22 @@ export class PlayScene extends Container {
     }
 
     _initBoard() {
-        this.board = Sprite.from("assets/images/ramus.jpg")
-        this.board.x =10;
-        this.board.y = 10;
+        this.board = new Board(Game.bundle.board);
+        this.board.x =GameConstant.GAME_WIDTH / 2;
+        this.board.y = GameConstant.GAME_HEIGHT /4 - 50;
         this.gameplay.addChild(this.board);
     }
 
     _initKnife() {
         this.knife = new Knife(Game.bundle.knife);
         this.knife.x = GameConstant.GAME_WIDTH / 2;
-        this.knife.y = GameConstant.GAME_HEIGHT - 100;
+        this.knife.y = GameConstant.GAME_HEIGHT /2 - 20;
         this.gameplay.addChild(this.knife); 
     }
 
     update(dt) {
         this.knife.update(dt);
+        this.board.update(dt);
         console.log(this.knife.x, this.knife.y);
     }
 }
