@@ -3,15 +3,15 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 
 export class Background extends Container {
-    constructor() {
+    constructor(texture) {
         super(); 
-        this._initSprite();
+        this._initSprite(texture);
         this.width = GameConstant.GAME_WIDTH;
         this.height = GameConstant.GAME_HEIGHT; 
     }
 
-    _initSprite() {
-        this.sprite = Sprite.from(Game.bundle.background);
+    _initSprite(texture) {
+        this.sprite = Sprite.from(texture);
         this.addChild(this.sprite);
     }
 }
