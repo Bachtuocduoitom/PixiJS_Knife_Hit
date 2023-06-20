@@ -12,7 +12,7 @@ export const manifest = {
             },
             {
                 name: 'background',
-                srcs: 'assets/images/bg_clear.png'
+                srcs: 'assets/images/background.png'
             },
             {
                 name: 'knife',
