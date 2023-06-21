@@ -8,21 +8,17 @@ export class Knife extends Sprite {
         this.scale.set(0.5);
         this.isMove = false;
         this.speed = 0;
-        window.addEventListener("click", (e) => this._onClicky(e));
+        
+    }
+
+    move() {
+        this.speed = 20;
+        this.isMove = true;
     }
 
     update(dt) {
         this.y -= this.speed * dt;
     }
 
-    _onClicky(e) {
-        if(!this.isMove) {
-            this.speed = 10;
-            this.isMove = true;
-        } else {
-            this.speed = 0;
-            this.isMove = false;
-        }
-        
-    }
+
 }
