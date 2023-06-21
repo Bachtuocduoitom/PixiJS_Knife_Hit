@@ -48,14 +48,16 @@ export class PlayScene extends Container {
 
     _initKnife() {
         this.knifeManager = new KnifeManager();
+
         this.knifeManager.x = 0;
         this.knifeManager.y = 0;
+
         this.gameplay.addChild(this.knifeManager);
     }
 
     update(dt) {
         this.knifeManager.update(dt);
         this.board.update(dt);
-       
+
     }
 }

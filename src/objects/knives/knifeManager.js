@@ -2,7 +2,9 @@ import { Container } from "pixi.js";
 import { Level1 } from "../scenes/playScene";
 import { Knife } from "./knife";
 import { Game } from "../../game";
+
 import { GameConstant } from "../../gameConstant";
+
 
 
 export class KnifeManager extends Container {
