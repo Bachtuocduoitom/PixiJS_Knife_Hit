@@ -5,7 +5,7 @@ export class Knife extends Sprite {
         super(texture);
 
         this.anchor.set(0.5);
-        this.scale.set(0.5);
+        this.scale.set(0.4);
         this.isMove = false;
         this.speed = 0;
         
