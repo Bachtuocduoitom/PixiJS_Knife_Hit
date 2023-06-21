@@ -3,6 +3,9 @@ import { Level1 } from "../scenes/playScene";
 import { Knife } from "./knife";
 import { Game } from "../../game";
 
+import { GameConstant } from "../../gameConstant";
+
+
 
 export class KnifeManager extends Container {
     constructor() {
@@ -25,6 +28,8 @@ export class KnifeManager extends Container {
 
     _spawnKnife() {
         let knife = new Knife(Game.bundle.knife);
+        knife.x = GameConstant.GAME_WIDTH / 2;
+        knife.y = GameConstant.GAME_HEIGHT /2 - 20;
         this.knives.push(knife);
         this.addChild(knife);
     }
