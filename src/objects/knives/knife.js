@@ -12,7 +12,7 @@ export class Knife extends Sprite {
     }
 
     move() {
-        this.speed = 20;
+        this.speed = 40;
         this.isMove = true;
     }
 

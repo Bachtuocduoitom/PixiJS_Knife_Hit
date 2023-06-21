@@ -28,8 +28,8 @@ export class KnifeManager extends Container {
 
     _spawnKnife() {
         let knife = new Knife(Game.bundle.knife);
-        knife.x = GameConstant.GAME_WIDTH / 2;
-        knife.y = GameConstant.GAME_HEIGHT /2 - 20;
+        knife.x = GameConstant.KNIFE_X_POSITION;
+        knife.y = GameConstant.KNIFE_Y_POSITION;
         this.knives.push(knife);
         this.addChild(knife);
     }
