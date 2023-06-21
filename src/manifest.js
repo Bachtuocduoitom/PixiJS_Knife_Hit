@@ -8,7 +8,7 @@ export const manifest = {
             },
             {
                 name: 'board',
-                srcs: 'assets/images/bang1.png'
+                srcs: 'assets/images/bang4.png'
             },
             {
                 name: 'background',
@@ -16,7 +16,7 @@ export const manifest = {
             },
             {
                 name: 'knife',
-                srcs: 'assets/images/knife0.png'
+                srcs: 'assets/images/knife1.png'
             },
         ],
     }],

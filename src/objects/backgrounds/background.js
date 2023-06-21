@@ -9,7 +9,6 @@ export class Background extends Container {
         this.width = GameConstant.GAME_WIDTH;
         this.height = GameConstant.GAME_HEIGHT; 
     }
-
     _initSprite(texture) {
         this.sprite = Sprite.from(texture);
         this.addChild(this.sprite);
