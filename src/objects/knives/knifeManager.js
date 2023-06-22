@@ -11,25 +11,33 @@ export class KnifeManager extends Container {
     constructor() {
         super();
         this.knives = [];
-        this.numOfKnife = Level1.KNIFE_NUMBER - 1;
-        this._spawnKnife();
+        this.obsKnives = [];
+        this.numOfKnife = Level1.KNIFE_NUMBER - 1; //so dao trong pool
+        this._spawnKnives();
         window.addEventListener("click", (e) => this._onClicky(e));
     }
 
-    // _spawnKnives() {
-    //     for ( let i = 0; i < Level1.KNIFE_NUMBER; i++) {
-    //         let knife = new Knife(Game.bundle.knife);
-    //         knife.x = this.x;
-    //         knife.y = this.y;
-    //         this.knives.push(knife);
-    //         this.addChild(knife);
-    //     }
-    // }
+    _spawnKnives() {
+        this._spawnFirstKnife();
+        for ( let i = 0; i < this.numOfKnife; i++) {
+            this._spawnAnotherKnife();
+        }
+    }
 
-    _spawnKnife() {
+    _spawnFirstKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = GameConstant.KNIFE_Y_POSITION;
+        knife.isActive = true;
+        this.knives.push(knife);
+        this.addChild(knife);
+    }
+
+    _spawnAnotherKnife() {
+        let knife = new Knife(Game.bundle.knife);
+        knife.x = GameConstant.KNIFE_X_POSITION;
+        knife.y = 1280;
+        knife.visible = false;
         this.knives.push(knife);
         this.addChild(knife);
     }
@@ -38,18 +46,27 @@ export class KnifeManager extends Container {
         this.knives.forEach(knife => {
             knife.update(dt);
         });
+        this.obsKnives.forEach(knife => {
+            knife.update(dt);
+        })
     }
 
     _onClicky(e) {
-        this.knives.forEach(knife => {
-            if(!knife.isMove) {
-                knife.isMove = true;
-                knife.move();
-            }
-        })
-        if (this.numOfKnife > 0) {
-            this._spawnKnife();
-            this.numOfKnife--;
+        // this.knives.forEach(knife => {
+        //     if(!knife.isMove) {
+        //         knife.isMove = true;
+        //         knife.move();
+        //     }
+        // })
+        // if (this.numOfKnife > 0) {
+        //     //this._spawnAnotherKnife();
+        //     this.numOfKnife--;
+        // }
+        
+        if (this.knives[0].isActive) {
+            this.knives[0].move();
+            console.log(this.obsKnives.length, this.knives.length);
         }
+        
     }
 }
