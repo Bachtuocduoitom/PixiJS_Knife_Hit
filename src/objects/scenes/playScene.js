@@ -26,10 +26,11 @@ export class PlayScene extends Container {
 
     _initGamePlay() {
         this.gameplay = new Container();
+        this.gameplay.sortableChildren = true;
         this.addChild(this.gameplay);
         this._initBackground();
         this._initBoard();
-        this._initKnife();
+        this._initKnifeManager();
         this._initBoxHide();
     }
 
@@ -45,39 +46,70 @@ export class PlayScene extends Container {
         this.board.x =GameConstant.GAME_WIDTH / 2;
         this.board.y = GameConstant.GAME_HEIGHT /3- 40;
         this.gameplay.addChild(this.board);
+        this.board.zIndex = 100;
     }
+
     _initBoxHide() {
         this.box = new Graphics();
-        this.box.lineStyle(0.01, 0xFF0000);
-        this.box.drawRect(GameConstant.GAME_WIDTH / 2 - 75, GameConstant.GAME_HEIGHT /3 - 75, 150,150);
+        this.box.lineStyle(1, 0xFF0000);
+        this.box.drawRect(GameConstant.GAME_WIDTH / 2 - 75, GameConstant.GAME_HEIGHT /3 - 40-75, 150,150);
         this.gameplay.addChild(this.box);
     }
-    _initKnife() {
+    
+    _initKnifeManager() {
         this.knifeManager = new KnifeManager();
-        this.knifeManager.x = GameConstant.GAME_WIDTH / 2;
-        this.knifeManager.y = GameConstant.GAME_HEIGHT - 200; 
+        this.knifeManager.x = 0;
+        this.knifeManager.y = 0; 
         this.gameplay.addChild(this.knifeManager);
+        this.knifeManager.zIndex = 0;
     }
 
     update(dt) {
         this.knifeManager.update(dt);
         this.board.update(dt);
-        this.collisonKnifeBox();
+        this._onCollision();
     }
-    collisonKnifeBox() {
-        this.knifeManager.knives.forEach((knife) => {
-            let a = knife.getBounds();
-            let b = this.box.getBounds();
-            if(a.x + a.width > b.x &&
-                a.x < b.x + b.width &&
-                a.y + a.height > b.y &&
-                a.y < b.y + b.height) {
-                    this.board.addChild(knife);
-                    knife.scale.set(0.5, -0.5);
-                    console.log('oke !');
-                    knife.speed = 0;
+
+    _onCollision() {
+        if (this.knifeManager.knives[0] != null) {
+            if (this.knifeManager.knives[0].isMove) {
+                if (this._isCollision(this.knifeManager.knives[0], this.box)) {
+                    this.knifeManager.knives[0].beObs();
+                    this._rotateKnife(this.knifeManager.knives[0]);
+                    // /this._addKnifeToBoard(this.knifeManager.knives[0]);
+                    this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
+                    if (this.knifeManager.numOfKnife > 0) {
+                        this.knifeManager.knives[0].setActivate();
+                        this.knifeManager.numOfKnife--;
+                    }
+                    
+                    console.log("va roi!");
                 }
-        });
-       
-      }
+            }
+        }
+        
+    }
+
+    _isCollision(a, b) {
+        const aBox = a.getBounds()
+        const bBox = b.getBounds();
+        return aBox.x + aBox.width > bBox.x &&
+            aBox.x < bBox.x + bBox.width &&
+            aBox.y + aBox.height > bBox.y &&
+            aBox.y < bBox.y + bBox.height
+    }
+
+    _addKnifeToBoard(knife) {
+        this.knifeManager.removeChild(knife);
+        knife.x = this.board.width/2;
+        knife.y = this.board.height/2;
+        this.board.addChild(knife);
+        
+    }
+
+    _rotateKnife(knife) {
+        knife.x = this.board.x;
+        knife.y = this.board.y;
+        knife.anchor.set(0.5, -0.5);
+    }
 }
