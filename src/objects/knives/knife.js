@@ -1,6 +1,6 @@
 import { Sprite } from "pixi.js";
 import { GameConstant } from "../../gameConstant";
-
+import { Board } from "../boards/board";
 export class Knife extends Sprite {
     constructor(texture) {
         super(texture);
@@ -13,11 +13,11 @@ export class Knife extends Sprite {
         this.isObs = false;
         this.speed = 0;
         this.angle = 0;
-        
+        this.board = new Board();
     }
 
     move() {
-        this.speed = 10;
+        this.speed = 25;
         this.isMove = true;
     }
 
@@ -52,9 +52,9 @@ export class Knife extends Sprite {
                 }
             }
         } else {
-            this.rotation += 0.03;
+            this.rotation += this.board.initRotation;
         }
-        
+        this.board.update(dt);
     }
    
 

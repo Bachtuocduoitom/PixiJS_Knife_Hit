@@ -82,7 +82,7 @@ export class PlayScene extends Container {
                         this.knifeManager.knives[0].setActivate();
                         this.knifeManager.numOfKnife--;
                     }
-                    
+                    // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
                 }
             }
