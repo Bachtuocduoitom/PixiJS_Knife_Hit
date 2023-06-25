@@ -1,5 +1,5 @@
-import { Container } from "pixi.js";
-import { Level1 } from "../scenes/playScene";
+import { Container, Graphics } from "pixi.js";
+import { Level1, PlayScene } from "../scenes/playScene";
 import { Knife } from "./knife";
 import { Game } from "../../game";
 
@@ -13,6 +13,9 @@ export class KnifeManager extends Container {
         this.knives = [];
         this.obsKnives = [];
         this.numOfKnife = Level1.KNIFE_NUMBER - 1; //so dao trong pool
+        this.boardAngleRotation = 0;
+        this.graphic = new Graphics();
+        this.addChild(this.graphic);
         this._spawnKnives();
         window.addEventListener("click", (e) => this._onClicky(e));
     }
@@ -43,11 +46,28 @@ export class KnifeManager extends Container {
     }
 
     update(dt) {
+        this.graphic.clear();
+
         this.knives.forEach(knife => {
             knife.update(dt);
+
+            //ve bound
+            // this.graphic.beginFill(0x880808, 1);
+            // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
+            // this.graphic.endFill();
         });
+
         this.obsKnives.forEach(knife => {
+            knife.angleRotation = this.boardAngleRotation;
             knife.update(dt);
+            
+            //ve bound
+            // this.graphic.beginFill(0x880808, 1);
+            // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
+            // this.graphic.endFill();
+            // console.log(- knife.angle *Math.PI / 180 % (2* Math.PI));
+            // let bb = knife.collider.getBounds()
+            // console.log(bb.x + bb.width/2, bb.y + bb.height/2);
         })
     }
 

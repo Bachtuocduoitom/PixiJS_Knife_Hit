@@ -1,23 +1,30 @@
 import { Sprite } from "pixi.js";
 import { GameConstant } from "../../gameConstant";
-import { Board } from "../boards/board";
+import { Collider } from "../physics/collider";
+
 export class Knife extends Sprite {
     constructor(texture) {
         super(texture);
 
-        this.anchor.set(0.5);
-        this.scale.set(0.4);
+        this.anchor.set(0.5);         
         this.isMove = false;
-        this.isActive = false;
-        this.setActive = false;
+        this.isActive = false; //da chuan bi de bi phong chua
+        this.startActive = false; //da bat dau set active chua
         this.isObs = false;
         this.speed = 0;
-        this.angle = 0;
-        this.board = new Board();
+        this.angleRotation = 0;
+        this._initCollider();
+    }
+
+    _initCollider() {
+        this.collider = new Collider();
+        this.collider.width = this.width/2;
+        this.collider.height = this.height;
+        this.addChild(this.collider);
     }
 
     move() {
-        this.speed = 25;
+        this.speed = 50;
         this.isMove = true;
     }
 
@@ -31,7 +38,7 @@ export class Knife extends Sprite {
     }
 
     setActivate() {
-        this.setActive = true;
+        this.startActive = true;
         this.visible = true;
     }
 
@@ -43,7 +50,7 @@ export class Knife extends Sprite {
     update(dt) {
         if (!this.isObs) {
             if (!this.isActive) {
-                if (this.setActive) {
+                if (this.startActive) {
                     this._toActive(dt);
                 }  
             } else {
@@ -52,9 +59,9 @@ export class Knife extends Sprite {
                 }
             }
         } else {
-            this.rotation += this.board.initRotation;
+            this.rotation += this.angleRotation;
         }
-        this.board.update(dt);
+        
     }
    
 

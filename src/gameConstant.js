@@ -5,5 +5,5 @@ export const GameConstant = Object.freeze({
     KNIFE_X_POSITION: 360,
     KNIFE_Y_POSITION: 950,  
 
-    DEBUG_DRAW_COLLIDER: true,
+    DEBUG_DRAW_COLLIDER: false,
   })
