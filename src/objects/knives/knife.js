@@ -61,7 +61,7 @@ export class Knife extends Sprite {
         } else {
             this.rotation += this.angleRotation;
         }
-        
+        this.board.update(dt);
     }
    
 
