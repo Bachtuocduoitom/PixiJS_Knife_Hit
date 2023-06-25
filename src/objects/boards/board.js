@@ -21,16 +21,17 @@ export class Board extends Sprite {
         this.rotation += this.angleRotation;
         this.collider.rotation -= this.angleRotation;
     }
+
     changeRotation() {
         this.numRotation = this.rotation / (Math.PI * 2);
         console.log(this.numRotation);
         if (this.numRotation > 2) {
           setTimeout(() => {
-            this.initRotation -= 0.00005;
+            this.angleRotation -= 0.00005;
           }, 500)
         }
         if (this.numRotation < 0) {
-          this.initRotation += 0.02;
+          this.angleRotation += 0.02;
         }
       }
 }
