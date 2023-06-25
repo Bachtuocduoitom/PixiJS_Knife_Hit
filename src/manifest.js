@@ -16,7 +16,7 @@ export const manifest = {
             },
             {
                 name: 'knife',
-                srcs: 'assets/images/knife1.png'
+                srcs: 'assets/images/knife0.png'
             },
         ],
     }],
