@@ -5,7 +5,7 @@ import { Collider } from "../physics/collider";
 export class Knife extends Sprite {
     constructor(texture) {
         super(texture);
-
+        this.scale.set(0.3);
         this.anchor.set(0.5);         
         this.isMove = false;
         this.isActive = false; //da chuan bi de bi phong chua
@@ -37,7 +37,6 @@ export class Knife extends Sprite {
             this.isActive = true;
         }
     }
-
     setActivate() {
         this.startActive = true;
         this.visible = true;
@@ -51,7 +50,6 @@ export class Knife extends Sprite {
         this.isObs = true;
         this.isMove = false;
     }
-
     update(dt) {
         if (!this.isObs) {
             if (!this.isActive) {

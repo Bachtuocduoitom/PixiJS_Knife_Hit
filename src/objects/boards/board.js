@@ -1,15 +1,16 @@
-import { Sprite } from "pixi.js";
+import { AnimatedSprite, Sprite, Texture, Container} from "pixi.js";
 import { Collider } from "../physics/collider";
-
+import { Game } from "../../game";
+import { Fragments } from "../breakUp/fragments";
+import { GameConstant } from "../../gameConstant";
 export class Board extends Sprite {
     constructor(texture) {
         super(texture);
         this.anchor.set(0.5);
-        //this.scale.set(0.7);
+        this.scale.set(0.8);
         this.angleRotation = 0.03;
         this._initCollider();
     }
-
     _initCollider() {
         this.collider = new Collider();
         this.collider.width = 150;
@@ -20,6 +21,7 @@ export class Board extends Sprite {
     update(dt) {
         this.rotation += this.angleRotation;
         this.collider.rotation -= this.angleRotation;
+        // this.changeRotation();
     }
 
     changeRotation() {
