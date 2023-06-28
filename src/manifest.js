@@ -16,7 +16,15 @@ export const manifest = {
             },
             {
                 name: 'knife',
-                srcs: 'assets/images/knife0.png'
+                srcs: 'assets/images/knife1.png'
+            },
+            {
+                name: 'particle',
+                srcs: 'assets/images/particle.png'
+            },
+            {
+                name: 'logParticle',
+                srcs: 'assets/particles/log_particle.json'
             },
         ],
     }],
