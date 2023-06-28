@@ -26,6 +26,15 @@ export const manifest = {
                 name: 'fragments3',
                 srcs: 'assets/images/frgSm3.png'
             },
+            {
+                name: 'particle',
+                srcs: 'assets/images/particle.png'
+            },
+            {
+                name: 'logParticle',
+                srcs: 'assets/particles/log_particle.json'
+
+            },
         ],
     }],
 }
