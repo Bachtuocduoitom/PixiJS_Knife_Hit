@@ -11,6 +11,7 @@ export class Knife extends Sprite {
         this.isActive = false; //da chuan bi de bi phong chua
         this.startActive = false; //da bat dau set active chua
         this.isObs = false;
+        this.isFall = false;
         this.speed = 0;
         this.angleRotation = 0;
         this._initCollider();
@@ -42,6 +43,10 @@ export class Knife extends Sprite {
         this.visible = true;
     }
 
+    setFall() {
+        this.isFall = true;
+    }
+
     beObs() {
         this.isObs = true;
         this.isMove = false;
@@ -56,6 +61,11 @@ export class Knife extends Sprite {
             } else {
                 if (this.isMove) {
                     this.y -= this.speed * dt;
+                }
+                if (this.isFall) {
+                    this.speed = 0;
+                    this.y += 20 + 1/2 * 9.8 * dt * dt;
+                    this.rotation += 0.1;
                 }
             }
         } else {
