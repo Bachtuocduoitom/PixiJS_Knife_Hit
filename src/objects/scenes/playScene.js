@@ -30,6 +30,7 @@ export class PlayScene extends Container {
         this.addChild(this.gameplay);
         this._initBackground();
         this._initBoard();
+       
         this._initKnifeManager();
     }
 
@@ -47,7 +48,6 @@ export class PlayScene extends Container {
         this.gameplay.addChild(this.board);
         this.board.zIndex = 100;
     }
-    
     _initKnifeManager() {
         this.knifeManager = new KnifeManager();
         this.knifeManager.x = 0;
@@ -64,7 +64,6 @@ export class PlayScene extends Container {
                         console.log("aaaaa");
                     } 
                 })
-
                 if (this._isCollision(this.knifeManager.knives[0].collider, this.board.collider)) {
                     this.knifeManager.knives[0].beObs();
                     this._rotateKnife(this.knifeManager.knives[0]);
@@ -75,14 +74,12 @@ export class PlayScene extends Container {
                     }
                     // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
-                }
+                    }
                 
                 
             }
         }
-        
     }
-
     _isCollision(a, b) {
         const aBox = a.getBounds()
         const bBox = b.getBounds();
@@ -98,7 +95,6 @@ export class PlayScene extends Container {
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
     }
-
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
     }
@@ -107,6 +103,7 @@ export class PlayScene extends Container {
         this.knifeManager.update(dt);
         this.board.update(dt);
         this._onCollision();
+        // this._onCollision2Knife();
         this._syncRotate();
     }
 
