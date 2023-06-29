@@ -10,7 +10,6 @@ export class Board extends Sprite {
         this.anchor.set(0.5);
         this.boardSprite = new Sprite(Game.bundle.board);
         this.boardSprite.anchor.set(0.5);
-        this.boardSprite.scale.set(0.8);
         this.angleRotation = 0.03;
         this._initCollider();
         this._initFragments();
@@ -25,6 +24,7 @@ export class Board extends Sprite {
         this.collider = new Collider();
         this.collider.width = 150;
         this.collider.height = 150;
+        this.collider.zIndex = 110;
         this.addChild(this.collider);
     }
     _initFragments() {
