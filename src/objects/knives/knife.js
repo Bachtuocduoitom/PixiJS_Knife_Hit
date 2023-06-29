@@ -25,13 +25,13 @@ export class Knife extends Sprite {
     }
 
     move() {
-        this.speed = 50;
+        this.speed = 70;
         this.isMove = true;
     }
 
     _toActive(dt) {
         if (this.y > GameConstant.KNIFE_Y_POSITION) {
-            this.y -= 50*dt;
+            this.y -= 100*dt;
         } else {
             this.y = GameConstant.KNIFE_Y_POSITION;
             this.isActive = true;
