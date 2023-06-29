@@ -46,7 +46,7 @@ export class PlayScene extends Container {
     }
 
     _initBoard() {
-        this.board = new Board(Game.bundle.board);
+        this.board = new Board();
         this.board.x = GameConstant.BOARD_X_POSITION;
         this.board.y = GameConstant.BOARD_Y_POSITION;
         this.gameplay.addChild(this.board);
@@ -112,11 +112,16 @@ export class PlayScene extends Container {
                         this.knifeManager.knives[0].setActivate();
                         this.knifeManager.numOfKnife--;
                     }
+                    if (this.knifeManager.knives.length == 0) {
+                        this.board.breakUp();
+                        this.board.setBroke();
+                        this.gameplay.removeChild(this.knifeManager);
+                        
+                    }
                     // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
+                    
                     }
-                
-                
             }
         }
     }

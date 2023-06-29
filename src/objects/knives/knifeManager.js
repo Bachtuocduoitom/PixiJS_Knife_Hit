@@ -70,7 +70,7 @@ export class KnifeManager extends Container {
     }
 
     _setObsAng(obs, avaiAngle) {
-        let i = Math.round(Util.random(0,18));
+        let i = Math.round(Util.random(0,17));
         while (!avaiAngle[i].available) {
             if (i === 17) {
                 i = 0;
