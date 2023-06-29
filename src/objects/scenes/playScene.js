@@ -5,6 +5,8 @@ import { Knife } from "../knives/knife";
 import { KnifeManager } from "../knives/knifeManager";
 import { Board } from "../boards/board";
 import { GameConstant } from "../../gameConstant";
+import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
+import { Util } from "../../helper/utils";
 
 export const GameState = Object.freeze({
     Lobby: "lobby",
@@ -20,7 +22,7 @@ export const Level1 = Object.freeze({
 export class PlayScene extends Container {
     constructor() {
         super();
-        this.state = GameState.Lobby;
+        this.state = GameState.Playing;
         this._initGamePlay();
     }
 
@@ -32,6 +34,8 @@ export class PlayScene extends Container {
         this._initBoard();
        
         this._initKnifeManager();
+        this._initObstacle();
+        this._initParticles();
     }
 
     _initBackground() {
@@ -42,9 +46,9 @@ export class PlayScene extends Container {
     }
 
     _initBoard() {
-        this.board = new Board(Game.bundle.board);
-        this.board.x =GameConstant.GAME_WIDTH / 2;
-        this.board.y = GameConstant.GAME_HEIGHT /3- 40;
+        this.board = new Board();
+        this.board.x = GameConstant.BOARD_X_POSITION;
+        this.board.y = GameConstant.BOARD_Y_POSITION;
         this.gameplay.addChild(this.board);
         this.board.zIndex = 100;
     }
@@ -56,39 +60,71 @@ export class PlayScene extends Container {
         this.knifeManager.zIndex = 0;
     }
 
+    _initObstacle() {
+        this.avaiAngle = [];
+        for(let i = 0; i < 18; i++) {
+            this.avaiAngle[i] = {
+                angle: i*20,
+                available: true,
+            }
+        }
+        this.knifeManager.spawnObsKnives(this.avaiAngle);
+        console.log(...this.avaiAngle);
+    }
+
+    _initParticles() {
+        this.particleContainer = new Container();
+        this.gameplay.addChild(this.particleContainer);
+    }
+
+    update(dt) {
+        this.knifeManager.update(dt);
+        this.board.update(dt);
+        this._onCollision();
+        this._syncRotate();
+    }
+
+
     _onCollision() {
         if (this.knifeManager.knives[0] != null) {
             if (this.knifeManager.knives[0].isMove) {
                 this.knifeManager.obsKnives.forEach(knife => {
-                    if (this._checkColliderObs(this._cal4PointKnife(this.knifeManager.knives[0]), this._cal4PointObs(knife))) {
+                    if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), this._cal4PointObs(knife))) {
                         console.log("aaaaa");
+                        this.knifeManager.knives[0].setFall();
+                        
                     } 
                 })
-                if (this._isCollision(this.knifeManager.knives[0].collider, this.board.collider)) {
+
+                if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
+                    //bien dao thanh vat can
                     this.knifeManager.knives[0].beObs();
+
+                    //tao vun go khi va cham
+                    let logParticle = new Emitter(this.particleContainer, upgradeConfig(Game.bundle.logParticle, [Game.bundle.particle]));
+                    logParticle.updateSpawnPos(this.knifeManager.knives[0].x, this.knifeManager.knives[0].y - 30);
+                    logParticle.playOnceAndDestroy();
+
+                    //quay dao theo khoi go
                     this._rotateKnife(this.knifeManager.knives[0]);
                     this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
                     if (this.knifeManager.numOfKnife > 0) {
                         this.knifeManager.knives[0].setActivate();
                         this.knifeManager.numOfKnife--;
                     }
+                    if (this.knifeManager.knives.length == 0) {
+                        this.board.breakUp();
+                        this.board.setBroke();
+                        this.gameplay.removeChild(this.knifeManager);
+                        
+                    }
                     // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
+                    
                     }
-                
-                
             }
         }
     }
-    _isCollision(a, b) {
-        const aBox = a.getBounds()
-        const bBox = b.getBounds();
-        return aBox.x + aBox.width > bBox.x &&
-            aBox.x < bBox.x + bBox.width &&
-            aBox.y + aBox.height > bBox.y &&
-            aBox.y < bBox.y + bBox.height
-    }
-
     _rotateKnife(knife) {
         knife.x = this.board.x;
         knife.y = this.board.y;
@@ -97,14 +133,6 @@ export class PlayScene extends Container {
     }
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
-    }
-
-    update(dt) {
-        this.knifeManager.update(dt);
-        this.board.update(dt);
-        this._onCollision();
-        // this._onCollision2Knife();
-        this._syncRotate();
     }
 
     _cal4PointObs(knife) {
@@ -140,53 +168,6 @@ export class PlayScene extends Container {
         let y = knife.collider.getBounds().y
       
         return [x, y, x + w, y, x + w, y + h, x, y + h]
-    }
-
-    _checkColliderObs(points1, points2) {
-        let a = points1
-        let b = points2
-        let polygons = [a, b]
-        let minA, maxA, projected, minB, maxB, j
-        for (let i = 0; i < polygons.length; i++)
-        {
-            let polygon = polygons[i]
-            for (let i1 = 0; i1 < polygon.length; i1 += 2)
-            {
-                let i2 = (i1 + 2) % polygon.length
-                let normal = { x: polygon[i2 + 1] - polygon[i1 + 1], y: polygon[i1] - polygon[i2] }
-                minA = maxA = null
-                for (j = 0; j < a.length; j += 2)
-                {
-                    projected = normal.x * a[j] + normal.y * a[j + 1]
-                    if (minA === null || projected < minA)
-                    {
-                        minA = projected
-                    }
-                    if (maxA === null || projected > maxA)
-                    {
-                        maxA = projected
-                    }
-                }
-                minB = maxB = null
-                for (j = 0; j < b.length; j += 2)
-                {
-                    projected = normal.x * b[j] + normal.y * b[j + 1]
-                    if (minB === null || projected < minB)
-                    {
-                        minB = projected
-                    }
-                    if (maxB === null || projected > maxB)
-                    {
-                        maxB = projected
-                    }
-                }
-                if (maxA < minB || maxB < minA)
-                {
-                    return false
-                }
-            }
-        }
-        return true
     }
 
 }
