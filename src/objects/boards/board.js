@@ -63,6 +63,9 @@ export class Board extends Sprite {
       this.fragments3.zIndex = 100;
       this.addChild(this.fragments1, this.fragments2, this.fragments3);
   }
+  resetBoard() {
+    this.texture = Game.bundle.board;
+  }
   breakUp() {
     // this.visible = false;
     this.texture = null;
@@ -72,24 +75,19 @@ export class Board extends Sprite {
   }
   setBroke() {
           this.isBroken = true;
-          new TWEEN.Tween(this.fragments1).to({
-            x: 100,
-            y:this.fragments1.y + 1300
-          }, 100).easing(TWEEN.Easing.Back.In).onUpdate(() => {
-            console.log('update...');
-          }).onComplete(() => {
+          // set rơi manh 1
+          new TWEEN.Tween(this.fragments1).to({x:- 70,y:this.fragments1.y - 50, rotation :4}, 10).onComplete(() => {
+            new TWEEN.Tween(this.fragments1).to({x: - 150,y: 1350, rotation: 4}, 50).start(this.currentDt)
+          }).start(this.currentDt);
 
-          })
-        .start(this.currentDt);
-        new TWEEN.Tween(this.fragments2).to({
-          x: -200,
-          y:this.fragments2.y + 1300
-        }, 100).easing(TWEEN.Easing.Back.In).onUpdate(() => {
-          console.log('update...');
-        }).onComplete(() => {
-          
-        })
-      .start(this.currentDt);
+        // set rơi manh 2
+        new TWEEN.Tween(this.fragments2).to({x:this.fragments2.x + 150,y:this.fragments2.y - 60,rotation : 4}, 10).onComplete(() => {
+          new TWEEN.Tween(this.fragments2).to({x:this.fragments2.x + 100,y: 1550, rotation : 3}, 40).start(this.currentDt)
+        }).start(this.currentDt);
+      // set rơi manh 3
+      new TWEEN.Tween(this.fragments3).to({x:this.fragments3.x + 15,y:this.fragments3.y - 70, rotation : 5}, 10).onComplete(() => {
+        new TWEEN.Tween(this.fragments3).to({x:this.fragments3.x + 120,y: 1350, rotation : 3}, 60).start(this.currentDt)
+      }).start(this.currentDt);
   }
     update(dt) {
       this.currentDt+=dt;
@@ -97,14 +95,7 @@ export class Board extends Sprite {
       if(this.isBroken) {
           this.boardSprite.texture = null;
           this.angleRotation = 0;
-        
-          // this.fragments2.y += 15 * dt ;
-        // set kiểu rơi cho mảnh 3
-          this.fragments3.x -= 5 * dt;
-          this.fragments3.rotation -= 0.02;
-          this.fragments3.y += 9.8 * dt * dt;
         } else {
-          
         this.fragments1.rotation += this.angleRotation;
         this.fragments2.rotation += this.angleRotation;
         this.fragments3.rotation += this.angleRotation;
