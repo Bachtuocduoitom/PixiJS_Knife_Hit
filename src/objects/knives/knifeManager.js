@@ -104,6 +104,7 @@ export class KnifeManager extends Container {
             // this.graphic.endFill();
         });
 
+      
         this.obsKnives.forEach(obs => {
             obs.angleRotation = this.boardAngleRotation;
             obs.update(dt);

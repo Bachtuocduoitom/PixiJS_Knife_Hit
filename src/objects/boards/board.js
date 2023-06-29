@@ -73,7 +73,7 @@ export class Board extends Sprite {
   setBroke() {
           this.isBroken = true;
           new TWEEN.Tween(this.fragments1).to({
-            x: 200,
+            x: 100,
             y:this.fragments1.y + 1300
           }, 100).easing(TWEEN.Easing.Back.In).onUpdate(() => {
             console.log('update...');
@@ -97,19 +97,7 @@ export class Board extends Sprite {
       if(this.isBroken) {
           this.boardSprite.texture = null;
           this.angleRotation = 0;
-        //  console.log(this.fragments1.x); 
-         // set kiểu rơi cho mảnh 1
-          // setTimeout(() => {
-          //   this.fragments1.rotation += 0.03;
-          // }, 10)
-          this.fragments1.x += 3;
-          // // this.fragments1.y -= 20 ;
-          // this.fragments1.y += 13 * dt;
-        // set kiểu rơi cho mảnh 2
-          // setTimeout(() => {
-          //   this.fragments2.rotation -= 0.02;
-          // }, 10)
-          // this.fragments2.x -= 2 * dt;
+        
           // this.fragments2.y += 15 * dt ;
         // set kiểu rơi cho mảnh 3
           this.fragments3.x -= 5 * dt;
