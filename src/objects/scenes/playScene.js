@@ -9,7 +9,7 @@ import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 import { Util } from "../../helper/utils";
 import { Sound } from "@pixi/sound";
 import { AppleManager } from "../apple/appleManager";
-
+import { BoxNotice } from "../BoxNoti/boxWin";
 export const GameState = Object.freeze({
     Lobby: "lobby",
     Playing: "playing",
@@ -39,6 +39,7 @@ export class PlayScene extends Container {
         this._initObstacle();
         this._initParticles();
         this._initSound();
+        // this._initBoxNotice();
     }
 
     _initBackground() {
@@ -47,7 +48,13 @@ export class PlayScene extends Container {
         this.background.y = 0;
         this.gameplay.addChild(this.background);
     }
-
+    // _initBoxNotice() {
+    //     this.boxNotice = new BoxNotice();
+    //     this.boxNotice.button.on("click", () => {
+    //         this.board.resetBoard();
+    //         this.gameplay.removeChild(this.boxNotice);
+    //       });
+    // }
     _initBoard() {
         this.board = new Board();
         this.board.x = GameConstant.BOARD_X_POSITION;
@@ -158,8 +165,13 @@ export class PlayScene extends Container {
                     if (this.knifeManager.knives.length == 0) {
                         this.board.breakUp();
                         this.board.setBroke();
+                        this.boxNotice = new BoxNotice();
                         this.gameplay.removeChild(this.knifeManager);
-                        
+                        this.gameplay.removeChild(this.appleManager); 
+                        setTimeout(() => {
+                            // this.boxNotice = new BoxNotice();
+                            this.gameplay.addChild(this.boxNotice);
+                        }, 1500)
                     }
                     // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
