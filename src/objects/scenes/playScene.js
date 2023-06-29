@@ -125,6 +125,7 @@ export class PlayScene extends Container {
             }
         }
     }
+
     _rotateKnife(knife) {
         knife.x = this.board.x;
         knife.y = this.board.y;

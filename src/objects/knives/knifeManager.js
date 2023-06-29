@@ -103,12 +103,11 @@ export class KnifeManager extends Container {
             // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
             // this.graphic.endFill();
         });
-
       
         this.obsKnives.forEach(obs => {
             obs.angleRotation = this.boardAngleRotation;
             obs.update(dt);
-            
+
             //ve bound
             // this.graphic.beginFill(0x880808, 1);
             // this.graphic.drawRect(obs.collider.getBounds().x, obs.collider.getBounds().y, obs.collider.getBounds().width, obs.collider.getBounds().height);
