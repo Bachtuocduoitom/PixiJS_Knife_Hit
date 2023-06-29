@@ -21,7 +21,7 @@ export class KnifeManager extends Container {
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
         //this._spawnObsKnives(); // tao vat can ban dau
-        window.addEventListener("click", (e) => this._onClicky(e));
+        window.addEventListener("mousedown", (e) => this._onClicky(e));
     }
 
     _spawnKnives() {
@@ -43,7 +43,7 @@ export class KnifeManager extends Container {
     _spawnAnotherKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = 1280;
+        knife.y = 1080;
         knife.visible = false;
         this.knives.push(knife);
         this.addChild(knife);
@@ -80,7 +80,6 @@ export class KnifeManager extends Container {
         }
         obs.angle = avaiAngle[i].angle;
         avaiAngle[i].available = false;
-        console.log(obs.angle);
     }
 
     _isColliosionForDefaultObs(knife) {

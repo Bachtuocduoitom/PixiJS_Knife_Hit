@@ -15,6 +15,18 @@ export const manifest = {
                 srcs: 'assets/images/knife.png'
             },
             {
+                name: 'apple',
+                srcs: 'assets/images/apple.png'
+            },
+            {
+                name: 'apple_slice_1',
+                srcs: 'assets/images/apple_slice_1.png'
+            },
+            {
+                name: 'apple_slice_2',
+                srcs: 'assets/images/apple_slice_2.png'
+            },
+            {
                 name: 'particle',
                 srcs: 'assets/images/particle.png'
             },
@@ -22,6 +34,18 @@ export const manifest = {
                 name: 'logParticle',
                 srcs: 'assets/particles/log_particle.json'
 
+            },
+            {
+                name: 'knife_hit_wood',
+                srcs: 'assets/sounds/knife_hit_wood.wav'
+            },
+            {
+                name: 'knife_hit_knife',
+                srcs: 'assets/sounds/knife_hit_knife.wav'
+            },
+            {
+                name: 'knife_hit_apple',
+                srcs: 'assets/sounds/knife_hit_apple.mp3'
             },
         ],
     }],

@@ -7,6 +7,8 @@ import { Board } from "../boards/board";
 import { GameConstant } from "../../gameConstant";
 import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 import { Util } from "../../helper/utils";
+import { Sound } from "@pixi/sound";
+import { AppleManager } from "../apple/appleManager";
 
 export const GameState = Object.freeze({
     Lobby: "lobby",
@@ -36,6 +38,7 @@ export class PlayScene extends Container {
         this._initKnifeManager();
         this._initObstacle();
         this._initParticles();
+        this._initSound();
     }
 
     _initBackground() {
@@ -68,8 +71,19 @@ export class PlayScene extends Container {
                 available: true,
             }
         }
+        
         this.knifeManager.spawnObsKnives(this.avaiAngle);
-        console.log(...this.avaiAngle);
+        this._initAppleManager();
+        this.appleManager.spawnApples(this.avaiAngle);
+        // /console.log(...this.avaiAngle);
+    }
+
+    _initAppleManager() {
+        this.appleManager = new AppleManager();
+        this.appleManager.x = 0;
+        this.appleManager.y = 0; 
+        this.gameplay.addChild(this.appleManager);
+        this.appleManager.zIndex = 101;
     }
 
     _initParticles() {
@@ -77,8 +91,21 @@ export class PlayScene extends Container {
         this.gameplay.addChild(this.particleContainer);
     }
 
+    _initSound() {
+        //tieng va cham dao
+        this.kHitKSound = Sound.from(Game.bundle.knife_hit_knife);
+        this.kHitKSound.volume = 0.3;
+
+        //tieng va cham go
+        this.kHitWSound = Sound.from(Game.bundle.knife_hit_wood);
+
+        //tieng va cham tao
+        this.kHitApple = Sound.from(Game.bundle.knife_hit_apple);
+    }
+
     update(dt) {
         this.knifeManager.update(dt);
+        this.appleManager.update(dt);
         this.board.update(dt);
         this._onCollision();
         this._syncRotate();
@@ -88,17 +115,33 @@ export class PlayScene extends Container {
     _onCollision() {
         if (this.knifeManager.knives[0] != null) {
             if (this.knifeManager.knives[0].isMove) {
+                //va cham dao
                 this.knifeManager.obsKnives.forEach(knife => {
                     if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), this._cal4PointObs(knife))) {
                         console.log("aaaaa");
+                        this.kHitKSound.play();
                         this.knifeManager.knives[0].setFall();
                         
                     } 
-                })
+                });
 
+                //va cham tao
+                this.appleManager.apples.forEach(apple => {
+                    if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), this._cal4PointObs(apple))) {
+                        console.log("xuyen tao");
+                        this.kHitApple.play();
+                        this.appleManager.removeApple(apple);
+                        console.log(this.appleManager.apples);
+                    } 
+                });
+
+                //va cham go
                 if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
                     //bien dao thanh vat can
                     this.knifeManager.knives[0].beObs();
+
+                    //tao am thanh
+                    this.kHitWSound.play();
 
                     //tao vun go khi va cham
                     let logParticle = new Emitter(this.particleContainer, upgradeConfig(Game.bundle.logParticle, [Game.bundle.particle]));
@@ -134,6 +177,7 @@ export class PlayScene extends Container {
     }
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
+        this.appleManager.boardAngleRotation = this.board.angleRotation;
     }
 
     _cal4PointObs(knife) {
