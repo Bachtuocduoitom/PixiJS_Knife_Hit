@@ -3,20 +3,16 @@ export const manifest = {
         name: 'gameBundle',
         assets: [
             {
-                name: 'cat',
-                srcs: 'assets/images/cat.png'
-            },
-            {
                 name: 'board',
-                srcs: 'assets/images/bang4.png'
+                srcs: 'assets/images/bang.png'
             },
             {
                 name: 'background',
-                srcs: 'assets/images/background.png'
+                srcs: 'assets/images/bg.png'
             },
             {
                 name: 'knife',
-                srcs: 'assets/images/knife1.png'
+                srcs: 'assets/images/knife.png'
             },
             {
                 name: 'apple',
@@ -37,6 +33,7 @@ export const manifest = {
             {
                 name: 'logParticle',
                 srcs: 'assets/particles/log_particle.json'
+
             },
             {
                 name: 'knife_hit_wood',

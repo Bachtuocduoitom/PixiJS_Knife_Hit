@@ -34,6 +34,7 @@ export class PlayScene extends Container {
         this.addChild(this.gameplay);
         this._initBackground();
         this._initBoard();
+       
         this._initKnifeManager();
         this._initObstacle();
         this._initParticles();
@@ -48,13 +49,12 @@ export class PlayScene extends Container {
     }
 
     _initBoard() {
-        this.board = new Board(Game.bundle.board);
+        this.board = new Board();
         this.board.x = GameConstant.BOARD_X_POSITION;
         this.board.y = GameConstant.BOARD_Y_POSITION;
         this.gameplay.addChild(this.board);
         this.board.zIndex = 100;
     }
-    
     _initKnifeManager() {
         this.knifeManager = new KnifeManager();
         this.knifeManager.x = 0;
@@ -155,17 +155,19 @@ export class PlayScene extends Container {
                         this.knifeManager.knives[0].setActivate();
                         this.knifeManager.numOfKnife--;
                     }
-
+                    if (this.knifeManager.knives.length == 0) {
+                        this.board.breakUp();
+                        this.board.setBroke();
+                        this.gameplay.removeChild(this.knifeManager);
+                        
+                    }
                     // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
                     console.log("va roi!");
-                }
-                
-                
+                    
+                    }
             }
         }
-        
     }
-
 
     _rotateKnife(knife) {
         knife.x = this.board.x;
@@ -173,7 +175,6 @@ export class PlayScene extends Container {
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
     }
-
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
         this.appleManager.boardAngleRotation = this.board.angleRotation;

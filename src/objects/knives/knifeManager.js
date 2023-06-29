@@ -15,6 +15,8 @@ export class KnifeManager extends Container {
         this.obsKnives = [];
         this.numOfKnife = Level1.KNIFE_NUMBER - 1; //so dao trong pool
         this.boardAngleRotation = 0;
+        // this.velocity = {x: 0, y: 0};
+        // this.gravity = 0.5;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
@@ -100,11 +102,11 @@ export class KnifeManager extends Container {
             // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
             // this.graphic.endFill();
         });
-
+      
         this.obsKnives.forEach(obs => {
             obs.angleRotation = this.boardAngleRotation;
             obs.update(dt);
-            
+
             //ve bound
             // this.graphic.beginFill(0x880808, 1);
             // this.graphic.drawRect(obs.collider.getBounds().x, obs.collider.getBounds().y, obs.collider.getBounds().width, obs.collider.getBounds().height);
