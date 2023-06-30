@@ -68,7 +68,13 @@ export class PlayScene extends Container {
         this.background.y = 0;
         this.gameplay.addChild(this.background);
     }
-
+    // _initBoxNotice() {
+    //     this.boxNotice = new BoxNotice();
+    //     this.boxNotice.button.on("click", () => {
+    //         this.board.resetBoard();
+    //         this.gameplay.removeChild(this.boxNotice);
+    //       });
+    // }
     _initBoard() {
         this.board = new Board();
         this.board.x = GameConstant.BOARD_X_POSITION;
@@ -199,6 +205,11 @@ export class PlayScene extends Container {
                         //this.gameplay.removeChild(this.knifeManager);
                         this.knifeManager.setObsFall();
                         this.appleManager.setApplesFall();
+                        this.boxNotice = new BoxNotice();
+                        setTimeout(() => {
+                            // this.boxNotice = new BoxNotice();
+                            this.gameplay.addChild(this.boxNotice);
+                        }, 1500)
                     }
                     
                     //tang diem

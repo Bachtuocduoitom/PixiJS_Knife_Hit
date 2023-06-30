@@ -41,7 +41,6 @@ export const manifest = {
             {
                 name: 'logParticle',
                 srcs: 'assets/particles/log_particle.json'
-
             },
             {
                 name: 'knife_hit_wood',
@@ -55,6 +54,14 @@ export const manifest = {
                 name: 'knife_hit_apple',
                 srcs: 'assets/sounds/knife_hit_apple.mp3'
             },
+            {
+                name: 'bgButton',
+                srcs: 'assets/images/bgButton.png'
+            },
+            {
+                name: 'victoryParticle',
+                srcs: 'assets/particles/victory.json'
+            }
         ],
     }],
 }
