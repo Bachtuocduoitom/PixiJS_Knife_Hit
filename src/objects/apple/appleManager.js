@@ -1,7 +1,6 @@
 import { Container, Graphics, Sprite } from "pixi.js";
 import { Level1, PlayScene } from "../scenes/playScene";
 import { Game } from "../../game";
-
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 import { Apple } from "./apple";

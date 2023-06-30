@@ -47,6 +47,10 @@ export const manifest = {
                 srcs: 'assets/sounds/knife_hit_apple.mp3'
             },
             {
+                name: 'brokenBoard',
+                srcs: 'assets/sounds/brokenBoard.mp3'
+            },
+            {
                 name: 'bgButton',
                 srcs: 'assets/images/bgButton.png'
             },
