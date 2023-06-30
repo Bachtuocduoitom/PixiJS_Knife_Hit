@@ -22,15 +22,15 @@ export class BoxNotice extends Container {
     box.x = (GameConstant.GAME_WIDTH - box.width) / 2;
     box.y = (GameConstant.GAME_HEIGHT - box.height) / 2 - box.height /3;
     // Message
-    const messageText = new Text('You win', {
+    this.messageText = new Text('You win', {
         fontSize: 70,
         fill: "#ADFF2F",
         fontWeight: "bold",
         textAlign: "center",
         fontFamily : "verdana",
     });
-    messageText.x =box.x + messageText.width /2.3;
-    messageText.y =box.y + box.y / 3 ;
+    this.messageText.x =box.x + this.messageText.width /2.3;
+    this.messageText.y =box.y + box.y / 3 ;
     // option 1
     this.button = new Sprite(Game.bundle.bgButton);
     this.button.width = 400;
@@ -41,22 +41,20 @@ export class BoxNotice extends Container {
     this.button.buttonMode = true;
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
-    const buttonText = new Text("Restart", {
+    this.buttonText = new Text("Tiếp tục", {
       fontSize: 35,
       fill: "#FF4500",
       fontWeight: "bold",
     });
-    buttonText.zIndex = 100;
-    // buttonText.anchor.set(0.5)
-    //  buttonText.pivot.set(buttonText.width / 2, buttonText.height / 2); // Đặt pivot ở giữa theo trục x và y
-    buttonText.x = this.button.x +  buttonText.width + 20 ;
-    buttonText.y = this.button.y + this.button.height/3 ;
-    this.button.addChild(buttonText);
+    this.buttonText.zIndex = 100;
+    this.buttonText.x = this.button.x +  this.buttonText.width + 5 ;
+    this.buttonText.y = this.button.y + this.button.height/3 ;
+    this.button.addChild(this.buttonText);
 
     //tạo animation win
     // this.winParticle = new Emitter(this.particleContainer, upgradeConfig(Game.bundle.victoryParticle, [Game.bundle.particle]));
     // this.winParticle.playOnceAndDestroy();
-    this.addChild(this.overlay, box, messageText, buttonText, this.button);
+    this.addChild(this.overlay, box, this.messageText, this.buttonText, this.button);
   }
 }
 
