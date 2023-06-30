@@ -113,7 +113,6 @@ export class Board extends Sprite {
       this.fragments3.rotation += this.angleRotation;
       this.boardSprite.rotation += this.angleRotation;
       this.changeRotation();
-      this.collider.rotation -= this.angleRotation;
     }
   }
   changeRotation() {

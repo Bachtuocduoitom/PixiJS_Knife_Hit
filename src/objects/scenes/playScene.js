@@ -8,10 +8,13 @@ import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 import { Util } from "../../helper/utils";
 import { Sound } from "@pixi/sound";
 import { AppleManager } from "../apple/appleManager";
+import { PlayUI } from "../ui/playUI";
+import { TutorialUI } from "../ui/tutorialUI";
+
 import { BoxNotice } from "../BoxNoti/boxNotice";
 import * as TWEEN from "@tweenjs/tween.js";
 export const GameState = Object.freeze({
-    Lobby: "lobby",
+    Tutorial: "tutorial",
     Playing: "playing",
     Win: "win",
     Lose: "lose"
@@ -22,12 +25,18 @@ export const Level1 = Object.freeze({
 export class PlayScene extends Container {
     constructor() {
         super();
-        this.state = GameState.Playing;
+        this.state = GameState.Tutorial;
+        this.score = 0;
+        this.appleScore = 0;
+        this.knifeNumber = Level1.KNIFE_NUMBER;
         this._initGamePlay();
         this.currentDt =0;
+        this._initUI();
     }
+    
     _initGamePlay() {
         this.gameplay = new Container();
+        this.gameplay.eventMode = 'static';
         this.gameplay.sortableChildren = true;
         this.addChild(this.gameplay);
         this._initBackground();
@@ -36,7 +45,21 @@ export class PlayScene extends Container {
         this._initObstacle();
         this._initParticles();
         this._initSound();
-        // this._restartGame();
+        this.gameplay.on("pointerdown", (e) => this._onClicky(e));
+        //window.addEventListener("pointerdown", (e) => this._onClicky(e));
+    }
+
+    _initUI() {
+        //tao play UI
+        this.playUI = new PlayUI();
+        this.addChild(this.playUI);
+
+        //tao lobby UI
+        this.tutorialUI = new TutorialUI();
+        this.tutorialUI.zIndex = 200;
+        this.addChild(this.tutorialUI);
+
+        this.tutorialUI.on("tapped", (e) => this._onStart(e));
     }
     _initBackground() {
         this.background = new Background(Game.bundle.background);
@@ -51,6 +74,7 @@ export class PlayScene extends Container {
         this.gameplay.addChild(this.board);
         this.board.zIndex = 100;
     }
+
     _initKnifeManager() {
         this.knifeManager = new KnifeManager();
         this.knifeManager.x = 0;
@@ -113,7 +137,22 @@ export class PlayScene extends Container {
         this.board.update(dt);
         this._onCollision();
         this._syncRotate();
+
+        if (this.state === GameState.Playing) {
+            this.playUI.updateTime(dt);
+        }
+
+        if (this.state === GameState.Tutorial) {
+            this.tutorialUI.updateUI(dt);
+        }
     }
+
+    _onStart(e) {
+        this.state = GameState.Playing;
+        this.tutorialUI.hide();
+        this._onClicky(e);
+    }
+
     _onCollision() {
         if (this.knifeManager.knives[0] != null) {
             if (this.knifeManager.knives[0].isMove) {
@@ -145,6 +184,9 @@ export class PlayScene extends Container {
                         console.log("xuyen tao");
                         this.kHitApple.play();
                         this.appleManager.removeApple(apple);
+
+                        //tang diem
+                        this.playUI.updateAppleScore(++this.appleScore);
                         console.log(this.appleManager.apples);
                     } 
                 });
@@ -170,6 +212,10 @@ export class PlayScene extends Container {
                         this.boardBroken.play();
                         this.board.breakUp();
                         this.board.setBroken();
+                        //this.gameplay.removeChild(this.knifeManager);
+                        this.knifeManager.setObsFall();
+                        this.appleManager.setApplesFall();
+                        this.boxNotice = new BoxNotice();
                         setTimeout(() => {
                             this.boxNotice = new BoxNotice();
                             this.gameplay.removeChild(this.board);
@@ -181,14 +227,9 @@ export class PlayScene extends Container {
                             });
                         }, 1500)
                     }
-                    // new TWEEN.Tween(this.board)
-                    // .to({y: -0.01}, 100)
-                    // .onComplete(() => {
-                    //   new TWEEN.Tween(this.board)
-                    //     .to({  y: 0.05 }, 100)
-                    //     .start(this.currentDt);
-                    // })
-                    // .start(this.currentDt);
+                    
+                    //tang diem
+                    this.playUI.updateScore(++this.score);
                     console.log("va roi!");
                     }
             }
@@ -200,6 +241,7 @@ export class PlayScene extends Container {
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
     }
+
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
         this.appleManager.boardAngleRotation = this.board.angleRotation;
@@ -231,4 +273,14 @@ export class PlayScene extends Container {
         let y = knife.collider.getBounds().y
         return [x, y, x + w, y, x + w, y + h, x, y + h]
     }
+
+    _onClicky(e) {
+        
+        
+        if ( this.knifeNumber > 0) {
+            this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - (this.knifeNumber--));
+            this.knifeManager._onClicky(e);
+        }
+    }
+
 }

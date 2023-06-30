@@ -2,6 +2,11 @@ export class Util {
     static random(min, max) {
       return Math.random() * (max - min) + min;
     }
+
+    static registerOnPointerDown(displayObject, onPointerDown, context) {
+        displayObject.eventMode = 'static';
+        displayObject.on("pointerdown", onPointerDown, context);
+      }
   
     static AABBCheck(a, b) {
         const aBox = a.getBounds()

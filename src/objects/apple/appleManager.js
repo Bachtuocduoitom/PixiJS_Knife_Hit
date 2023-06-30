@@ -10,7 +10,7 @@ export class AppleManager extends Container {
     constructor() {
         super();
         this.apples = [];
-        this.numOfApple = Math.round(Util.random(0,2));
+        this.numOfApple = Math.round(Util.random(0,5));
         this.boardAngleRotation = 0;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
@@ -75,6 +75,12 @@ export class AppleManager extends Container {
         //console.log(this.slice1.x, this.slice1.y);
     }
 
+    setApplesFall() {
+        this.apples.forEach(apple => {
+            apple.setFall();
+        })
+    }
+
     removeApple(apple) {
         //lat cat 1
         this.slice1.x = apple.getBounds().x + apple.getBounds().width/2;
@@ -88,13 +94,13 @@ export class AppleManager extends Container {
         this.slice2.visible = true;
 
 
-        new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 50, y: this.slice1.y - 50}, 8).onComplete(() => {
-            new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 200, y: 1350}, 30).start(this.currentTime)
+        new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 90, y: this.slice1.y - 120}, 13).onComplete(() => {
+            new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 150, y: 1350}, 35).start(this.currentTime)
         }).start(this.currentTime);
 
-        new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 50, y: this.slice2.y - 50}, 10).onComplete(() => {
-            new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 200, y: 1350}, 25).start(this.currentTime)
-        }).start(this.currentTime);
+        //new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 40, y: this.slice2.y - 50}, 9).onComplete(() => {
+            new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 150, y: 1350}, 35).start(this.currentTime)
+        //}).start(this.currentTime);
         
         this.removeChild(apple);
         this.apples.splice(this.apples.indexOf(apple), 1);
