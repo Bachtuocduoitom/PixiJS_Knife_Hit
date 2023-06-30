@@ -1,6 +1,7 @@
 import { Sprite } from "pixi.js";
 import { GameConstant } from "../../gameConstant";
 import { Collider } from "../physics/collider";
+import { Util } from "../../helper/utils";
 
 export class Knife extends Sprite {
     constructor(texture) {
@@ -25,13 +26,13 @@ export class Knife extends Sprite {
     }
 
     move() {
-        this.speed = 100;
+        this.speed = 70;
         this.isMove = true;
     }
 
     _toActive(dt) {
         if (this.y > GameConstant.KNIFE_Y_POSITION) {
-            this.y -= 100*dt;
+            this.y -= 70*dt;
         } else {
             this.y = GameConstant.KNIFE_Y_POSITION;
             this.isActive = true;
@@ -44,6 +45,17 @@ export class Knife extends Sprite {
 
     setFall() {
         this.isFall = true;
+    }
+
+    setEndFall() {
+        if ((this.angle%360) <= 180) {
+            this.isFallLeft = true;
+        } else {
+            this.isFallRight = true;
+        }
+        this.fallRotation = Util.random(0.1, 0.3);
+        this.fallX = Util.random(8,15);
+        this.fallY = Util.random(15,20);
     }
 
     beObs() {
@@ -67,7 +79,19 @@ export class Knife extends Sprite {
                 }
             }
         } else {
-            this.rotation += this.angleRotation;
+            if (this.isFallLeft) {
+                this.x += this.fallX*dt;
+                this.speed = 0;
+                this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                this.rotation += this.fallRotation;
+            } else if (this.isFallRight) {
+                this.x -= this.fallX*dt;
+                this.speed = 0;
+                this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                this.rotation -= this.fallRotation;
+            } else {
+                this.rotation += this.angleRotation;
+            }
         }
         
     }

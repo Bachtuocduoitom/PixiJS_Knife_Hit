@@ -21,7 +21,7 @@ export class KnifeManager extends Container {
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
         //this._spawnObsKnives(); // tao vat can ban dau
-        window.addEventListener("mousedown", (e) => this._onClicky(e));
+        // /window.addEventListener("mousedown", (e) => this._onClicky(e));
     }
 
     _spawnKnives() {
@@ -114,6 +114,16 @@ export class KnifeManager extends Container {
             // console.log(- obs.angle *Math.PI / 180 % (2* Math.PI));
             // let bb = obs.collider.getBounds()
             // console.log(bb.x + bb.width/2, bb.y + bb.height/2);
+        })
+    }
+
+    setObsFall() {
+        this.obsKnives.forEach(obs => {
+            obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width/2;
+            obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height/2;
+            obs.anchor.set(0.5);
+            obs.collider.anchor.set(0.5);
+            obs.setEndFall();
         })
     }
 

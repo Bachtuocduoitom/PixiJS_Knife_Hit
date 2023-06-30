@@ -19,6 +19,7 @@ export class Apple extends Sprite {
     setFall() {
         this.isFall = true;
         this.y = this.collider.getBounds().y + this.collider.getBounds().height/2;
+        this.x = this.collider.getBounds().x + this.collider.getBounds().width/2;
         this.anchor.set(0.5);
         this.collider.anchor.set(0.5);
         

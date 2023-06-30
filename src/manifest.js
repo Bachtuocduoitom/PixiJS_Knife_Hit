@@ -27,6 +27,14 @@ export const manifest = {
                 srcs: 'assets/images/apple_slice_2.png'
             },
             {
+                name: 'knife_white_icon',
+                srcs: 'assets/images/knife_white_icon.png'
+            },
+            {
+                name: 'knife_black_icon',
+                srcs: 'assets/images/knife_black_icon.png'
+            },
+            {
                 name: 'particle',
                 srcs: 'assets/images/particle.png'
             },
