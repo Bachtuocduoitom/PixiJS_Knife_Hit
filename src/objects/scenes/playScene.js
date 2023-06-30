@@ -9,9 +9,11 @@ import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 import { Util } from "../../helper/utils";
 import { Sound } from "@pixi/sound";
 import { AppleManager } from "../apple/appleManager";
+import { PlayUI } from "../ui/playUI";
+import { TutorialUI } from "../ui/tutorialUI";
 
 export const GameState = Object.freeze({
-    Lobby: "lobby",
+    Tutorial: "tutorial",
     Playing: "playing",
     Win: "win",
     Lose: "lose"
@@ -24,21 +26,40 @@ export const Level1 = Object.freeze({
 export class PlayScene extends Container {
     constructor() {
         super();
-        this.state = GameState.Playing;
+        this.state = GameState.Tutorial;
+        this.score = 0;
+        this.appleScore = 0;
+        this.knifeNumber = Level1.KNIFE_NUMBER;
         this._initGamePlay();
+        this._initUI();
     }
-
+    
     _initGamePlay() {
         this.gameplay = new Container();
+        this.gameplay.eventMode = 'static';
         this.gameplay.sortableChildren = true;
         this.addChild(this.gameplay);
         this._initBackground();
         this._initBoard();
-       
         this._initKnifeManager();
         this._initObstacle();
         this._initParticles();
         this._initSound();
+        this.gameplay.on("pointerdown", (e) => this._onClicky(e));
+        //window.addEventListener("pointerdown", (e) => this._onClicky(e));
+    }
+
+    _initUI() {
+        //tao play UI
+        this.playUI = new PlayUI();
+        this.addChild(this.playUI);
+
+        //tao lobby UI
+        this.tutorialUI = new TutorialUI();
+        this.tutorialUI.zIndex = 200;
+        this.addChild(this.tutorialUI);
+
+        this.tutorialUI.on("tapped", (e) => this._onStart(e));
     }
 
     _initBackground() {
@@ -55,6 +76,7 @@ export class PlayScene extends Container {
         this.gameplay.addChild(this.board);
         this.board.zIndex = 100;
     }
+
     _initKnifeManager() {
         this.knifeManager = new KnifeManager();
         this.knifeManager.x = 0;
@@ -109,8 +131,21 @@ export class PlayScene extends Container {
         this.board.update(dt);
         this._onCollision();
         this._syncRotate();
+
+        if (this.state === GameState.Playing) {
+            this.playUI.updateTime(dt);
+        }
+
+        if (this.state === GameState.Tutorial) {
+            this.tutorialUI.updateUI(dt);
+        }
     }
 
+    _onStart(e) {
+        this.state = GameState.Playing;
+        this.tutorialUI.hide();
+        this._onClicky(e);
+    }
 
     _onCollision() {
         if (this.knifeManager.knives[0] != null) {
@@ -131,6 +166,9 @@ export class PlayScene extends Container {
                         console.log("xuyen tao");
                         this.kHitApple.play();
                         this.appleManager.removeApple(apple);
+
+                        //tang diem
+                        this.playUI.updateAppleScore(++this.appleScore);
                         console.log(this.appleManager.apples);
                     } 
                 });
@@ -158,10 +196,13 @@ export class PlayScene extends Container {
                     if (this.knifeManager.knives.length == 0) {
                         this.board.breakUp();
                         this.board.setBroke();
-                        this.gameplay.removeChild(this.knifeManager);
-                        
+                        //this.gameplay.removeChild(this.knifeManager);
+                        this.knifeManager.setObsFall();
+                        this.appleManager.setApplesFall();
                     }
-                    // console.log(Math.round(this.board.rotation / (Math.PI * 2)) , 'vòng');
+                    
+                    //tang diem
+                    this.playUI.updateScore(++this.score);
                     console.log("va roi!");
                     
                     }
@@ -175,6 +216,7 @@ export class PlayScene extends Container {
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
     }
+
     _syncRotate() {
         this.knifeManager.boardAngleRotation = this.board.angleRotation;
         this.appleManager.boardAngleRotation = this.board.angleRotation;
@@ -213,6 +255,14 @@ export class PlayScene extends Container {
         let y = knife.collider.getBounds().y
       
         return [x, y, x + w, y, x + w, y + h, x, y + h]
+    }
+
+    _onClicky(e) {
+        this.knifeManager._onClicky(e);
+        
+        if ( this.knifeNumber > 0) {
+            this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - (this.knifeNumber--));
+        }
     }
 
 }

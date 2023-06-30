@@ -16,7 +16,7 @@ export class Board extends Sprite {
         this.sortableChildren = true;
         this.zIndex = 0;
         this.addChild(this.boardSprite);
-         this.currentDt = 0;
+        this.currentDt = 0;
 
         // this._animate();
     }
@@ -109,20 +109,19 @@ export class Board extends Sprite {
         this.fragments2.rotation += this.angleRotation;
         this.fragments3.rotation += this.angleRotation;
         this.boardSprite.rotation += this.angleRotation;
-        // this.changeRotation();
-        this.collider.rotation -= this.angleRotation;
+        this.changeRotation();
         }
     }
     changeRotation() {
-      this.boardSprite.numRotation = this.boardSprite.rotation / (Math.PI * 2);
-      console.log(this.boardSprite.numRotation);
-      if (this.boardSprite.numRotation > 1) {
+      this.numRotation = this.boardSprite.rotation / (Math.PI * 2);
+      //console.log(this.numRotation);
+      if (this.numRotation > 1) {
         setTimeout(() => {
-          this.boardSprite.angleRotation -= 0.00005;
+          this.angleRotation -= 0.00005;
         }, 500)
       }
-      if (this.boardSprite.numRotation < 0) {
-        this.boardSprite.angleRotation += 0.02;
+      if (this.numRotation < 0) {
+        this.angleRotation += 0.02;
       }
     }
 }
