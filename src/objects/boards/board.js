@@ -101,6 +101,17 @@ export class Board extends Sprite {
       })
       .start(this.currentDt);
   }
+  //Tạo hiệu ứng bảng giật mỗi lần phóng dao
+  boundBoard() {
+    new TWEEN.Tween(this.boardSprite)
+    .to({y: this.boardSprite.y - 4},2)
+    .onComplete(() => {
+        new TWEEN.Tween(this.boardSprite)
+        .to({ y: this.boardSprite.y + 2  }, 4)
+        .start(this.currentDt);
+    })
+    .start(this.currentDt);
+  }
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);
