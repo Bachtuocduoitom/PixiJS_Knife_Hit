@@ -18,7 +18,6 @@ export class TutorialUI extends Container{
       this.fakeBg.alpha = 0.75;
       this.fakeBg.tint = 0x000000;
       this.addChild(this.fakeBg);
-  
       Util.registerOnPointerDown(this.fakeBg, this._onTapBg, this);
     }
   

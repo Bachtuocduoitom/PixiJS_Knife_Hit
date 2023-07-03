@@ -9,7 +9,7 @@ export class Board extends Sprite {
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
-    this.angleRotation = 0.03;
+    this.angleRotation = 0.04;
     this._initCollider();
     this._initFragments();
     this.sortableChildren = true;
@@ -72,7 +72,7 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: -170, y: - 170, rotation: 4 }, 10)
+      .to({ x: -170, y: - 170, rotation: 3.5 }, 10)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
           .to({ x: -250, y: 1350, rotation: -3 }, 50)
@@ -81,7 +81,7 @@ export class Board extends Sprite {
       .start(this.currentDt);
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 250, y: -200, rotation: 5 }, 10)
+      .to({ x: 250, y: -300, rotation: 5 }, 10)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
           .to({ x: 100, y: 1550, rotation: 3 }, 40)
@@ -91,12 +91,12 @@ export class Board extends Sprite {
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
       .to(
-        { x: 15, y: -210, rotation: 5 },
+        { x: 15, y: -350, rotation: 5 },
         10
       )
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: 120, y: 1350, rotation: 3 }, 60)
+          .to({ x: 120, y: 1350, rotation: 2 }, 60)
           .start(this.currentDt);
       })
       .start(this.currentDt);
