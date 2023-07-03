@@ -11,7 +11,6 @@ import { AppleManager } from "../apple/appleManager";
 import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
-import * as TWEEN from "@tweenjs/tween.js";
 export const GameState = Object.freeze({
     Tutorial: "tutorial",
     Playing: "playing",
@@ -146,8 +145,6 @@ export class PlayScene extends Container {
         this.boardBroken.volume =100;
     }
     update(dt) {
-        this.currentDt += dt;
-        TWEEN.update(this.currentDt);
         this.knifeManager.update(dt);
         this.appleManager.update(dt);
         this.board.update(dt);
@@ -233,17 +230,9 @@ export class PlayScene extends Container {
                             this.resultUI.show();
                         }, 1500)
                     }
-                    new TWEEN.Tween(this.board)
-                    .to({y: GameConstant.BOARD_Y_POSITION - 3},2)
-                    .onComplete(() => {
-                        new TWEEN.Tween(this.board)
-                        .to({ y: GameConstant.BOARD_Y_POSITION + 2  }, 4)
-                        .start(this.currentDt);
-                    })
-                    .start(this.currentDt);
-
                     //tang diem
                     this.playUI.updateScore(++this.score);
+                    this.board.boundBoard();
                     console.log("va roi!");
                     console.log(this.board.y, GameConstant.BOARD_Y_POSITION);
                     }
