@@ -26,23 +26,19 @@ export class ResultGameUI extends Container {
   }
  _initBox() {
     // Hộp chính
-    this.box = new Graphics();
-    this.box.lineStyle(4, 0x556B2F, 1);
-    this.box.beginFill(0xffffff, 0.4);
-    this.box.drawRect(0, 0, 600, 400);
-    this.box.endFill();
+    this.box = new Sprite(Game.bundle.resultGameBg);
+    this.box.width = 600;
+    this.box.height = 400;
+    this.box.opacity = 0.6;
     this.addChild(this.box);
     // const gifTexture = Texture.from('../assets/images/victory.gif');
     // this.box = new AnimatedSprite([gifTexture]);
-
     // // Thiết lập vị trí và kích thước của this.box
     // this.box.width = 400;
     // this.box.height =400;
     // // Thêm this.box vào stage
     // this.addChild(this.box);
-
     // // Bắt đầu phát lại hình ảnh chuyển động
-    
     // this.box.play();
     }
  _initMessage() {
@@ -54,13 +50,14 @@ export class ResultGameUI extends Container {
         textAlign: "center",
         fontFamily : "verdana",
     });
+    this.messageText.zIndex = 100;
     this.addChild(this.messageText);
  }
  _initButton() {
     // option 1
     this.button = new Sprite(Game.bundle.bgButton);
-    this.button.width = 400;
-    this.button.height = 100;   
+    this.button.width = 300;
+    this.button.height = 80;   
     this.button.interactive = true;
     this.button.buttonMode = true;
     this.button.zIndex = 0;
@@ -92,10 +89,10 @@ export class ResultGameUI extends Container {
     this.messageText.x = GameConstant.GAME_WIDTH /2 - this.messageText.width /2;
     this.messageText.y =this.box.y + this.box.y / 4 ;
 
-    this.button.x = this.box.x /2 + this.button.width /3;
-    this.button.y = 2 * this.box.y - this.button.height;
+    this.button.x = this.box.x /2 + this.button.width /1.6  ;
+    this.button.y = 2 * this.box.y - 1.5 * this.button.height;
 
     this.buttonText.x = GameConstant.GAME_WIDTH /2 - this.buttonText.width /2;
-    this.buttonText.y = GameConstant.GAME_HEIGHT /2 + this.buttonText.height /2;
+    this.buttonText.y = GameConstant.GAME_HEIGHT /2;
   }
 }
