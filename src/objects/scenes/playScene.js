@@ -95,7 +95,6 @@ export class PlayScene extends Container {
     this.removeChild(this.playUI, this.tutorialUI);
     this._initUI();
     this.resultUI.hide();
-    this.board.addFragmentsIntoBoard();
     console.log("tiep tuc");
   }
   // xử lí click restart
@@ -105,7 +104,6 @@ export class PlayScene extends Container {
     this.gameplay.removeChild(this.appleManager);
     this.removeChild(this.playUI, this.tutorialUI);
     this._initUI();
-    this.board.addFragmentsIntoBoard();
     console.log("choi lai");
   }
   _initObstacle() {
@@ -180,7 +178,7 @@ export class PlayScene extends Container {
             this.kHitKSound.play();
             this.knifeManager.knives[0].setFall();
             setTimeout(() => {
-              this.removeChild(this.gameplay);
+              // this.removeChild(this.gameplay);
               this.resultUI.show();
               this.state = GameState.Lose;
               this.resultUI.messageText.text = "You lose";
@@ -249,11 +247,11 @@ export class PlayScene extends Container {
               this.resultUI.show();
             }, 1500);
           }
+          // Bảng nảy lên và lóe sáng
+          this.board.boundFlareBoard();
           //tang diem
           this.playUI.updateScore(++this.score);
-          this.board.boundBoard();
           console.log("va roi!");
-          console.log(this.board.y, GameConstant.BOARD_Y_POSITION);
         }
       }
     }
