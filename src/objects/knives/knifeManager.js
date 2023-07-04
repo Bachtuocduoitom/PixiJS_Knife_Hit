@@ -87,9 +87,9 @@ export class KnifeManager extends Container {
             knife.update(dt);
 
             //ve bound
-            this.graphic.beginFill(0x880808, 1);
-            this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
-            this.graphic.endFill();
+            // this.graphic.beginFill(0x880808, 1);
+            // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
+            // this.graphic.endFill();
         });
       
         this.obsKnives.forEach(obs => {
@@ -120,7 +120,8 @@ export class KnifeManager extends Container {
         if (this.knives[0].isActive) {
             this.knives[0].move();
             console.log(this.obsKnives.length, this.knives.length);
-        }
+            return true;
+        } else {return false;}
         
     }
 
