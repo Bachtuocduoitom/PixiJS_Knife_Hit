@@ -114,8 +114,11 @@ export class AppleManager extends Container {
         this.removeChild(apple);
         this.apples.splice(this.apples.indexOf(apple), 1);
     }
-    showPlusOne() {
-        
+
+    onBoardHit() {
+        this.apples.forEach(apple => {
+           apple.moveUpABit();
+        })
     }
 
 }

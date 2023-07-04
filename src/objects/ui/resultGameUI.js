@@ -20,7 +20,7 @@ export class ResultGameUI extends Container {
     this.overlay.beginFill(0x000000, 0.5);
     this.overlay.drawRect(0, 0, GameConstant.GAME_WIDTH, GameConstant.GAME_HEIGHT);
     this.overlay.endFill();
-    this.overlay.interactive = true;
+    this.overlay.eventMode = 'static';
     this.overlay.buttonMode = true;
     this.addChild(this.overlay);
   }
@@ -58,7 +58,7 @@ export class ResultGameUI extends Container {
     this.button = new Sprite(Game.bundle.bgButton);
     this.button.width = 300;
     this.button.height = 80;   
-    this.button.interactive = true;
+    this.button.eventMode = 'static';
     this.button.buttonMode = true;
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
