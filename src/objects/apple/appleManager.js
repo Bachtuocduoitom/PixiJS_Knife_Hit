@@ -80,7 +80,6 @@ export class AppleManager extends Container {
             apple.setFall();
         })
     }
-
     removeApple(apple) {
         //lat cat 1
         this.slice1.x = apple.getBounds().x + apple.getBounds().width/2;
@@ -104,6 +103,9 @@ export class AppleManager extends Container {
         
         this.removeChild(apple);
         this.apples.splice(this.apples.indexOf(apple), 1);
+    }
+    showPlusOne() {
+        
     }
 
 }
