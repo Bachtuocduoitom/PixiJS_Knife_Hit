@@ -2,13 +2,14 @@ import { AnimatedSprite, Sprite, Texture, Container } from "pixi.js";
 import { Collider } from "../physics/collider";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
+import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
 export class Board extends Sprite {
   constructor(texture) {
     super(texture);
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
-    this.boardSprite.alpha = 1;
+    // this.boardSprite.alpha = 1;
     this.boardSprite.anchor.set(0.5);
     this.angleRotation = 0.04;
     this._initCollider();
@@ -26,12 +27,13 @@ export class Board extends Sprite {
     this.addChild(this.collider);
   }
   _initFragments() {
-    // this.frgLgFrames = [];
-    // for (let i = 1; i <= 2; i++) {
-    //   let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
-    //   this.frgLgFrames.push(frgLgframe);
-    // }
-    this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
+    this.frgLgFrames = [];
+    for (let i = 1; i <= 2; i++) {
+      let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
+      this.frgLgFrames.push(frgLgframe);
+    }
+       this.fragments1 = new AnimatedSprite(this.frgLgFrames);
+    // this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
     this.fragments1.anchor.set(0.5);
     this.fragments1.scale.set(0.7);
     this.fragments1.rotation = -0.5;
@@ -43,6 +45,7 @@ export class Board extends Sprite {
     //   let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
     //   this.frgMdFrames.push(frgMdframe);
     // }
+       // this.fragments2 = new AnimatedSprite(this.frgMdFrames);
     this.fragments2 =  Sprite.from('../assets/images/frgMd1.png');
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
@@ -114,17 +117,24 @@ export class Board extends Sprite {
       })
       .start(this.currentDt);
   }
-  //Tạo hiệu ứng bảng giật mỗi lần phóng dao
-  boundBoard() {
+  //Tạo hiệu ứng bảng giật và lóe sáng mỗi lần phóng dao
+  boundFlareBoard() {
+    this.boardFilter = new AdjustmentFilter();
+    this.boardSprite.filters = [this.boardFilter];
     new TWEEN.Tween(this.boardSprite)
-      .to({ y: this.boardSprite.y - 6, alpha: 0.985 }, 2)
+      .to({ y: this.boardSprite.y - 6}, 2)
+      .onUpdate(() => {
+        this.boardFilter.gamma = 2;
+      })
       .onComplete(() => {
+        this.boardFilter.gamma = 1;
         new TWEEN.Tween(this.boardSprite)
-          .to({ y: this.boardSprite.y + 6, alpha: 1 }, 4)
+          .to({ y: this.boardSprite.y + 6}, 4)
           .start(this.currentDt);
       })
       .start(this.currentDt);
   }
+  //Lóe sáng bảng mỗi lần phóng dao
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);

@@ -256,7 +256,11 @@ export class PlayScene extends Container {
               this.resultUI.show();
             }, 1500);
           }
-          
+          // Bảng nảy lên và lóe sáng
+          this.board.boundFlareBoard();
+          //tang diem
+          this.playUI.updateScore(++this.score);
+          console.log("va roi!");
         }
       }
     }
