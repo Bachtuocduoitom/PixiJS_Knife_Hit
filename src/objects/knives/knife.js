@@ -2,11 +2,11 @@ import { Sprite } from "pixi.js";
 import { GameConstant } from "../../gameConstant";
 import { Collider } from "../physics/collider";
 import { Util } from "../../helper/utils";
+import * as TWEEN from "@tweenjs/tween.js";
 
 export class Knife extends Sprite {
     constructor(texture) {
         super(texture);
-       
         this.anchor.set(0.5);         
         this.isMove = false;
         this.isActive = false; //da chuan bi de bi phong chua
@@ -15,6 +15,7 @@ export class Knife extends Sprite {
         this.isFall = false;
         this.speed = 0;
         this.angleRotation = 0;
+        this.currentTime = 0;
         this._initCollider();
     }
 
@@ -62,6 +63,7 @@ export class Knife extends Sprite {
         this.isObs = true;
         this.isMove = false;
     }
+
     update(dt) {
         if (!this.isObs) {
             if (!this.isActive) {
@@ -93,8 +95,10 @@ export class Knife extends Sprite {
                 this.rotation += this.angleRotation;
             }
         }
-        
+        this.currentTime += dt;
     }
    
-
+    moveUpABit() {
+        new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+      }
 }

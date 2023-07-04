@@ -9,7 +9,7 @@ export class Util {
       }
   
     static AABBCheck(a, b) {
-        const aBox = a.getBounds()
+        const aBox = a.getBounds();
         const bBox = b.getBounds();
         return aBox.x + aBox.width > bBox.x &&
             aBox.x < bBox.x + bBox.width &&

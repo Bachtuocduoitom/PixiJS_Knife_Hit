@@ -50,7 +50,7 @@ export class PlayScene extends Container {
 
   _initUI() {
     //tao play UI
-    this.playUI = new PlayUI();
+    this.playUI = new PlayUI(this.score, this.appleScore);
     this.addChild(this.playUI);
     this._initUIResult();
     //tao lobby UI
@@ -62,17 +62,20 @@ export class PlayScene extends Container {
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContGame(e));
   }
+
   _initUIResult() {
     // win UI
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
   }
+
   _initBackground() {
     this.background = new Background(Game.bundle.background);
     this.background.x = 0;
     this.background.y = 0;
     this.gameplay.addChild(this.background);
   }
+
   _initBoard() {
     this.board = new Board();
     this.board.x = GameConstant.BOARD_X_POSITION;
@@ -88,6 +91,7 @@ export class PlayScene extends Container {
     this.gameplay.addChild(this.knifeManager);
     this.knifeManager.zIndex = 0;
   }
+
   // Xử lí click tiếp tục
   _onContGame() {
     this.removeChild(this.gameplay);
@@ -97,6 +101,7 @@ export class PlayScene extends Container {
     this.resultUI.hide();
     console.log("tiep tuc");
   }
+
   // xử lí click restart
   _onRestartGame() {
     this.removeChild(this.gameplay);
@@ -106,6 +111,7 @@ export class PlayScene extends Container {
     this._initUI();
     console.log("choi lai");
   }
+
   _initObstacle() {
     this.avaiAngle = [];
     for (let i = 0; i < 18; i++) {
@@ -119,6 +125,7 @@ export class PlayScene extends Container {
     this.appleManager.spawnApples(this.avaiAngle);
     // /console.log(...this.avaiAngle);
   }
+
   _initAppleManager() {
     this.appleManager = new AppleManager();
     this.appleManager.x = 0;
@@ -126,10 +133,12 @@ export class PlayScene extends Container {
     this.gameplay.addChild(this.appleManager);
     this.appleManager.zIndex = 101;
   }
+
   _initParticles() {
     this.particleContainer = new Container();
     this.gameplay.addChild(this.particleContainer);
   }
+
   _initSound() {
     //tieng va cham dao
     this.kHitKSound = Sound.from(Game.bundle.knife_hit_knife);
@@ -167,34 +176,26 @@ export class PlayScene extends Container {
     if (this.knifeManager.knives[0] != null) {
       if (this.knifeManager.knives[0].isMove) {
         //va cham dao
-        this.knifeManager.obsKnives.forEach((knife) => {
-          if (
-            Util.SATPolygonPolygon(
-              this._cal4PointKnife(this.knifeManager.knives[0]),
-              this._cal4PointObs(knife)
-            )
-          ) {
-            console.log("aaaaa");
-            this.kHitKSound.play();
-            this.knifeManager.knives[0].setFall();
-            setTimeout(() => {
-              // this.removeChild(this.gameplay);
-              this.resultUI.show();
-              this.state = GameState.Lose;
-              this.resultUI.messageText.text = "You lose";
-              this.resultUI.buttonText.text = "Chơi lại";
-              this.resultUI.messageText.style.fill = "red";
-            }, 1500);
-          }
-        });
+        if (this.knifeManager.knives[0].y >= 610) {
+            this.knifeManager.obsKnives.forEach((knife) => {
+                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
+                  console.log("aaaaa");
+                  this.kHitKSound.play();
+                  this.knifeManager.knives[0].setFall();
+                  this.state = GameState.Lose;
+                  setTimeout(() => {
+                    this.resultUI.show();
+                    this.resultUI.messageText.text = "You lose";
+                    this.resultUI.buttonText.text = "Chơi lại";
+                    this.resultUI.messageText.style.fill = "red";
+                  }, 1500);
+                }
+              });
+        }
+        
         //va cham tao
         this.appleManager.apples.forEach((apple) => {
-          if (
-            Util.SATPolygonPolygon(
-              this._cal4PointKnife(this.knifeManager.knives[0]),
-              this._cal4PointObs(apple)
-            )
-          ) {
+          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(apple))) {
             console.log("xuyen tao");
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
@@ -204,17 +205,15 @@ export class PlayScene extends Container {
             console.log(this.appleManager.apples);
           }
         });
+
         //va cham go
-        if (
-          Util.AABBCheck(
-            this.knifeManager.knives[0].collider,
-            this.board.collider
-          )
-        ) {
+        if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();
+
           //tao am thanh
           this.kHitWSound.play();
+
           //tao vun go khi va cham
           let logParticle = new Emitter(
             this.particleContainer,
@@ -225,6 +224,16 @@ export class PlayScene extends Container {
             this.knifeManager.knives[0].y - 30
           );
           logParticle.playOnceAndDestroy();
+
+          //dich chuyen nhe go tao va  dao
+          this.board.onHit();
+          this.knifeManager.onBoardHit();
+          this.appleManager.onBoardHit();
+
+          //tang diem
+          this.playUI.updateScore(++this.score);
+          console.log("va roi!");
+
           //quay dao theo khoi go
           this._rotateKnife(this.knifeManager.knives[0]);
           this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
@@ -232,13 +241,13 @@ export class PlayScene extends Container {
             this.knifeManager.knives[0].setActivate();
             this.knifeManager.numOfKnife--;
           }
+
           // phóng hết dao
           if (this.knifeManager.knives.length == 0) {
             // tạo âm thanh
             this.boardBroken.play();
             // Hiện và xử lí các mảnh vỡ bay ra
             this.board.breakUp();
-            this.board.setBroken();
             this.knifeManager.setObsFall();
             this.appleManager.setApplesFall();
             // Hiện UI result
@@ -267,45 +276,7 @@ export class PlayScene extends Container {
     this.knifeManager.boardAngleRotation = this.board.angleRotation;
     this.appleManager.boardAngleRotation = this.board.angleRotation;
   }
-  _cal4PointObs(knife) {
-    let centerX =
-      knife.collider.getBounds().x + knife.collider.getBounds().width / 2; //toa do x cua tam
-    let centerY =
-      knife.collider.getBounds().y + knife.collider.getBounds().height / 2; //toa do y cua tam
-    let ang = (-knife.angle * Math.PI) / 180; //angle
-    let wid = knife.collider.width; //width
-    let hei = knife.collider.height; //height
-    //TOP RIGHT VERTEX:
-    let Top_RightX =
-      centerX + (wid / 2) * Math.cos(ang) - (hei / 2) * Math.sin(ang);
-    let Top_RightY =
-      centerY - (wid / 2) * Math.sin(ang) - (hei / 2) * Math.cos(ang);
-    //TOP LEFT VERTEX:
-    let Top_LeftX =
-      centerX - (wid / 2) * Math.cos(ang) - (hei / 2) * Math.sin(ang);
-    let Top_LeftY =
-      centerY + (wid / 2) * Math.sin(ang) - (hei / 2) * Math.cos(ang);
-    //BOTTOM LEFT VERTEX:
-    let Bot_LeftX =
-      centerX - (wid / 2) * Math.cos(ang) + (hei / 2) * Math.sin(ang);
-    let Bot_LeftY =
-      centerY + (wid / 2) * Math.sin(ang) + (hei / 2) * Math.cos(ang);
-    //BOTTOM RIGHT VERTEX:
-    let Bot_RightX =
-      centerX + (wid / 2) * Math.cos(ang) + (hei / 2) * Math.sin(ang);
-    let Bot_RightY =
-      centerY - (wid / 2) * Math.sin(ang) + (hei / 2) * Math.cos(ang);
-    return [
-      Top_LeftX,
-      Top_LeftY,
-      Top_RightX,
-      Top_RightY,
-      Bot_RightX,
-      Bot_RightY,
-      Bot_LeftX,
-      Bot_LeftY,
-    ];
-  }
+  
   _cal4PointKnife(knife) {
     let w = knife.collider.getBounds().width;
     let h = knife.collider.getBounds().height;
@@ -315,9 +286,14 @@ export class PlayScene extends Container {
   }
 
   _onClicky(e) {
-    if (this.knifeNumber > 0) {
-      this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - this.knifeNumber--);
-      this.knifeManager._onClicky(e);
+    if (this.state === GameState.Playing) {
+        if (this.knifeNumber > 0) {
+            
+            if (this.knifeManager._onClicky(e)) {
+            this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - this.knifeNumber--);
+            }
+          }
     }
+    
   }
 }

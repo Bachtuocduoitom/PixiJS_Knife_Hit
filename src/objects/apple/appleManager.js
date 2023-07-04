@@ -10,11 +10,11 @@ export class AppleManager extends Container {
     constructor() {
         super();
         this.apples = [];
-        this.numOfApple = Math.round(Util.random(0,5));
+        this.numOfApple = Math.round(Util.random(0,4));
         this.boardAngleRotation = 0;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
-        this._spawnSlices();
+        //this._spawnSlices();
         this.currentTime = 0;
     }
 
@@ -48,21 +48,7 @@ export class AppleManager extends Container {
         avaiAngle[i].available = false;
     }
 
-    _spawnSlices() {
-        //lat cat 1
-        this.slice1 = new Sprite(Game.bundle.apple_slice_1);
-        this.slice1.anchor.set(0.5);
-        this.slice1.visible = false;
-        this.addChild(this.slice1);
-
-        //lat cat 2
-        this.slice2 = Sprite.from(Game.bundle.apple_slice_2);
-        this.slice2.anchor.set(0.5);
-        this.slice2.visible = false;
-        this.addChild(this.slice2);
-
-      
-    }
+  
 
     update(dt) {
         this.currentTime += dt;
@@ -82,27 +68,57 @@ export class AppleManager extends Container {
     }
     removeApple(apple) {
         //lat cat 1
-        this.slice1.x = apple.getBounds().x + apple.getBounds().width/2;
-        this.slice1.y = apple.getBounds().y + apple.getBounds().height/2;
-        this.slice1.visible = true;
-        
+        let slice1 = new Sprite(Game.bundle.apple_slice_1);
+        slice1.anchor.set(0.5);
+        slice1.x = apple.getBounds().x + apple.getBounds().width/2;
+        slice1.y = apple.getBounds().y + apple.getBounds().height/2;
+        this.addChild(slice1);
 
         //lat cat 2
-        this.slice2.x = apple.getBounds().x + apple.getBounds().width/2;
-        this.slice2.y = apple.getBounds().y + apple.getBounds().height/2;
-        this.slice2.visible = true;
+        let slice2 = new Sprite(Game.bundle.apple_slice_2);
+        slice2.anchor.set(0.5);
+        slice2.x = apple.getBounds().x + apple.getBounds().width/2;
+        slice2.y = apple.getBounds().y + apple.getBounds().height/2;
+        this.addChild(slice2);
+
+        //loe sang
+        let flare = new Sprite(Game.bundle.flare);
+        flare.alpha = 0;
+        flare.tint = 0xFFFAFA;
+        flare.scale.set(0.2);
+        flare.anchor.set(0.5);
+        flare.x = apple.getBounds().x;
+        flare.y = apple.getBounds().y + apple.getBounds().height;
+        this.addChild(flare);
 
 
-        new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 90, y: this.slice1.y - 120}, 13).onComplete(() => {
-            new TWEEN.Tween(this.slice1).to({x: this.slice1.x - 150, y: 1350}, 35).start(this.currentTime)
+        new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
+            new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+                this.removeChild(slice1);
+                slice1.destroy();
+            });
         }).start(this.currentTime);
 
         //new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 40, y: this.slice2.y - 50}, 9).onComplete(() => {
-            new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 150, y: 1350}, 35).start(this.currentTime)
+            new TWEEN.Tween(slice2).to({x: slice2.x + 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+                this.removeChild(slice2);
+                slice2.destroy();
+            });
         //}).start(this.currentTime);
+
+        new TWEEN.Tween(flare).to({alpha: 1, scale: { x: 1.0, y: 1.0 }}, 5).yoyo(true).repeat(1).start(this.currentTime).onComplete(() => {
+            this.removeChild(flare);
+            flare.destroy();
+        });;
         
         this.removeChild(apple);
         this.apples.splice(this.apples.indexOf(apple), 1);
+    }
+
+    onBoardHit() {
+        this.apples.forEach(apple => {
+           apple.moveUpABit();
+        })
     }
 
 }

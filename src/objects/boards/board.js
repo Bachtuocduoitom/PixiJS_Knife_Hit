@@ -71,8 +71,21 @@ export class Board extends Sprite {
   breakUp() {
     // this.texture = null;
     this.fragments1.visible = true;
+    // this.fragments1.play();
+    // this.fragments1.animationSpeed = 0.08;
+    // this.fragments1.loop = false;
+
     this.fragments2.visible = true;
+    // this.fragments2.play();
+    // this.fragments2.animationSpeed = 0.08;
+    // this.fragments2.loop = false;
+
     this.fragments3.visible = true;
+    // this.fragments3.play();
+    // this.fragments3.animationSpeed = 0.08;
+    // this.fragments3.loop = false;
+
+    this.setBroken();
   }
   setBroken() {
     this.isBroken = true;
@@ -146,5 +159,9 @@ export class Board extends Sprite {
     if (this.numRotation < -2) {
       this.angleRotation += 0.02;
     }
+  }
+
+  onHit() {
+    new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentDt);
   }
 }
