@@ -93,6 +93,10 @@ export const manifest = {
             {
                 name: 'victoryParticle',
                 srcs: 'assets/particles/victory.json'
+            },
+            {
+                name: 'resultGameBg',
+                srcs: 'assets/images/victory.png'
             }
         ],
     }],

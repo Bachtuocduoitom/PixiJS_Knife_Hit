@@ -66,7 +66,6 @@ export class AppleManager extends Container {
             apple.setFall();
         })
     }
-
     removeApple(apple) {
         //lat cat 1
         let slice1 = new Sprite(Game.bundle.apple_slice_1);
@@ -114,6 +113,9 @@ export class AppleManager extends Container {
         
         this.removeChild(apple);
         this.apples.splice(this.apples.indexOf(apple), 1);
+    }
+    showPlusOne() {
+        
     }
 
 }
