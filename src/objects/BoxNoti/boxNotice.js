@@ -37,7 +37,7 @@ export class BoxNotice extends Container {
     this.button.height = 100;
     this.button.x = box.x /2 + this.button.width /3;
     this.button.y = 2 * box.y - this.button.height/2;
-    this.button.interactive = true;
+    this.button.eventMode = 'static';
     this.button.buttonMode = true;
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1

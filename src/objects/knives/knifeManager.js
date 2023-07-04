@@ -15,8 +15,6 @@ export class KnifeManager extends Container {
         this.obsKnives = [];
         this.numOfKnife = Level1.KNIFE_NUMBER - 1; //so dao trong pool
         this.boardAngleRotation = 0;
-        // this.velocity = {x: 0, y: 0};
-        // this.gravity = 0.5;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
@@ -82,15 +80,6 @@ export class KnifeManager extends Container {
         avaiAngle[i].available = false;
     }
 
-    _isColliosionForDefaultObs(knife) {
-        this.obsKnives.forEach(obs => {
-            if (Util.SATPolygonPolygon(Util.find4Vertex(knife), Util.find4Vertex(obs))) {
-                return true;
-            }
-        });
-        return false;
-    }
-
     update(dt) {
         this.graphic.clear();
 
@@ -98,9 +87,9 @@ export class KnifeManager extends Container {
             knife.update(dt);
 
             //ve bound
-            // this.graphic.beginFill(0x880808, 1);
-            // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
-            // this.graphic.endFill();
+            this.graphic.beginFill(0x880808, 1);
+            this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
+            this.graphic.endFill();
         });
       
         this.obsKnives.forEach(obs => {
@@ -128,22 +117,17 @@ export class KnifeManager extends Container {
     }
 
     _onClicky(e) {
-        // this.knives.forEach(knife => {
-        //     if(!knife.isMove) {
-        //         knife.isMove = true;
-        //         knife.move();
-        //     }
-        // })
-        // if (this.numOfKnife > 0) {
-        //     //this._spawnAnotherKnife();
-        //     this.numOfKnife--;
-        // }
-        
         if (this.knives[0].isActive) {
             this.knives[0].move();
             console.log(this.obsKnives.length, this.knives.length);
         }
         
+    }
+
+    onBoardHit() {
+        this.obsKnives.forEach(obs => {
+           obs.moveUpABit();
+        })
     }
 
 
