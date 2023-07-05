@@ -28,7 +28,7 @@ export class Board extends Sprite {
   }
   _initFragments() {
     this.frgLgFrames = [];
-    for (let i = 0; i <= 4; i++) {
+    for (let i = 0; i <= 5; i++) {
       let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
       this.frgLgFrames.push(frgLgframe);
     }
@@ -69,17 +69,17 @@ export class Board extends Sprite {
     // this.texture = null;
     this.fragments1.visible = true;
     this.fragments1.play();
-    this.fragments1.animationSpeed = 0.3;
+    this.fragments1.animationSpeed = 0.15;
     this.fragments1.loop = false;
 
     this.fragments2.visible = true;
     this.fragments2.play();
-    this.fragments2.animationSpeed = 0.21;
+    this.fragments2.animationSpeed = 0.15;
     this.fragments2.loop = false;
 
     this.fragments3.visible = true;
     this.fragments3.play();
-    this.fragments3.animationSpeed = 0.28;  
+    this.fragments3.animationSpeed = 0.15;  
     this.fragments3.loop = false;
 
     this.setBroken();
@@ -88,16 +88,16 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: -50, y: -10, rotation: -0.02}, 30)
+      .to({ x: -50, y: -50, rotation: 0.05}, 30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: -150, y: 1200, rotation: -0.03 }, 50)
+          .to({ x: -150, y: 1200, rotation: 0.02 }, 70)
           .start(this.currentDt);
       })
       .start(this.currentDt);
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 150, y: -150, rotation: 0.5 }, 30)
+      .to({ x: 150, y: -150, rotation: 0.5 }, 40)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
           .to({ x: 280, y: 1250, rotation: 1 },55)
@@ -106,7 +106,7 @@ export class Board extends Sprite {
       .start(this.currentDt);
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -250, rotation: -0.08 },30)
+      .to({ x: -200, y: -250, rotation: -0.5 },30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
           .to({ x: -300, y: 1350, rotation: -1.5 },60)

@@ -180,7 +180,7 @@ export class PlayScene extends Container {
             this.knifeManager.obsKnives.forEach((knife) => {
                 if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
                   console.log("aaaaa");
-                  // this.kHitKSound.play();
+                  this.kHitKSound.play();
                   this.knifeManager.knives[0].setFall();
                   this.state = GameState.Lose;
                   setTimeout(() => {
@@ -197,7 +197,7 @@ export class PlayScene extends Container {
         this.appleManager.apples.forEach((apple) => {
           if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(apple))) {
             console.log("xuyen tao");
-            // this.kHitApple.play();
+            this.kHitApple.play();
             this.appleManager.removeApple(apple);
 
             //tang diem
@@ -212,7 +212,7 @@ export class PlayScene extends Container {
           this.knifeManager.knives[0].beObs();
 
           //tao am thanh
-          // this.kHitWSound.play();
+          this.kHitWSound.play();
 
           //tao vun go khi va cham
           let logParticle = new Emitter(
@@ -245,7 +245,7 @@ export class PlayScene extends Container {
           // phóng hết dao
           if (this.knifeManager.knives.length == 0) {
             // tạo âm thanh
-            // this.boardBroken.play();
+            this.boardBroken.play();
             // Hiện và xử lí các mảnh vỡ bay ra
             this.board.breakUp();
             this.knifeManager.setObsFall();
