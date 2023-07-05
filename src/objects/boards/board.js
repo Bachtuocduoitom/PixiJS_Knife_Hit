@@ -28,7 +28,7 @@ export class Board extends Sprite {
   }
   _initFragments() {
     this.frgLgFrames = [];
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 0; i <= 4; i++) {
       let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
       this.frgLgFrames.push(frgLgframe);
     }
@@ -40,50 +40,47 @@ export class Board extends Sprite {
     this.fragments1.visible = false;
     this.fragments1.zIndex = 100;
 
-    // this.frgMdFrames = [];
-    // for (let i = 1; i <= 2; i++) {
-    //   let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
-    //   this.frgMdFrames.push(frgMdframe);
-    // }
-       // this.fragments2 = new AnimatedSprite(this.frgMdFrames);
-    this.fragments2 =  Sprite.from('../assets/images/frgMd1.png');
+    this.frgMdFrames = [];
+    for (let i = 1; i <= 4; i++) {
+      let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
+      this.frgMdFrames.push(frgMdframe);
+    }
+       this.fragments2 = new AnimatedSprite(this.frgMdFrames);
+    // this.fragments2 =  Sprite.from('../assets/images/frgMd1.png');
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
     this.fragments2.visible = false;
     this.fragments2.zIndex = 100;
 
-    // this.frgSmFrames = [];
-    // for (let i = 1; i <= 2; i++) {
-    //   let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
-    //   this.frgSmFrames.push(frgSmframe);
-    // }
-    this.fragments3 =  Sprite.from('../assets/images/frgSm1.png');
-    // this.fragments3 = new AnimatedSprite(this.frgSmFrames);
+    this.frgSmFrames = [];
+    for (let i = 1; i <= 5; i++) {
+      let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
+      this.frgSmFrames.push(frgSmframe);
+    }
+    this.fragments3 = new AnimatedSprite(this.frgSmFrames);
+    // this.fragments3 =  Sprite.from('../assets/images/frgSm1.png');
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
     this.fragments3.visible = false;
     this.fragments3.zIndex = 100;
-    this.addFragmentsIntoBoard();
-  }
-  addFragmentsIntoBoard() {
     this.addChild(this.fragments1, this.fragments2, this.fragments3);
   }
   breakUp() {
     // this.texture = null;
     this.fragments1.visible = true;
-    // this.fragments1.play();
-    // this.fragments1.animationSpeed = 0.08;
-    // this.fragments1.loop = false;
+    this.fragments1.play();
+    this.fragments1.animationSpeed = 0.3;
+    this.fragments1.loop = false;
 
     this.fragments2.visible = true;
-    // this.fragments2.play();
-    // this.fragments2.animationSpeed = 0.08;
-    // this.fragments2.loop = false;
+    this.fragments2.play();
+    this.fragments2.animationSpeed = 0.21;
+    this.fragments2.loop = false;
 
     this.fragments3.visible = true;
-    // this.fragments3.play();
-    // this.fragments3.animationSpeed = 0.08;
-    // this.fragments3.loop = false;
+    this.fragments3.play();
+    this.fragments3.animationSpeed = 0.28;  
+    this.fragments3.loop = false;
 
     this.setBroken();
   }
@@ -91,28 +88,28 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: -170, y: -170, rotation: 2 }, 20)
+      .to({ x: -50, y: -10, rotation: -0.02}, 30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: -250, y: 1350, rotation: -0.8 }, 40)
+          .to({ x: -150, y: 1200, rotation: -0.03 }, 50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 250, y: -300, rotation: 4 }, 20)
+      .to({ x: 150, y: -150, rotation: 0.5 }, 30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 100, y: 1550, rotation: 3 }, 40)
+          .to({ x: 280, y: 1250, rotation: 1 },55)
           .start(this.currentDt);
       })
       .start(this.currentDt);
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: 35, y: -350, rotation: 5 }, 15)
+      .to({ x: -200, y: -250, rotation: -0.08 },30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: 120, y: 1350, rotation: 2 }, 50)
+          .to({ x: -300, y: 1350, rotation: -1.5 },60)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -122,14 +119,14 @@ export class Board extends Sprite {
     this.boardFilter = new AdjustmentFilter();
     this.boardSprite.filters = [this.boardFilter];
     new TWEEN.Tween(this.boardSprite)
-      .to({ y: this.boardSprite.y - 6}, 2)
+      .to({ y: this.boardSprite.y - 4}, 2)
       .onUpdate(() => {
         this.boardFilter.gamma = 2;
       })
       .onComplete(() => {
         this.boardFilter.gamma = 1;
         new TWEEN.Tween(this.boardSprite)
-          .to({ y: this.boardSprite.y + 6}, 4)
+          .to({ y: this.boardSprite.y + 4}, 4)
           .start(this.currentDt);
       })
       .start(this.currentDt);
