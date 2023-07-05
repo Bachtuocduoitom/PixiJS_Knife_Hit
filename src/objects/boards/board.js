@@ -31,7 +31,7 @@ export class Board extends Sprite {
     //   let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
     //   this.frgLgFrames.push(frgLgframe);
     // }
-    this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
+    this.fragments1 = Sprite.from(Game.bundle.fragment_lg_1);
     this.fragments1.anchor.set(0.5);
     this.fragments1.scale.set(0.7);
     this.fragments1.rotation = -0.5;
@@ -43,7 +43,7 @@ export class Board extends Sprite {
     //   let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
     //   this.frgMdFrames.push(frgMdframe);
     // }
-    this.fragments2 =  Sprite.from('../assets/images/frgMd1.png');
+    this.fragments2 =  Sprite.from(Game.bundle.fragment_md_1);
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
     this.fragments2.visible = false;
@@ -54,7 +54,7 @@ export class Board extends Sprite {
     //   let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
     //   this.frgSmFrames.push(frgSmframe);
     // }
-    this.fragments3 =  Sprite.from('../assets/images/frgSm1.png');
+    this.fragments3 =  Sprite.from(Game.bundle.fragment_sm_1);
     // this.fragments3 = new AnimatedSprite(this.frgSmFrames);
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
