@@ -60,7 +60,11 @@ export class PlayScene extends Container {
 
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
-    this.resultUI.on("tapped", (e) => this._onContGame(e));
+    if(this.resultUI.messageText.text = "You win") {
+      this.resultUI.on("tapped", (e) => this._onContGame(e));
+    }else if(this.resultUI.messageText.text = "You lose"){
+      this.resultUI.on("tapped", (e) => this._onRestartGame(e));
+    }
   }
 
   _initUIResult() {
@@ -255,9 +259,24 @@ export class PlayScene extends Container {
               this.state = GameState.Win;
               this.resultUI.show();
             }, 1500);
+
+             //tao vòng tròn lóe sáng khi thắng
+          let circleParticle = new Emitter(
+            this.particleContainer,
+            upgradeConfig(Game.bundle.circleParticle, [Game.bundle.circleWhite])
+          );
+          circleParticle.scale = 0.06;  
+          circleParticle.updateSpawnPos(
+            this.board.x ,
+            this.board.y
+          );
+          setTimeout(() => {
+            circleParticle.playOnceAndDestroy();
+          }, 100)
           }
           // Bảng nảy lên và lóe sáng
           this.board.boundFlareBoard();
+          //
           //tang diem
           this.playUI.updateScore(++this.score);
           console.log("va roi!");
