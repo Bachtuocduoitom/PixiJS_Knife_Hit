@@ -35,30 +35,6 @@ export const manifest = {
                 srcs: 'assets/images/knife_black_icon.png'
             },
             {
-                name: 'fragment_lg_1',
-                srcs: 'assets/images/frgLg1.png'
-            },
-            {
-                name: 'fragment_lg_2',
-                srcs: 'assets/images/frgLg2.png'
-            },
-            {
-                name: 'fragment_md_1',
-                srcs: 'assets/images/frgMd1.png'
-            },
-            {
-                name: 'fragment_md_2',
-                srcs: 'assets/images/frgMd2.png'
-            },
-            {
-                name: 'fragment_sm_1',
-                srcs: 'assets/images/frgSm1.png'
-            },
-            {
-                name: 'fragment_sm_2',
-                srcs: 'assets/images/frgSm2.png'
-            },
-            {
                 name: 'flare',
                 srcs: 'assets/images/sao8canh.png'
             },
@@ -97,6 +73,14 @@ export const manifest = {
             {
                 name: 'resultGameBg',
                 srcs: 'assets/images/victory.png'
+            },
+            {
+                name: 'circleWhite',
+                srcs: 'assets/images/circle.png'
+            },
+            {
+                name: 'circleParticle',
+                srcs: 'assets/particles/brokenBoard.json'
             }
         ],
     }],
