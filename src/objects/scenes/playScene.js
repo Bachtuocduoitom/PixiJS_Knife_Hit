@@ -60,7 +60,7 @@ export class PlayScene extends Container {
 
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
-    this.resultUI.on("tapped", (e) => this._onContGame(e));
+    this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
   }
 
   _initUIResult() {
@@ -92,21 +92,29 @@ export class PlayScene extends Container {
     this.knifeManager.zIndex = 0;
   }
 
+  // Check if win or lose
+  _onContOrRestart() {
+      if(this.resultUI.messageText.text === "You lose") {
+        this._onRestartGame();
+      } else {
+        this._onContGame();
+      }
+  }
+
   // Xử lí click tiếp tục
   _onContGame() {
     this.removeChild(this.gameplay);
     this._initGamePlay();
     this.removeChild(this.playUI, this.tutorialUI);
     this._initUI();
-    this.resultUI.hide();
     console.log("tiep tuc");
   }
 
   // xử lí click restart
   _onRestartGame() {
     this.removeChild(this.gameplay);
+    this.score = 0;
     this._initGamePlay();
-    this.gameplay.removeChild(this.appleManager);
     this.removeChild(this.playUI, this.tutorialUI);
     this._initUI();
     console.log("choi lai");
@@ -202,15 +210,11 @@ export class PlayScene extends Container {
 
             //tang diem
             this.playUI.updateAppleScore(++this.appleScore);
-            console.log(this.appleManager.apples);
           }
         });
 
         //va cham go
         if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
-          //bien dao thanh vat can
-          this.knifeManager.knives[0].beObs();
-
           //tao am thanh
           this.kHitWSound.play();
 
@@ -233,17 +237,20 @@ export class PlayScene extends Container {
           //tang diem
           this.playUI.updateScore(++this.score);
           console.log("va roi!");
+  
+          //bien dao thanh vat can
+          this.knifeManager.knives[0].beObs();
 
           //quay dao theo khoi go
           this._rotateKnife(this.knifeManager.knives[0]);
           this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
           if (this.knifeManager.numOfKnife > 0) {
             this.knifeManager.knives[0].setActivate();
-            this.knifeManager.numOfKnife--;
           }
+          this.knifeManager.numOfKnife--;
 
           // phóng hết dao
-          if (this.knifeManager.knives.length == 0) {
+          if (this.knifeNumber === 0) {
             // tạo âm thanh
             this.boardBroken.play();
             // Hiện và xử lí các mảnh vỡ bay ra
@@ -255,8 +262,7 @@ export class PlayScene extends Container {
               this.state = GameState.Win;
               this.resultUI.show();
             }, 1500);
-          }
-          
+          } 
         }
       }
     }
@@ -285,7 +291,7 @@ export class PlayScene extends Container {
     if (this.state === GameState.Playing) {
         if (this.knifeNumber > 0) {
             
-            if (this.knifeManager._onClicky(e)) {
+            if (this.knifeManager.onClicky(e)) {
             this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - this.knifeNumber--);
             }
           }
