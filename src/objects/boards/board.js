@@ -10,7 +10,6 @@ export class Board extends Sprite {
     super(texture);
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
-    // this.boardSprite.alpha = 1;
     this.boardSprite.anchor.set(0.5);
     this.angleRotation = 0.05;
     this.countRotation = 0;
@@ -24,6 +23,7 @@ export class Board extends Sprite {
     this.addChild(this.boardSprite);
     this.currentDt = 0;
   }
+
   _initCollider() {
     this.collider = new Collider();
     this.collider.width = 150;
@@ -31,9 +31,10 @@ export class Board extends Sprite {
     this.collider.zIndex = 110;
     this.addChild(this.collider);
   }
+
   _initFragments() {
     this.frgLgFrames = [];
-    for (let i = 0; i <= 5; i++) {
+    for (let i = 2; i <= 5; i++) {
       let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
       this.frgLgFrames.push(frgLgframe);
     }
@@ -46,7 +47,7 @@ export class Board extends Sprite {
     this.fragments1.zIndex = 100;
 
     this.frgMdFrames = [];
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 2; i <= 4; i++) {
       let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
       this.frgMdFrames.push(frgMdframe);
     }
@@ -58,7 +59,7 @@ export class Board extends Sprite {
     this.fragments2.zIndex = 100;
 
     this.frgSmFrames = [];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 2; i <= 5; i++) {
       let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
       this.frgSmFrames.push(frgSmframe);
     }
@@ -79,47 +80,50 @@ export class Board extends Sprite {
     // this.texture = null;
     this.fragments1.visible = true;
     this.fragments1.play();
-    this.fragments1.animationSpeed = 0.15;
+    this.fragments1.animationSpeed = 0.08 ;
     this.fragments1.loop = false;
 
     this.fragments2.visible = true;
     this.fragments2.play();
-    this.fragments2.animationSpeed = 0.15;
+    this.fragments2.animationSpeed = 0.12;
     this.fragments2.loop = false;
 
     this.fragments3.visible = true;
     this.fragments3.play();
-    this.fragments3.animationSpeed = 0.15;  
+    this.fragments3.animationSpeed = 0.12;  
     this.fragments3.loop = false;
 
     this.setBroken();
   }
+
   setBroken() {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: -50, y: -50, rotation: 0.05}, 30)
+      .to({ x: 200, y: -2, rotation: 0.0001},20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: -150, y: 1200, rotation: 0.02 }, 70)
+          .to({ x: 280, y: 1200, rotation: 0.0005 },40)
           .start(this.currentDt);
       })
       .start(this.currentDt);
+
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 150, y: -150, rotation: 0.5 }, 40)
+      .to({ x: 180, y: -350, rotation: 0.005 }, 20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 280, y: 1250, rotation: 1 },55)
+          .to({ x: 380, y: 1250, rotation: 0.05 },55)
           .start(this.currentDt);
       })
       .start(this.currentDt);
+
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -250, rotation: -0.5 },30)
+      .to({ x: -200, y: -350, rotation: -0.005 },20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -300, y: 1350, rotation: -1.5 },60)
+          .to({ x: -400, y: 1350, rotation: -0.05 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -139,6 +143,7 @@ export class Board extends Sprite {
       this.changeRotation();
     }
   }
+
   changeRotation() {
     this.countRotation += this.angleRotation;
     this.numRotation = this.countRotation / (Math.PI * 2);
