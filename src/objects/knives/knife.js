@@ -50,13 +50,30 @@ export class Knife extends Sprite {
 
     setEndFall() {
         if ((this.angle%360) <= 180) {
-            this.isFallLeft = true;
+            if((this.angle%360) >= 90) {
+                this.isFallUpLeft = true;
+            } else {
+                this.isFallDownLeft = true;
+            }
         } else {
-            this.isFallRight = true;
+            if((this.angle%360) <= 270) {
+                this.isFallUpRight = true;
+            } else {
+                this.isFallDownRight = true;
+            }
         }
         this.fallRotation = Util.random(0.1, 0.3);
         this.fallX = Util.random(8,15);
         this.fallY = Util.random(15,20);
+        this.pushForce = 50;
+    }
+
+    setLastFall() {
+        this.isLast = true;
+        this.fallRotation = Util.random(0.05, 0.1);
+        this.fallX = Util.random(-5,5);
+        this.fallY = Util.random(15,20);
+        this.pushForce = 50;
     }
 
     beObs() {
@@ -81,16 +98,29 @@ export class Knife extends Sprite {
                 }
             }
         } else {
-            if (this.isFallLeft) {
+            if (this.isFallDownLeft) {
                 this.x += this.fallX*dt;
-                this.speed = 0;
                 this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
                 this.rotation += this.fallRotation;
-            } else if (this.isFallRight) {
+            } else if (this.isFallDownRight) {
                 this.x -= this.fallX*dt;
-                this.speed = 0;
                 this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
                 this.rotation -= this.fallRotation;
+            } else if(this.isFallUpLeft) {
+                this.x += this.fallX*dt;
+                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                this.rotation -= this.fallRotation;
+                this.pushForce --;
+            } else if(this.isFallUpRight) {
+                this.x -= this.fallX*dt;
+                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                this.rotation -= this.fallRotation;
+                this.pushForce --;
+            } else if(this.isLast) {
+                this.x -= this.fallX*dt;;
+                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                this.rotation -= this.fallRotation;
+                this.pushForce --;
             } else {
                 this.rotation += this.angleRotation;
             }
