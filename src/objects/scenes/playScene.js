@@ -46,6 +46,7 @@ export class PlayScene extends Container {
     this._initParticles();
     this._initSound();
     this._initWhiteCircle();
+    this._initCircleLine();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
   }
@@ -154,6 +155,18 @@ export class PlayScene extends Container {
     this.whiteCircle.zIndex = 150;
     this.whiteCircle.visible = false;
   }
+
+  _initCircleLine() {
+    this.circleLine = new Sprite(Game.bundle.circleLineWhite);
+    this.addChild(this.circleLine);
+    this.circleLine.x = this.board.x;
+    this.circleLine.y = this.board.y;
+    this.circleLine.anchor.set(0.5);
+    this.circleLine.alpha = 0.3;
+    this.circleLine.zIndex = 150;
+    this.circleLine.visible = false;
+
+  }
   _initParticles() {
     this.particleContainer = new Container();
     this.gameplay.addChild(this.particleContainer);
@@ -189,19 +202,34 @@ export class PlayScene extends Container {
     }
   }
 
- // Vòng tròn xuất hiện khi bảng vỡ ra
- circleFlare() {
-  new TWEEN.Tween(this.whiteCircle)
-  .to({scale: {x:0.5, y: 0.5}}, 8)
-  .onComplete(() => {
+ // Hình tròn xuất hiện khi bảng vỡ ra
+  circleFlare() {
     new TWEEN.Tween(this.whiteCircle)
-    .to({scale: {x:2 ,y: 2}}, 10)
-    .onComplete(() => {this.whiteCircle.visible = false})
-    .start(this.currentDt)
-  })
-  .start(this.currentDt);
-}
+    .to({scale: {x:0.5, y: 0.5}}, 4)
+    .onComplete(() => {
+      new TWEEN.Tween(this.whiteCircle)
+      .to({scale: {x:1.5 ,y: 1.5}}, 8)
+      .onComplete(() => {this.whiteCircle.visible = false})
+      .start(this.currentDt)
+    })
+    .start(this.currentDt);
+  }
 
+ // Vòng tròn xuất hiện khi bảng vỡ ra
+  circleLineZoom() {
+    new TWEEN.Tween(this.circleLine)
+    .to({scale: {x:1.5, y: 1.5}}, 5)
+    .onComplete(() => {
+      new TWEEN.Tween(this.circleLine)
+      .to({scale: {x:2 ,y: 2}}, 8)
+      .onComplete(() => {
+        this.circleLine.alpha = 0.01;
+        this.circleLine.visible = false;
+      })
+      .start(this.currentDt)
+    })
+    .start(this.currentDt);
+  }
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
@@ -289,9 +317,11 @@ export class PlayScene extends Container {
               this.state = GameState.Win;
               this.resultUI.show();
             }, 1500);
-          // vòng tròn zoom
+          // hình tròn và vòng tròn xuất hiện
           this.whiteCircle.visible = true;
           this.circleFlare();
+          this.circleLine.visible = true;
+          this.circleLineZoom();
           }
         }
       }
