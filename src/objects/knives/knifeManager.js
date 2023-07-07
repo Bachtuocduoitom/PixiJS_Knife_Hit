@@ -47,7 +47,7 @@ export class KnifeManager extends Container {
     }
 
     spawnObsKnives(avaiAngle) {
-        let numOfDefautObs = Math.round(Util.random(0,3));
+        let numOfDefautObs = Util.randomInteger(0, 3);
         for (let i = 0; i < numOfDefautObs; i++) {
             this._spawnObs(avaiAngle);
         }
@@ -67,7 +67,7 @@ export class KnifeManager extends Container {
     }
 
     _setObsAng(obs, avaiAngle) {
-        let i = Math.round(Util.random(0,17));
+        let i = Util.randomInteger(0, 17);
         while (!avaiAngle[i].available) {
             if (i === 17) {
                 i = 0;

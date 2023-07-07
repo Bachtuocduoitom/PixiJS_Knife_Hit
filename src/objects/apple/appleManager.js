@@ -10,7 +10,7 @@ export class AppleManager extends Container {
     constructor() {
         super();
         this.apples = [];
-        this.numOfApple = Math.round(Util.random(0,4));
+        this.numOfApple = Util.randomInteger(0, 2);
         this.boardAngleRotation = 0;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
@@ -36,7 +36,7 @@ export class AppleManager extends Container {
     }
 
     _setAppleAng(apple, avaiAngle) {
-        let i = Math.round(Util.random(0,17));
+        let i = Util.randomInteger(0, 17);
         while (!avaiAngle[i].available) {
             if (i === 17) {
                 i = 0;
