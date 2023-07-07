@@ -19,7 +19,7 @@ export class Game {
             this.app.ticker.add(this.update, this);
         })
 
-        this.resire();
+        this.resize();
         window.addEventListener("resize", this.resize);
     }
 
@@ -37,7 +37,7 @@ export class Game {
         this.app.stage.addChild(this.playScene);
     }
 
-    static resire() {
+    static resize() {
         const screenWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         const screenHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 

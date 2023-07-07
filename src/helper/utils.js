@@ -3,6 +3,10 @@ export class Util {
       return Math.random() * (max - min) + min;
     }
 
+    static randomInteger(min, max) {
+        return Math.round(Math.random() * (max - min) + min);
+    }
+
     static registerOnPointerDown(displayObject, onPointerDown, context) {
         displayObject.eventMode = 'static';
         displayObject.on("pointerdown", onPointerDown, context);
