@@ -26,8 +26,8 @@ export class Board extends Sprite {
     this.collider.zIndex = 110;
     this.addChild(this.collider);
   }
-
   _initFragments() {
+    // mảnh 1
     this.frgLgFrames = [];
     for (let i = 2; i <= 5; i++) {
       let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
@@ -40,7 +40,8 @@ export class Board extends Sprite {
     this.fragments1.rotation = -0.5;
     this.fragments1.visible = false;
     this.fragments1.zIndex = 100;
-
+   
+    // mảnh 2
     this.frgMdFrames = [];
     for (let i = 2; i <= 4; i++) {
       let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
@@ -53,6 +54,7 @@ export class Board extends Sprite {
     this.fragments2.visible = false;
     this.fragments2.zIndex = 100;
 
+    // mảnh 3
     this.frgSmFrames = [];
     for (let i = 2; i <= 5; i++) {
       let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
@@ -64,7 +66,15 @@ export class Board extends Sprite {
     this.fragments3.scale.set(0.8);
     this.fragments3.visible = false;
     this.fragments3.zIndex = 100;
-    this.addChild(this.fragments1, this.fragments2, this.fragments3);
+
+    // mảnh vụn
+    this.fragmentsMin =  Sprite.from('../assets/images/minFrg.png');
+    this.fragmentsMin.anchor.set(0.5);
+    this.fragmentsMin.scale.set(0.8);
+    this.fragmentsMin.visible = false;
+    this.fragmentsMin.zIndex = 100;
+    this.addChild(this.fragments1, this.fragments2, this.fragments3,  this.fragmentsMin);
+    
   }
 
   breakUp() {
@@ -84,6 +94,7 @@ export class Board extends Sprite {
     this.fragments3.animationSpeed = 0.12;  
     this.fragments3.loop = false;
 
+    this.fragmentsMin.visible = true;
     this.setBroken();
   }
 
@@ -94,7 +105,7 @@ export class Board extends Sprite {
       .to({ x: 200, y: -2, rotation: 0.0001},20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: 280, y: 1200, rotation: 0.0005 },40)
+          .to({ x: 280, y: 1200, rotation: 0.0005 },35)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -104,7 +115,7 @@ export class Board extends Sprite {
       .to({ x: 180, y: -350, rotation: 0.005 }, 20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: 0.05 },55)
+          .to({ x: 380, y: 1250, rotation: 0.05 },45)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -114,9 +125,14 @@ export class Board extends Sprite {
       .to({ x: -200, y: -350, rotation: -0.005 },20)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation: -0.05 },50)
+          .to({ x: -400, y: 1350, rotation: -0.05 },40)
           .start(this.currentDt);
       })
+      .start(this.currentDt);
+
+      // set rơi mảnh vụn
+      new TWEEN.Tween(this.fragmentsMin)
+      .to({ x: -200, y: 1500, rotation: -0.005 },100)
       .start(this.currentDt);
   }
 
@@ -138,22 +154,6 @@ export class Board extends Sprite {
       .start(this.currentDt);
   }
 
-  // Vòng tròn xuất hiện khi bảng vỡ ra
-  circleFlare() {
-    new TWEEN.Tween(this.circleWhite)
-    .to({x:this.circleWhite.x + 200, y:this.circleWhite.y +200}, 20)
-    .onUpdate(() => {
-      
-    })
-    .onComplete(() => {
-      new TWEEN.Tween(this.circleWhite)
-      .to({x:this.circleWhite.x - 200, y:this.circleWhite.y -200}, 30)
-      .onUpdate(() => {})
-      .onComplete(() => {})
-      .start(this.currentDt)
-    })
-    .start(this.currentDt);
-  }
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);
