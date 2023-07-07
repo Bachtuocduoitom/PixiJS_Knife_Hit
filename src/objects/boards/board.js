@@ -4,15 +4,20 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
+import { Util } from "../../helper/utils";
 export class Board extends Sprite {
   constructor(texture) {
     super(texture);
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
-    this.angleRotation = 0.04;
+    this.angleRotation = 0.05;
+    this.countRotation = 0;
+    this.numRotation = 0;
     this._initCollider();
     this._initFragments();
+    this.randomRotationToChange();
+    this._initFilter();
     this.sortableChildren = true;
     this.zIndex = 0;
     this.addChild(this.boardSprite);
@@ -22,7 +27,7 @@ export class Board extends Sprite {
   _initCollider() {
     this.collider = new Collider();
     this.collider.width = 150;
-    this.collider.height = 150;
+    this.collider.height = 110;
     this.collider.zIndex = 110;
     this.addChild(this.collider);
   }
@@ -34,7 +39,7 @@ export class Board extends Sprite {
       this.frgLgFrames.push(frgLgframe);
     }
        this.fragments1 = new AnimatedSprite(this.frgLgFrames);
-    // this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
+       // this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
     this.fragments1.anchor.set(0.5);
     this.fragments1.scale.set(0.7);
     this.fragments1.rotation = -0.5;
@@ -77,6 +82,10 @@ export class Board extends Sprite {
     
   }
 
+  _initFilter() {
+    this.boardFilter = new AdjustmentFilter();
+    this.boardSprite.filters = [this.boardFilter];
+  }
   breakUp() {
     // this.texture = null;
     this.fragments1.visible = true;
@@ -136,24 +145,6 @@ export class Board extends Sprite {
       .start(this.currentDt);
   }
 
-  //Tạo hiệu ứng bảng giật và lóe sáng mỗi lần phóng dao
-  boundFlareBoard() {
-    this.boardFilter = new AdjustmentFilter();
-    this.boardSprite.filters = [this.boardFilter];
-    new TWEEN.Tween(this.boardSprite)
-      .to({ y: this.boardSprite.y - 4}, 2)
-      .onUpdate(() => {
-        this.boardFilter.gamma = 2;
-      })
-      .onComplete(() => {
-        this.boardFilter.gamma = 1;
-        new TWEEN.Tween(this.boardSprite)
-          .to({ y: this.boardSprite.y + 4}, 4)
-          .start(this.currentDt);
-      })
-      .start(this.currentDt);
-  }
-
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);
@@ -170,18 +161,34 @@ export class Board extends Sprite {
   }
 
   changeRotation() {
-    this.numRotation = this.boardSprite.rotation / (Math.PI * 2);
-    if (this.numRotation >= 2) {
-      setTimeout(() => {
-        this.angleRotation -= 0.0001;
-      },500);
+    this.countRotation += this.angleRotation;
+    this.numRotation = this.countRotation / (Math.PI * 2);
+    if (this.numRotation >= this.numRotationToChange) {
+      this.angleRotation -= 1/2400;
+      if (this.angleRotation <= 0) {
+        this.countRotation = 0;
+        this.numRotation = 0;
+        this.randomRotationToChange();
+
+      } 
+    } else if (this.angleRotation <= 0.05) {
+      this.angleRotation += 1/2000;
     }
-    if (this.numRotation < -2) {
-      this.angleRotation += 0.02;
-    }
+    console.log(this.numRotation);
+    console.log(this.angleRotation);
+    console.log(this.numRotationToChange);
+    
   }
 
   onHit() {
-    new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentDt);
+    new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
+      this.boardFilter.gamma = 2;
+    }).onComplete(() => {
+      this.boardFilter.gamma = 1;
+    }).start(this.currentDt);
+  }
+
+  randomRotationToChange() {
+    this.numRotationToChange = Util.random(2, 3.5);
   }
 }
