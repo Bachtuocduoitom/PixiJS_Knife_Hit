@@ -18,7 +18,6 @@ export class KnifeManager extends Container {
         this.graphic = new Graphics();
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
-        //this._spawnObsKnives(); // tao vat can ban dau
         // /window.addEventListener("mousedown", (e) => this._onClicky(e));
     }
 
@@ -84,7 +83,7 @@ export class KnifeManager extends Container {
         this.graphic.clear();
 
         this.knives.forEach(knife => {
-            knife.update(dt);
+            knife.update(dt);          
 
             //ve bound
             // this.graphic.beginFill(0x880808, 1);
@@ -112,11 +111,16 @@ export class KnifeManager extends Container {
             obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height/2;
             obs.anchor.set(0.5);
             obs.collider.anchor.set(0.5);
-            obs.setEndFall();
+            if (this.obsKnives.indexOf(obs) === (this.obsKnives.length - 1)) {
+                obs.setLastFall();
+            } else {
+                obs.setEndFall();
+            }
+            
         })
     }
 
-    _onClicky(e) {
+    onClicky(e) {
         if (this.knives[0].isActive) {
             this.knives[0].move();
             console.log(this.obsKnives.length, this.knives.length);
