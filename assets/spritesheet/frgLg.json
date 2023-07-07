@@ -1,0 +1,95 @@
+{
+	"frames": {
+		"frgLg2.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 444,
+				"h": 436
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 444,
+				"h": 436
+			},
+			"sourceSize": {
+				"w": 444,
+				"h": 436
+			}
+		},
+		"frgLg3.png": {
+			"frame": {
+				"x": 1,
+				"y": 439,
+				"w": 444,
+				"h": 403
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 444,
+				"h": 403
+			},
+			"sourceSize": {
+				"w": 444,
+				"h": 403
+			}
+		},
+		"frgLg4.png": {
+			"frame": {
+				"x": 447,
+				"y": 1,
+				"w": 444,
+				"h": 394
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 444,
+				"h": 394
+			},
+			"sourceSize": {
+				"w": 444,
+				"h": 394
+			}
+		},
+		"frgLg5.png": {
+			"frame": {
+				"x": 447,
+				"y": 397,
+				"w": 444,
+				"h": 389
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 444,
+				"h": 389
+			},
+			"sourceSize": {
+				"w": 444,
+				"h": 389
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "LG.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 892,
+			"h": 843
+		},
+		"scale": "1"
+	}
+}
