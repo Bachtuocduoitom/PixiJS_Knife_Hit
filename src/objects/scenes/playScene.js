@@ -11,6 +11,7 @@ import { AppleManager } from "../apple/appleManager";
 import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
+import * as TWEEN from "@tweenjs/tween.js";
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
   Playing: "playing",
@@ -28,7 +29,6 @@ export class PlayScene extends Container {
     this.appleScore = 0;
 
     this._initGamePlay();
-    this.currentDt = 0;
     this._initUI();
   }
 
@@ -37,6 +37,7 @@ export class PlayScene extends Container {
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
     this.knifeNumber = Level1.KNIFE_NUMBER;
+    this.currentDt = 0;
     this.addChild(this.gameplay);
     this._initBackground();
     this._initBoard();
@@ -44,6 +45,7 @@ export class PlayScene extends Container {
     this._initObstacle();
     this._initParticles();
     this._initSound();
+    this._initWhiteCircle();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
   }
@@ -141,7 +143,17 @@ export class PlayScene extends Container {
     this.gameplay.addChild(this.appleManager);
     this.appleManager.zIndex = 101;
   }
-
+  _initWhiteCircle() {
+    this.whiteCircle = new Sprite(Game.bundle.circleWhite);
+    this.addChild(this.whiteCircle);
+    this.whiteCircle.x = this.board.x;
+    this.whiteCircle.y = this.board.y;
+    this.whiteCircle.anchor.set(0.5);
+    this.whiteCircle.alpha = 0.2;
+    this.whiteCircle.scale.set(0.8);
+    this.whiteCircle.zIndex = 150;
+    this.whiteCircle.visible = false;
+  }
   _initParticles() {
     this.particleContainer = new Container();
     this.gameplay.addChild(this.particleContainer);
@@ -160,6 +172,8 @@ export class PlayScene extends Container {
     this.boardBroken.volume = 100;
   }
   update(dt) {
+    this.currentDt += dt;
+    TWEEN.update(this.currentDt);
     this.knifeManager.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);
@@ -174,6 +188,19 @@ export class PlayScene extends Container {
       this.tutorialUI.updateUI(dt);
     }
   }
+
+ // Vòng tròn xuất hiện khi bảng vỡ ra
+ circleFlare() {
+  new TWEEN.Tween(this.whiteCircle)
+  .to({scale: {x:0.5, y: 0.5}}, 8)
+  .onComplete(() => {
+    new TWEEN.Tween(this.whiteCircle)
+    .to({scale: {x:2 ,y: 2}}, 10)
+    .onComplete(() => {this.whiteCircle.visible = false})
+    .start(this.currentDt)
+  })
+  .start(this.currentDt);
+}
 
   _onStart(e) {
     this.state = GameState.Playing;
@@ -262,7 +289,10 @@ export class PlayScene extends Container {
               this.state = GameState.Win;
               this.resultUI.show();
             }, 1500);
-          } 
+          // vòng tròn zoom
+          this.whiteCircle.visible = true;
+          this.circleFlare();
+          }
         }
       }
     }
