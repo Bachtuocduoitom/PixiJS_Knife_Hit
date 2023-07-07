@@ -14,6 +14,7 @@ export class Board extends Sprite {
     this.angleRotation = 0.05;
     this.countRotation = 0;
     this.numRotation = 0;
+    this.rotateDirection = 1;
     this._initCollider();
     this._initFragments();
     this.randomRotationToChange();
@@ -145,22 +146,33 @@ export class Board extends Sprite {
   }
 
   changeRotation() {
-    this.countRotation += this.angleRotation;
+    this.countRotation += Math.abs(this.angleRotation);
     this.numRotation = this.countRotation / (Math.PI * 2);
     if (this.numRotation >= this.numRotationToChange) {
-      this.angleRotation -= 1/2400;
-      if (this.angleRotation <= 0) {
-        this.countRotation = 0;
-        this.numRotation = 0;
-        this.randomRotationToChange();
-
-      } 
-    } else if (this.angleRotation <= 0.05) {
+      if (this.rotateDirection === 1) {
+        this.angleRotation -= 1/2400;
+        if (this.angleRotation <= 0) {
+          this.countRotation = 0;
+          this.numRotation = 0;
+          this.randomRotationToChange();
+          this.rotateDirection = Util.randomInteger(0, 1);
+        } 
+      } else {
+        this.angleRotation += 1/2400;
+        if (this.angleRotation >= 0) {
+          this.countRotation = 0;
+          this.numRotation = 0;
+          this.randomRotationToChange();
+          this.rotateDirection = Util.randomInteger(0, 1);
+        } 
+      }
+      
+    } else if (this.angleRotation < 0.05 && this.rotateDirection === 1) {
       this.angleRotation += 1/2000;
+    } else if (this.angleRotation > -0.05 && this.rotateDirection === 0) {
+      this.angleRotation -= 1/2000;
     }
-    console.log(this.numRotation);
-    console.log(this.angleRotation);
-    console.log(this.numRotationToChange);
+    
     
   }
 
@@ -173,6 +185,7 @@ export class Board extends Sprite {
   }
 
   randomRotationToChange() {
-    this.numRotationToChange = Util.random(2, 3.5);
+    this.numRotationToChange = Util.random(2, 3);
   }
+
 }
