@@ -34,13 +34,6 @@ export class Board extends Sprite {
   }
   _initFragments() {
     // mảnh 1
-    // this.frgLgFrames = [];
-    // for (let i = 2; i <= 5; i++) {
-    //   let frgLgframe = Texture.from(`../assets/images/frgLg${i}.png`);
-    //   this.frgLgFrames.push(frgLgframe);
-    // }
-    //    this.fragments1 = new AnimatedSprite(this.frgLgFrames);
-       // this.fragments1 = Sprite.from('../assets/images/frgLg1.png');
     this.fragments1 = new AnimatedSprite(Game.bundle.frgLg._frameKeys.map(image => Texture.from(image)));
     this.fragments1.anchor.set(0.5);
     this.fragments1.scale.set(0.7);
@@ -49,13 +42,6 @@ export class Board extends Sprite {
     this.fragments1.zIndex = 100;
    
     // mảnh 2
-    // this.frgMdFrames = [];
-    // for (let i = 2; i <= 4; i++) {
-    //   let frgMdframe = Texture.from(`../assets/images/frgMd${i}.png`);
-    //   this.frgMdFrames.push(frgMdframe);
-    // }
-    //    this.fragments2 = new AnimatedSprite(this.frgMdFrames);
-    // this.fragments2 =  Sprite.from('../assets/images/frgMd1.png');
     this.fragments2 = new AnimatedSprite(Game.bundle.frgMd._frameKeys.map(image => Texture.from(image)));
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
@@ -63,13 +49,6 @@ export class Board extends Sprite {
     this.fragments2.zIndex = 100;
 
     // mảnh 3
-    // this.frgSmFrames = [];
-    // for (let i = 2; i <= 5; i++) {
-    //   let frgSmframe = Texture.from(`../assets/images/frgSm${i}.png`);
-    //   this.frgSmFrames.push(frgSmframe);
-    // }
-    // this.fragments3 = new AnimatedSprite(this.frgSmFrames);
-    // this.fragments3 =  Sprite.from('../assets/images/frgSm1.png');
     this.fragments3 = new AnimatedSprite(Game.bundle.frgSm._frameKeys.map(image => Texture.from(image)));
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
@@ -77,7 +56,7 @@ export class Board extends Sprite {
     this.fragments3.zIndex = 100;
 
     // mảnh vụn
-    this.fragmentsMin =  Sprite.from('../assets/images/minFrg.png');
+    this.fragmentsMin = Sprite.from('../assets/images/minFrg.png');
     this.fragmentsMin.anchor.set(0.5);
     this.fragmentsMin.scale.set(0.8);
     this.fragmentsMin.visible = false;
@@ -115,37 +94,37 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: 200, y: -2, rotation: 0.001},40)
+      .to({ x: 200, y: -2, rotation: this.rotation + 0.005},40)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: 280, y: 1200, rotation:  1 },50)
+          .to({ x: 280, y: 1200, rotation:this.rotation + 1 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
 
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 180, y: -350, rotation: 0.005 },40)
+      .to({ x: 180, y: -350, rotation:this.rotation + 0.005 },40)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: 0.05 },55)
+          .to({ x: 380, y: 1250, rotation: this.rotation + 0.05 },55)
           .start(this.currentDt);
       })
       .start(this.currentDt);
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -350, rotation: -0.005 },40)
+      .to({ x: -200, y: -350, rotation:this.rotation -0.005 },40)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation: -0.05 },60)
+          .to({ x: -400, y: 1350, rotation:this.rotation -0.05 },60)
           .start(this.currentDt);
       })
       .start(this.currentDt);
 
       // set rơi mảnh vụn
       new TWEEN.Tween(this.fragmentsMin)
-      .to({ x: -200, y: 1500, rotation: -0.005 },70)
+      .to({ x: -200, y: 1500, rotation:this.rotation -0.005 },80)
       .start(this.currentDt);
   }
 
@@ -194,7 +173,7 @@ export class Board extends Sprite {
     
     
   }
-  
+
   onHit() {
     new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
       this.boardFilter.gamma = 1.5;
