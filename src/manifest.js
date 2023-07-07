@@ -79,9 +79,21 @@ export const manifest = {
                 srcs: 'assets/images/circle.png'
             },
             {
-                name: 'circleParticle',
-                srcs: 'assets/particles/brokenBoard.json'
-            }
+                name: 'circleLineWhite',
+                srcs: 'assets/images/cirleLine.png'
+            },
+            {
+                name: 'frgLg',
+                srcs: 'assets/spritesheet/frgLg.json'
+            },
+            {
+                name: 'frgMd',
+                srcs: 'assets/spritesheet/frgMd.json'
+            },
+            {
+                name: 'frgSm',
+                srcs: 'assets/spritesheet/frgSm.json'
+            },
         ],
     }],
 }
