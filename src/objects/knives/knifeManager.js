@@ -1,6 +1,6 @@
 import { Container, Graphics } from "pixi.js";
 import { Level1, PlayScene } from "../scenes/playScene";
-import { Knife } from "./knife";
+import { Knife, KnifeState } from "./knife";
 import { Game } from "../../game";
 
 import { GameConstant } from "../../gameConstant";
@@ -18,7 +18,7 @@ export class KnifeManager extends Container {
         this.graphic = new Graphics();
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
-        // /window.addEventListener("mousedown", (e) => this._onClicky(e));
+        
     }
 
     _spawnKnives() {
@@ -28,31 +28,36 @@ export class KnifeManager extends Container {
         }
     }
 
+    //sinh dao dau tien
     _spawnFirstKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = GameConstant.KNIFE_Y_POSITION;
-        knife.isActive = true;
+        knife.state = KnifeState.ACTIVATED;
         this.knives.push(knife);
         this.addChild(knife);
     }
 
+    //sinh cac dao con lai
     _spawnAnotherKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = 1080;
         knife.visible = false;
+        knife.state = KnifeState.DEFAULT;
+        //knife.alpha = 0;
         this.knives.push(knife);
         this.addChild(knife);
     }
 
+    //sinh obstacle knife
     spawnObsKnives(avaiAngle) {
         let numOfDefautObs = Util.randomInteger(0, 3);
         for (let i = 0; i < numOfDefautObs; i++) {
             this._spawnObs(avaiAngle);
-        }
-        
+        }        
     }
+
 
     _spawnObs(avaiAngle) {
         let knife = new Knife(Game.bundle.knife);
@@ -66,6 +71,7 @@ export class KnifeManager extends Container {
         this.addChild(knife);
     }
 
+    //dat goc ban dau cho dao gam tren go
     _setObsAng(obs, avaiAngle) {
         let i = Util.randomInteger(0, 17);
         while (!avaiAngle[i].available) {
@@ -112,16 +118,16 @@ export class KnifeManager extends Container {
             obs.anchor.set(0.5);
             obs.collider.anchor.set(0.5);
             if (this.obsKnives.indexOf(obs) === (this.obsKnives.length - 1)) {
-                obs.setLastFall();
+                obs.setLastObsFall();
             } else {
-                obs.setEndFall();
+                obs.setAnotherObsFall();
             }
             
         })
     }
 
     onClicky(e) {
-        if (this.knives[0].isActive) {
+        if (this.knives[0].state === "activated") {
             this.knives[0].move();
             console.log(this.obsKnives.length, this.knives.length);
             return true;

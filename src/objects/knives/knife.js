@@ -4,15 +4,21 @@ import { Collider } from "../physics/collider";
 import { Util } from "../../helper/utils";
 import * as TWEEN from "@tweenjs/tween.js";
 
+export const KnifeState = Object.freeze({
+    DEFAULT: "default",
+    ACTIVATED: "activated",
+    ACTIVATING: "activating",
+    ACTIVE: "active",
+    MOVE: "move",
+    OBSTACLE: "obstacle",
+    FALL: "fall",
+  });
+
 export class Knife extends Sprite {
     constructor(texture) {
         super(texture);
-        this.anchor.set(0.5);         
-        this.isMove = false;
-        this.isActive = false; //da chuan bi de bi phong chua
-        this.startActive = false; //da bat dau set active chua
-        this.isObs = false;
-        this.isFall = false;
+        this.anchor.set(0.5);     
+        this.state = KnifeState.DEFAULT;    
         this.speed = 0;
         this.angleRotation = 0;
         this.currentTime = 0;
@@ -27,28 +33,27 @@ export class Knife extends Sprite {
     }
 
     move() {
+        this.state = KnifeState.MOVE;
         this.speed = 70;
-        this.isMove = true;
     }
 
-    _toActive(dt) {
-        if (this.y > GameConstant.KNIFE_Y_POSITION) {
-            this.y -= 70*dt;
-        } else {
-            this.y = GameConstant.KNIFE_Y_POSITION;
-            this.isActive = true;
-        }
+    _toActive() {
+        this.state= KnifeState.ACTIVATING;
+        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION}, 1).onComplete(() => {
+            this.state = KnifeState.ACTIVATED;
+        }).start(this.currentTime);
     }
     setActivate() {
-        this.startActive = true;
         this.visible = true;
+        this.state = KnifeState.ACTIVE;
     }
 
     setFall() {
-        this.isFall = true;
+        this.state = KnifeState.FALL;
     }
 
-    setEndFall() {
+    setAnotherObsFall() {
+        this.setFall();
         if ((this.angle%360) <= 180) {
             if((this.angle%360) >= 90) {
                 this.isFallUpLeft = true;
@@ -68,8 +73,9 @@ export class Knife extends Sprite {
         this.pushForce = 50;
     }
 
-    setLastFall() {
-        this.isLast = true;
+    setLastObsFall() {
+        this.setFall();
+        this.isLastOne = true;
         this.fallRotation = Util.random(0.05, 0.1);
         this.fallX = Util.random(-5,5);
         this.fallY = Util.random(15,20);
@@ -77,55 +83,57 @@ export class Knife extends Sprite {
     }
 
     beObs() {
-        this.isObs = true;
-        this.isMove = false;
+        this.state = KnifeState.OBSTACLE;
     }
 
     update(dt) {
-        if (!this.isObs) {
-            if (!this.isActive) {
-                if (this.startActive) {
-                    this._toActive(dt);
-                }  
-            } else {
-                if (this.isMove) {
-                    this.y -= this.speed * dt;
-                }
-                if (this.isFall) {
-                    this.speed = 0;
+        this.currentTime += dt;
+
+        switch (this.state) {
+            case "move":
+                this.y -= this.speed * dt;
+                break;
+
+            case "active":
+                this._toActive();
+                break;
+
+            case "fall":
+                if (this.isFallDownLeft) {
+                    this.x += this.fallX*dt;
+                    this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                    this.rotation += this.fallRotation;
+                } else if (this.isFallDownRight) {
+                    this.x -= this.fallX*dt;
+                    this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                    this.rotation -= this.fallRotation;
+                } else if(this.isFallUpLeft) {
+                    this.x += this.fallX*dt;
+                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.rotation -= this.fallRotation;
+                    this.pushForce --;
+                } else if(this.isFallUpRight) {
+                    this.x -= this.fallX*dt;
+                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.rotation -= this.fallRotation;
+                    this.pushForce --;
+                } else if(this.isLastOne) {
+                    this.x -= this.fallX*dt;;
+                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.rotation -= this.fallRotation;
+                    this.pushForce --;
+                } else {
                     this.y += 20 + 1/2 * 9.8 * dt * dt;
                     this.rotation += 0.1;
                 }
-            }
-        } else {
-            if (this.isFallDownLeft) {
-                this.x += this.fallX*dt;
-                this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
-                this.rotation += this.fallRotation;
-            } else if (this.isFallDownRight) {
-                this.x -= this.fallX*dt;
-                this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
-                this.rotation -= this.fallRotation;
-            } else if(this.isFallUpLeft) {
-                this.x += this.fallX*dt;
-                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
-                this.rotation -= this.fallRotation;
-                this.pushForce --;
-            } else if(this.isFallUpRight) {
-                this.x -= this.fallX*dt;
-                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
-                this.rotation -= this.fallRotation;
-                this.pushForce --;
-            } else if(this.isLast) {
-                this.x -= this.fallX*dt;;
-                this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
-                this.rotation -= this.fallRotation;
-                this.pushForce --;
-            } else {
-                this.rotation += this.angleRotation;
-            }
+                break;
+            
+            case "obstacle":
+                this.rotation += this.angleRotation * dt;
+                break;
+
         }
-        this.currentTime += dt;
+
     }
    
     moveUpABit() {
