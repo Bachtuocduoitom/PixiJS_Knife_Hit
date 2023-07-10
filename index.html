@@ -4775,6 +4775,7 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     });
   }
   removeApple(apple) {
+    let acceleration = 50;
     let slice1 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.apple_slice_1);
     slice1.anchor.set(0.5);
     slice1.x = apple.getBounds().x + apple.getBounds().width / 2;
@@ -4793,11 +4794,11 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     flare.x = apple.getBounds().x;
     flare.y = apple.getBounds().y + apple.getBounds().height;
     this.addChild(flare);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 90, y: slice1.y - 120 }, 13).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
-        this.removeChild(slice1);
-        slice1.destroy();
-      });
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 200, y: 1350 }, 35).onUpdate(() => {
+      slice1.y -= acceleration;
+    }).onComplete(() => {
+      this.removeChild(slice1);
+      slice1.destroy();
     }).start(this.currentTime);
     new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice2).to({ x: slice2.x + 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
       this.removeChild(slice2);
@@ -5012,7 +5013,7 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     }).start(this.currentDt);
   }
   randomRotationToChange() {
-    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_6__.Util.random(2, 3);
+    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_6__.Util.random(1, 3);
   }
 }
 
@@ -5414,17 +5415,14 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   _initUI() {
     this.playUI = new _ui_playUI__WEBPACK_IMPORTED_MODULE_10__.PlayUI(this.score, this.appleScore);
     this.addChild(this.playUI);
-    this._initUIResult();
+    this.resultUI = new _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__.ResultGameUI();
+    this.addChild(this.resultUI);
     this.tutorialUI = new _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__.TutorialUI();
     this.tutorialUI.zIndex = 200;
     this.addChild(this.tutorialUI);
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
-  }
-  _initUIResult() {
-    this.resultUI = new _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__.ResultGameUI();
-    this.addChild(this.resultUI);
   }
   _initBackground() {
     this.background = new _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__.Background(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.background);
@@ -5457,17 +5455,25 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   // Xử lí click tiếp tục
   _onContGame() {
     this.removeChild(this.gameplay);
+    this.gameplay.destroy();
     this._initGamePlay();
-    this.removeChild(this.playUI, this.tutorialUI);
+    this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
+    this.playUI.destroy();
+    this.tutorialUI.destroy();
+    this.resultUI.destroy();
     this._initUI();
     console.log("tiep tuc");
   }
   // xử lí click restart
   _onRestartGame() {
     this.removeChild(this.gameplay);
+    this.gameplay.destroy();
     this.score = 0;
     this._initGamePlay();
-    this.removeChild(this.playUI, this.tutorialUI);
+    this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
+    this.playUI.destroy();
+    this.tutorialUI.destroy();
+    this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
   }
@@ -5569,8 +5575,8 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
               console.log("aaaaa");
               this.kHitKSound.play();
               this.knifeManager.knives[0].setFall();
-              this.state = GameState.Lose;
               setTimeout(() => {
+                this.state = GameState.Lose;
                 this.resultUI.show();
                 this.resultUI.messageText.text = "You lose";
                 this.resultUI.buttonText.text = "Ch\u01A1i l\u1EA1i";
