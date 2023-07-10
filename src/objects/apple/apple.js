@@ -30,11 +30,11 @@ export class Apple extends Sprite {
 
     update(dt) {
         if (!this.isFall) {
-            this.rotation += this.angleRotation;
+            this.rotation += this.angleRotation * dt;
         } else {
             
-            this.y += 20 + 1/2 * 9.8 * dt * dt;
-            this.rotation += 0.1;
+            this.y += 20 * dt + 1/2 * 9.8 * dt * dt;
+            this.rotation += 0.1 * dt;
         }
         this.currentTime += dt;
     }
