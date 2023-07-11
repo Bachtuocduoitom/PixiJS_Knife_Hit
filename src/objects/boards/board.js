@@ -94,7 +94,7 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},40)
+      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},25)
       .onComplete(() => {
         console.log(this.fragments1.rotation);
         new TWEEN.Tween(this.fragments1)
@@ -105,20 +105,20 @@ export class Board extends Sprite {
 
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },40)
+      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },25)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },55)
+          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },40)
+      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },60)
+          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
