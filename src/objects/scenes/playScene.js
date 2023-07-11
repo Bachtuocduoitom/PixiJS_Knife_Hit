@@ -103,9 +103,12 @@ export class PlayScene extends Container {
 
   // Xử lí click tiếp tục
   _onContGame() {
+    //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
     this._initGamePlay();
+
+    //destroy UI and initial new ones
     this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
     this.playUI.destroy();
     this.tutorialUI.destroy();
@@ -116,10 +119,13 @@ export class PlayScene extends Container {
 
   // xử lí click restart
   _onRestartGame() {
+    //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
-    this.score = 0;
+    this.score = 0; //reset score
     this._initGamePlay();
+
+    //destroy UI and initial new ones
     this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
     this.playUI.destroy();
     this.tutorialUI.destroy();
@@ -244,7 +250,7 @@ export class PlayScene extends Container {
     if (this.knifeManager.knives[0] != null) {
       if (this.knifeManager.knives[0].state === "move") {
         //va cham dao
-        if (this.knifeManager.knives[0].y >= 610) {
+        if (this.knifeManager.knives[0].y >= 590) {
             this.knifeManager.obsKnives.forEach((knife) => {
                 if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
                   console.log("aaaaa");
@@ -301,6 +307,8 @@ export class PlayScene extends Container {
   
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();
+
+          console.log(this.knifeManager.knives[0].position);
 
           //quay dao theo khoi go
           this._rotateKnife(this.knifeManager.knives[0]);
