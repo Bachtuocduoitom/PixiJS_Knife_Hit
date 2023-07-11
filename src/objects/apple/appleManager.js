@@ -67,6 +67,7 @@ export class AppleManager extends Container {
         })
     }
     removeApple(apple) {
+        let acceleration = 50;
         //lat cat 1
         let slice1 = new Sprite(Game.bundle.apple_slice_1);
         slice1.anchor.set(0.5);
@@ -92,11 +93,21 @@ export class AppleManager extends Container {
         this.addChild(flare);
 
 
-        new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
-            new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
-                this.removeChild(slice1);
-                slice1.destroy();
-            });
+        // new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
+        //     new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+        //         this.removeChild(slice1);
+        //         slice1.destroy();
+        //     });
+        // }).start(this.currentTime);
+        new TWEEN.Tween(slice1).to({x: slice1.x - 200, y: 1350}, 35)
+        .onUpdate(() => {
+            slice1.y -= acceleration;
+            
+        })
+        .onComplete(() => {
+            
+            this.removeChild(slice1);
+            slice1.destroy();
         }).start(this.currentTime);
 
         //new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 40, y: this.slice2.y - 50}, 9).onComplete(() => {

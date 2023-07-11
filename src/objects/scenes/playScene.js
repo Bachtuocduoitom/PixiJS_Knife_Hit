@@ -12,6 +12,7 @@ import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
 import * as TWEEN from "@tweenjs/tween.js";
+
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
   Playing: "playing",
@@ -55,8 +56,10 @@ export class PlayScene extends Container {
     //tao play UI
     this.playUI = new PlayUI(this.score, this.appleScore);
     this.addChild(this.playUI);
-    this._initUIResult();
-    //tao lobby UI
+    // result UI
+    this.resultUI = new ResultGameUI();
+    this.addChild(this.resultUI);
+    //tao tutorial UI
     this.tutorialUI = new TutorialUI();
     this.tutorialUI.zIndex = 200;
     this.addChild(this.tutorialUI);
@@ -64,12 +67,6 @@ export class PlayScene extends Container {
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
-  }
-
-  _initUIResult() {
-    // win UI
-    this.resultUI = new ResultGameUI();
-    this.addChild(this.resultUI);
   }
 
   _initBackground() {
@@ -106,19 +103,33 @@ export class PlayScene extends Container {
 
   // Xử lí click tiếp tục
   _onContGame() {
+    //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
+    this.gameplay.destroy();
     this._initGamePlay();
-    this.removeChild(this.playUI, this.tutorialUI);
+
+    //destroy UI and initial new ones
+    this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
+    this.playUI.destroy();
+    this.tutorialUI.destroy();
+    this.resultUI.destroy();
     this._initUI();
     console.log("tiep tuc");
   }
 
   // xử lí click restart
   _onRestartGame() {
+    //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
-    this.score = 0;
+    this.gameplay.destroy();
+    this.score = 0; //reset score
     this._initGamePlay();
-    this.removeChild(this.playUI, this.tutorialUI);
+
+    //destroy UI and initial new ones
+    this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
+    this.playUI.destroy();
+    this.tutorialUI.destroy();
+    this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
   }
@@ -237,16 +248,17 @@ export class PlayScene extends Container {
   }
   _onCollision() {
     if (this.knifeManager.knives[0] != null) {
-      if (this.knifeManager.knives[0].isMove) {
+      if (this.knifeManager.knives[0].state === "move") {
         //va cham dao
-        if (this.knifeManager.knives[0].y >= 610) {
+        if (this.knifeManager.knives[0].y >= 590) {
             this.knifeManager.obsKnives.forEach((knife) => {
                 if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
                   console.log("aaaaa");
                   this.kHitKSound.play();
                   this.knifeManager.knives[0].setFall();
-                  this.state = GameState.Lose;
+                  
                   setTimeout(() => {
+                    this.state = GameState.Lose;
                     this.resultUI.show();
                     this.resultUI.messageText.text = "You lose";
                     this.resultUI.buttonText.text = "Chơi lại";
@@ -295,6 +307,8 @@ export class PlayScene extends Container {
   
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();
+
+          console.log(this.knifeManager.knives[0].position);
 
           //quay dao theo khoi go
           this._rotateKnife(this.knifeManager.knives[0]);

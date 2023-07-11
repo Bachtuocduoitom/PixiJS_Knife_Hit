@@ -136,10 +136,10 @@ export class Board extends Sprite {
       this.boardSprite.texture = null;
       this.angleRotation = 0;
     } else {
-      this.fragments1.rotation += this.angleRotation;
-      this.fragments2.rotation += this.angleRotation;
-      this.fragments3.rotation += this.angleRotation;
-      this.boardSprite.rotation += this.angleRotation;
+      this.fragments1.rotation += this.angleRotation * dt;
+      this.fragments2.rotation += this.angleRotation * dt;
+      this.fragments3.rotation += this.angleRotation * dt;
+      this.boardSprite.rotation += this.angleRotation * dt;
       this.changeRotation();
     }
   }
@@ -184,7 +184,7 @@ export class Board extends Sprite {
   }
 
   randomRotationToChange() {
-    this.numRotationToChange = Util.random(2, 3);
+    this.numRotationToChange = Util.random(1, 3);
   }
 
 }
