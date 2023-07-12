@@ -15,6 +15,7 @@ export class Board extends Sprite {
     this.countRotation = 0;
     this.numRotation = 0;
     this.rotateDirection = 1;
+    this.isStop = false;
     this._initCollider();
     this._initFragments();
     this.randomRotationToChange();
@@ -129,11 +130,17 @@ export class Board extends Sprite {
       .start(this.currentDt);
   }
 
+  setStop() {
+    this.isStop = true;
+  }
+
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);
     if (this.isBroken) {
       this.boardSprite.texture = null;
+      this.angleRotation = 0;
+    } else if (this.isStop) {
       this.angleRotation = 0;
     } else {
       this.fragments1.rotation += this.angleRotation * dt;
