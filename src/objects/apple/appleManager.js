@@ -28,7 +28,7 @@ export class AppleManager extends Container {
         let apple = new Apple(Game.bundle.apple);
         apple.x = GameConstant.BOARD_X_POSITION;
         apple.y = GameConstant.BOARD_Y_POSITION;
-        apple.anchor.set(0.5, -2.6);
+        apple.anchor.set(0.5, -2.7);
         apple.collider.anchor.set(0.5, -3);
         this._setAppleAng(apple, avaiAngle);
         this.apples.push(apple);
@@ -55,8 +55,8 @@ export class AppleManager extends Container {
         TWEEN.update(this.currentTime);
         this.graphic.clear();
         this.apples.forEach(apple => {
-            apple.update(dt);
             apple.angleRotation = this.boardAngleRotation;
+            apple.update(dt);
         })  
         //console.log(this.slice1.x, this.slice1.y);
     }
@@ -93,22 +93,22 @@ export class AppleManager extends Container {
         this.addChild(flare);
 
 
-        // new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
-        //     new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
-        //         this.removeChild(slice1);
-        //         slice1.destroy();
-        //     });
-        // }).start(this.currentTime);
-        new TWEEN.Tween(slice1).to({x: slice1.x - 200, y: 1350}, 35)
-        .onUpdate(() => {
-            slice1.y -= acceleration;
-            
-        })
-        .onComplete(() => {
-            
-            this.removeChild(slice1);
-            slice1.destroy();
+        new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
+            new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+                this.removeChild(slice1);
+                slice1.destroy();
+            });
         }).start(this.currentTime);
+        // new TWEEN.Tween(slice1).to({x: slice1.x - 200, y: 1350}, 35)
+        // .onUpdate(() => {
+        //     slice1.y -= acceleration;
+            
+        // })
+        // .onComplete(() => {
+            
+        //     this.removeChild(slice1);
+        //     slice1.destroy();
+        // }).start(this.currentTime);
 
         //new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 40, y: this.slice2.y - 50}, 9).onComplete(() => {
             new TWEEN.Tween(slice2).to({x: slice2.x + 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {

@@ -6,12 +6,12 @@ import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Util } from "../../helper/utils";
 export class Board extends Sprite {
-  constructor(texture) {
-    super(texture);
+  constructor() {
+    super();
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
-    this.angleRotation = 0.05;
+    this.angleRotation = 0.05; 
     this.countRotation = 0;
     this.numRotation = 0;
     this.rotateDirection = 1;
@@ -20,8 +20,6 @@ export class Board extends Sprite {
     this._initFragments();
     this.randomRotationToChange();
     this._initFilter();
-    this.sortableChildren = true;
-    this.zIndex = 0;
     this.addChild(this.boardSprite);
     this.currentDt = 0;
   }
@@ -40,28 +38,24 @@ export class Board extends Sprite {
     this.fragments1.scale.set(0.7);
     this.fragments1.rotation = -0.5;
     this.fragments1.visible = false;
-    this.fragments1.zIndex = 100;
    
     // mảnh 2
     this.fragments2 = new AnimatedSprite(Game.bundle.frgMd._frameKeys.map(image => Texture.from(image)));
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
     this.fragments2.visible = false;
-    this.fragments2.zIndex = 100;
 
     // mảnh 3
     this.fragments3 = new AnimatedSprite(Game.bundle.frgSm._frameKeys.map(image => Texture.from(image)));
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
     this.fragments3.visible = false;
-    this.fragments3.zIndex = 100;
 
     // mảnh vụn
     this.fragmentsMin = Sprite.from('../assets/images/minFrg.png');
     this.fragmentsMin.anchor.set(0.5);
     this.fragmentsMin.scale.set(0.8);
     this.fragmentsMin.visible = false;
-    this.fragmentsMin.zIndex = 100;
     this.addChild(this.fragments1, this.fragments2, this.fragments3,  this.fragmentsMin);
     
   }
@@ -97,7 +91,6 @@ export class Board extends Sprite {
     new TWEEN.Tween(this.fragments1)
       .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},40)
       .onComplete(() => {
-        console.log(this.fragments1.rotation);
         new TWEEN.Tween(this.fragments1)
           .to({ x: 280, y: 1200, rotation:this.fragments1.rotation + 4 },50)
           .start(this.currentDt);

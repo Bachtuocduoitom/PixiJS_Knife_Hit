@@ -29,7 +29,7 @@ export class PlayScene extends Container {
     this.state = GameState.Tutorial;
     this.score = 0;
     this.appleScore = 0;
-
+    this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
   }
@@ -50,6 +50,7 @@ export class PlayScene extends Container {
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
+    console.log(this.currentLevel);
   }
 
   _initUI() {
@@ -61,7 +62,6 @@ export class PlayScene extends Container {
     this.addChild(this.resultUI);
     //tao tutorial UI
     this.tutorialUI = new TutorialUI();
-    this.tutorialUI.zIndex = 200;
     this.addChild(this.tutorialUI);
 
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
@@ -103,6 +103,9 @@ export class PlayScene extends Container {
 
   // Xử lí click tiếp tục
   _onContGame() {
+    //update level
+    this.currentLevel++;
+
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
@@ -119,6 +122,9 @@ export class PlayScene extends Container {
 
   // xử lí click restart
   _onRestartGame() {
+    //update level
+    this.currentLevel = 1;
+
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
