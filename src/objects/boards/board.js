@@ -2,12 +2,15 @@ import { AnimatedSprite, Sprite, Texture, Container } from "pixi.js";
 import { Collider } from "../physics/collider";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
+import { DataManager } from "../level/dataManager";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Util } from "../../helper/utils";
 export class Board extends Sprite {
-  constructor(texture) {
-    super(texture);
+  constructor(data) {
+    super();
+    this.dataObj = data;
+    
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);

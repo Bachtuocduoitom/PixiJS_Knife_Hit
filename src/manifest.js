@@ -94,6 +94,10 @@ export const manifest = {
                 name: 'frgSm',
                 srcs: 'assets/spritesheet/frgSm.json'
             },
+            {
+                name: 'data',
+                srcs: 'assets/json/levels.json'
+            },
         ],
     }],
 }

@@ -14,11 +14,15 @@ export class Game {
         this._loadGameAssets().then((bundle) => {
             this.bundle = bundle;
 
-            this._initScene();
-
-            this.app.ticker.add(this.update, this);
+            this._loadGameDataLevel()
+            .then(res => res.json())
+            .then(data => {
+                this.dataLevel = data.level;
+                this._initScene();
+                this.app.ticker.add(this.update, this);
+            })
+           .catch(err => console.log("lỗi"))
         })
-
         this.resize();
         window.addEventListener("resize", this.resize);
     }
@@ -26,6 +30,10 @@ export class Game {
     static async _loadGameAssets() {
         await Assets.init({manifest: manifest});
         return await Assets.loadBundle('gameBundle');
+    }
+    
+    static async _loadGameDataLevel() {
+        return fetch('assets/json/levels.json');
     }
 
     static update(dt) {

@@ -11,6 +11,7 @@ import { AppleManager } from "../apple/appleManager";
 import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
+import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export const GameState = Object.freeze({
@@ -28,7 +29,7 @@ export class PlayScene extends Container {
     this.state = GameState.Tutorial;
     this.score = 0;
     this.appleScore = 0;
-
+    this.currentLevel =1;
     this._initGamePlay();
     this._initUI();
   }
@@ -48,10 +49,16 @@ export class PlayScene extends Container {
     this._initSound();
     this._initWhiteCircle();
     this._initCircleLine();
+    this._dataManager();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
   }
-
+  _dataManager() {
+    this.dataManager = new DataManager();
+    console.log(this.dataManager.getDataLevel(this.currentLevel));
+    console.log(Game.dataLevel);
+    
+  }
   _initUI() {
     //tao play UI
     this.playUI = new PlayUI(this.score, this.appleScore);

@@ -1,0 +1,54 @@
+{
+    "level": [{
+        "id": 1,
+        "knifeData": {
+            "knifeNumber": 7,
+            "isOnBoard": false
+        },
+        "boardData": {
+            "boardChangeRotate": false,
+            "boardSpeed": 0.05
+        },
+        "appleData": {
+            "appleOnBoard": 1,
+            "isOnBoard": false
+        }
+    },
+    {
+        "id": 2,
+        "knifeData": {
+            "knifeNumber": 8,
+            "isOnBoard": true,
+            "minNumKnifeOnBoard": 1,
+            "maxNumKnifeOnBoard" : 3
+        },
+        "boardData": {
+            "boardChangeRotate": true,
+            "boardSpeed": 0.06
+        },
+        "appleData": {
+            "isOnBoard": true,
+            "minNumApleOnBoard": 1,
+            "maxNumAppleOnBoard" : 3
+        }
+    },
+    {
+        "id": 3,
+        "knifeData": {
+            "knifeNumber": 9,
+            "isOnBoard": true,
+            "minNumKnifeOnBoard": 2,
+            "maxNumKnifeOnBoard" : 4
+        },
+        "boardData": {
+            "boardChangeRotate": true,
+            "boardSpeed": 0.1
+        },
+        "appleData": {
+            "isOnBoard": true,
+            "minNumApleOnBoard":2,
+            "maxNumAppleOnBoard" : 3
+        }
+    }
+]
+}
