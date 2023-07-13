@@ -11,6 +11,7 @@ import { AppleManager } from "../apple/appleManager";
 import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
+import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
 
@@ -47,8 +48,7 @@ export class PlayScene extends Container {
     this._initObstacle();
     this._initParticles();
     this._initSound();
-    this._initWhiteCircle();
-    this._initCircleLine();
+    this._initCircleFlare();
     this._dataManager();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
@@ -152,7 +152,7 @@ export class PlayScene extends Container {
     this.knifeManager.spawnObsKnives(this.avaiAngle);
     this._initAppleManager();
     this.appleManager.spawnApples(this.avaiAngle);
-    // /console.log(...this.avaiAngle);
+    //console.log(...this.avaiAngle);
   }
 
   _initAppleManager() {
@@ -162,29 +162,22 @@ export class PlayScene extends Container {
     this.gameplay.addChild(this.appleManager);
     this.appleManager.zIndex = 101;
   }
-  _initWhiteCircle() {
+  _initCircleFlare() {
+    //tao hin tron loe sang
     this.whiteCircle = new Sprite(Game.bundle.circleWhite);
-    this.addChild(this.whiteCircle);
-    this.whiteCircle.x = this.board.x;
-    this.whiteCircle.y = this.board.y;
+    this.gameplay.addChild(this.whiteCircle);
     this.whiteCircle.anchor.set(0.5);
-    this.whiteCircle.alpha = 0.2;
-    this.whiteCircle.scale.set(0.8);
     this.whiteCircle.zIndex = 150;
     this.whiteCircle.visible = false;
-  }
 
-  _initCircleLine() {
+    //tao vong tron loe sang
     this.circleLine = new Sprite(Game.bundle.circleLineWhite);
-    this.addChild(this.circleLine);
-    this.circleLine.x = this.board.x;
-    this.circleLine.y = this.board.y;
+    this.gameplay.addChild(this.circleLine);
     this.circleLine.anchor.set(0.5);
-    this.circleLine.alpha = 0.3;
     this.circleLine.zIndex = 150;
     this.circleLine.visible = false;
-
   }
+
   _initParticles() {
     this.particleContainer = new Container();
     this.gameplay.addChild(this.particleContainer);
@@ -221,7 +214,14 @@ export class PlayScene extends Container {
   }
 
  // Hình tròn xuất hiện khi bảng vỡ ra
-  circleFlare() {
+  _showCircleFlare() {
+    //hinh tron loe sang
+    this.whiteCircle.x = this.board.x;
+    this.whiteCircle.y = this.board.y;
+    this.whiteCircle.scale.set(0.8);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.2;
+
     new TWEEN.Tween(this.whiteCircle)
     .to({scale: {x:0.5, y: 0.5}}, 4)
     .onComplete(() => {
@@ -231,10 +231,13 @@ export class PlayScene extends Container {
       .start(this.currentDt)
     })
     .start(this.currentDt);
-  }
 
- // Vòng tròn xuất hiện khi bảng vỡ ra
-  circleLineZoom() {
+    //vong tron loe sang
+    this.circleLine.x = this.board.x;
+    this.circleLine.y = this.board.y;
+    this.circleLine.visible = true;
+    this.circleLine.alpha = 0.3;
+    
     new TWEEN.Tween(this.circleLine)
     .to({scale: {x:1.5, y: 1.5}}, 5)
     .onComplete(() => {
@@ -248,6 +251,38 @@ export class PlayScene extends Container {
     })
     .start(this.currentDt);
   }
+
+  _showKnifeCollisionFlare(knife) {
+    //hinh tron loe sang
+    this.whiteCircle.x = knife.x;
+    this.whiteCircle.y = knife.y - knife.height/4;
+    this.whiteCircle.scale.set(0.1);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.5;
+
+    new TWEEN.Tween(this.whiteCircle)
+    .to({scale: {x:0.7, y: 0.7}}, 6)
+    .onComplete(() => {
+      this.whiteCircle.visible = false;
+    })
+    .start(this.currentDt);
+
+    //man hinh loe sang
+    let sceneFilter = new AdjustmentFilter();
+    this.gameplay.filters = [sceneFilter];
+    new TWEEN.Tween(this.gameplay)
+    .to({alpha : 1,scale: {x:1.05, y: 1.05}}, 8)
+    .yoyo(true).repeat(1)
+    .onUpdate(() => {
+      sceneFilter.gamma = 2;
+
+    })
+    .onComplete(() => {
+      sceneFilter.gamma = 1;
+    })
+    .start(this.currentDt);
+  }
+
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
@@ -263,6 +298,13 @@ export class PlayScene extends Container {
                   console.log("aaaaa");
                   this.kHitKSound.play();
                   this.knifeManager.knives[0].setFall();
+                  this._showKnifeCollisionFlare(this.knifeManager.knives[0]);
+                  this.board.setStop();
+
+                  //dich chuyen nhe go tao va  dao
+                  this.board.onHit();
+                  this.knifeManager.onBoardHit();
+                  this.appleManager.onBoardHit();
                   
                   setTimeout(() => {
                     this.state = GameState.Lose;
@@ -315,8 +357,6 @@ export class PlayScene extends Container {
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();
 
-          console.log(this.knifeManager.knives[0].position);
-
           //quay dao theo khoi go
           this._rotateKnife(this.knifeManager.knives[0]);
           this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
@@ -339,10 +379,8 @@ export class PlayScene extends Container {
               this.resultUI.show();
             }, 1500);
           // hình tròn và vòng tròn xuất hiện
-          this.whiteCircle.visible = true;
-          this.circleFlare();
-          this.circleLine.visible = true;
-          this.circleLineZoom();
+          this._showCircleFlare();
+          
           }
         }
       }
