@@ -4377,8 +4377,11 @@ class Game {
     document.body.appendChild(this.app.view);
     this._loadGameAssets().then((bundle) => {
       this.bundle = bundle;
-      this._initScene();
-      this.app.ticker.add(this.update, this);
+      this._loadGameDataLevel().then((data) => {
+        this.dataLevel = data.level;
+        this._initScene();
+        this.app.ticker.add(this.update, this);
+      }).catch((err) => console.log("l\u1ED7i"));
     });
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -4387,6 +4390,11 @@ class Game {
     return __async(this, null, function* () {
       yield pixi_js__WEBPACK_IMPORTED_MODULE_0__.Assets.init({ manifest: _manifest__WEBPACK_IMPORTED_MODULE_3__.manifest });
       return yield pixi_js__WEBPACK_IMPORTED_MODULE_0__.Assets.loadBundle("gameBundle");
+    });
+  }
+  static _loadGameDataLevel() {
+    return __async(this, null, function* () {
+      return fetch("assets/json/levels.json").then((res) => res.json());
     });
   }
   static update(dt) {
@@ -4436,6 +4444,7 @@ const GameConstant = Object.freeze({
   BOARD_X_POSITION: 360,
   BOARD_Y_POSITION: 386,
   JUMP_TIMER: 2,
+  JUMP_DISTANCE: 10,
   DEBUG_DRAW_COLLIDER: false
 });
 
@@ -4683,15 +4692,15 @@ class Apple extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
   }
   update(dt) {
     if (!this.isFall) {
-      this.rotation += this.angleRotation;
+      this.rotation += this.angleRotation * dt;
     } else {
-      this.y += 20 + 1 / 2 * 9.8 * dt * dt;
-      this.rotation += 0.1;
+      this.y += 20 * dt + 1 / 2 * 9.8 * dt * dt;
+      this.rotation += 0.1 * dt;
     }
     this.currentTime += dt;
   }
   moveUpABit() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_2__.Tween(this).to({ y: this.y - 10 }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_2__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
   }
 }
 
@@ -4724,16 +4733,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
-  constructor() {
+  constructor(data) {
     super();
+    this.appleData = data;
     this.apples = [];
-    this.numOfApple = _helper_utils__WEBPACK_IMPORTED_MODULE_4__.Util.randomInteger(0, 2);
     this.boardAngleRotation = 0;
     this.graphic = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
     this.addChild(this.graphic);
     this.currentTime = 0;
   }
   spawnApples(avaiAngle) {
+    this.numOfApple = _helper_utils__WEBPACK_IMPORTED_MODULE_4__.Util.randomInteger(this.appleData.minOnBoard, this.appleData.maxOnBoard);
     for (let i = 0; i < this.numOfApple; i++) {
       this._spawnApple(avaiAngle);
     }
@@ -4742,7 +4752,7 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     let apple = new _apple__WEBPACK_IMPORTED_MODULE_5__.Apple(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.apple);
     apple.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.BOARD_X_POSITION;
     apple.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.BOARD_Y_POSITION;
-    apple.anchor.set(0.5, -2.6);
+    apple.anchor.set(0.5, -2.7);
     apple.collider.anchor.set(0.5, -3);
     this._setAppleAng(apple, avaiAngle);
     this.apples.push(apple);
@@ -4765,8 +4775,8 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.update(this.currentTime);
     this.graphic.clear();
     this.apples.forEach((apple) => {
-      apple.update(dt);
       apple.angleRotation = this.boardAngleRotation;
+      apple.update(dt);
     });
   }
   setApplesFall() {
@@ -4794,11 +4804,11 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     flare.x = apple.getBounds().x;
     flare.y = apple.getBounds().y + apple.getBounds().height;
     this.addChild(flare);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 200, y: 1350 }, 35).onUpdate(() => {
-      slice1.y -= acceleration;
-    }).onComplete(() => {
-      this.removeChild(slice1);
-      slice1.destroy();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 90, y: slice1.y - 120 }, 13).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
+        this.removeChild(slice1);
+        slice1.destroy();
+      });
     }).start(this.currentTime);
     new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice2).to({ x: slice2.x + 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
       this.removeChild(slice2);
@@ -4870,9 +4880,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _physics_collider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../physics/collider */ "./src/objects/physics/collider.js");
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../game */ "./src/game.js");
 /* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
-/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
-/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
-/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+/* harmony import */ var _level_dataManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../level/dataManager */ "./src/objects/level/dataManager.js");
+/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+
 
 
 
@@ -4881,23 +4893,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
-  constructor(texture) {
-    super(texture);
+  constructor(data) {
+    super();
+    this.boardData = data;
     this.anchor.set(0.5);
     this.boardSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
-    this.angleRotation = 0.05;
+    this.addChild(this.boardSprite);
+    this.angleRotation = this.boardData.rotationSpeed;
     this.countRotation = 0;
     this.numRotation = 0;
     this.rotateDirection = 1;
+    this.isStop = false;
+    this.currentDt = 0;
     this._initCollider();
     this._initFragments();
     this.randomRotationToChange();
     this._initFilter();
-    this.sortableChildren = true;
-    this.zIndex = 0;
-    this.addChild(this.boardSprite);
-    this.currentDt = 0;
+    if (this.boardData.isChangeSpeed) {
+      this.minusSpeed = this.angleRotation / 60 / 2;
+      this.plusSpeed = this.angleRotation / 60;
+    }
   }
   _initCollider() {
     this.collider = new _physics_collider__WEBPACK_IMPORTED_MODULE_1__.Collider();
@@ -4912,26 +4928,22 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.fragments1.scale.set(0.7);
     this.fragments1.rotation = -0.5;
     this.fragments1.visible = false;
-    this.fragments1.zIndex = 100;
     this.fragments2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.AnimatedSprite(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.frgMd._frameKeys.map((image) => pixi_js__WEBPACK_IMPORTED_MODULE_0__.Texture.from(image)));
     this.fragments2.anchor.set(0.5);
     this.fragments2.scale.set(0.8);
     this.fragments2.visible = false;
-    this.fragments2.zIndex = 100;
     this.fragments3 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.AnimatedSprite(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.frgSm._frameKeys.map((image) => pixi_js__WEBPACK_IMPORTED_MODULE_0__.Texture.from(image)));
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
     this.fragments3.visible = false;
-    this.fragments3.zIndex = 100;
     this.fragmentsMin = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from("../assets/images/minFrg.png");
     this.fragmentsMin.anchor.set(0.5);
     this.fragmentsMin.scale.set(0.8);
     this.fragmentsMin.visible = false;
-    this.fragmentsMin.zIndex = 100;
     this.addChild(this.fragments1, this.fragments2, this.fragments3, this.fragmentsMin);
   }
   _initFilter() {
-    this.boardFilter = new _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_4__.AdjustmentFilter();
+    this.boardFilter = new _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_5__.AdjustmentFilter();
     this.boardSprite.filters = [this.boardFilter];
   }
   breakUp() {
@@ -4952,68 +4964,75 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
   }
   setBroken() {
     this.isBroken = true;
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments1).to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3 }, 40).onComplete(() => {
-      console.log(this.fragments1.rotation);
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments1).to({ x: 280, y: 1200, rotation: this.fragments1.rotation + 4 }, 50).start(this.currentDt);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3 }, 25).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 280, y: 1200, rotation: this.fragments1.rotation + 4 }, 50).start(this.currentDt);
     }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments2).to({ x: 180, y: -350, rotation: this.fragments2.rotation + 2 }, 40).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments2).to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 }, 55).start(this.currentDt);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 180, y: -350, rotation: this.fragments2.rotation + 2 }, 25).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 }, 50).start(this.currentDt);
     }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments3).to({ x: -200, y: -350, rotation: this.fragments3.rotation - 3 }, 40).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragments3).to({ x: -400, y: 1350, rotation: this.fragments3.rotation - 5 }, 60).start(this.currentDt);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -200, y: -350, rotation: this.fragments3.rotation - 3 }, 30).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -400, y: 1350, rotation: this.fragments3.rotation - 5 }, 50).start(this.currentDt);
     }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this.fragmentsMin).to({ x: -200, y: 1500, rotation: this.fragmentsMin.rotation - 5e-3 }, 80).start(this.currentDt);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragmentsMin).to({ x: -200, y: 1500, rotation: this.fragmentsMin.rotation - 5e-3 }, 80).start(this.currentDt);
+  }
+  setStop() {
+    this.isStop = true;
   }
   update(dt) {
     this.currentDt += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.update(this.currentDt);
+    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.update(this.currentDt);
     if (this.isBroken) {
       this.boardSprite.texture = null;
       this.angleRotation = 0;
+    } else if (this.isStop) {
+      this.angleRotation = 0;
     } else {
-      this.fragments1.rotation += this.angleRotation;
-      this.fragments2.rotation += this.angleRotation;
-      this.fragments3.rotation += this.angleRotation;
-      this.boardSprite.rotation += this.angleRotation;
-      this.changeRotation();
+      this.fragments1.rotation += this.angleRotation * dt;
+      this.fragments2.rotation += this.angleRotation * dt;
+      this.fragments3.rotation += this.angleRotation * dt;
+      this.boardSprite.rotation += this.angleRotation * dt;
+      if (this.boardData.isChangeSpeed) {
+        this.changeRotation();
+      }
     }
   }
+  //thay doi toc do va huong quay
   changeRotation() {
     this.countRotation += Math.abs(this.angleRotation);
     this.numRotation = this.countRotation / (Math.PI * 2);
     if (this.numRotation >= this.numRotationToChange) {
       if (this.rotateDirection === 1) {
-        this.angleRotation -= 1 / 2400;
+        this.angleRotation -= this.minusSpeed;
         if (this.angleRotation <= 0) {
           this.countRotation = 0;
           this.numRotation = 0;
           this.randomRotationToChange();
-          this.rotateDirection = _helper_utils__WEBPACK_IMPORTED_MODULE_6__.Util.randomInteger(0, 1);
+          this.rotateDirection = _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.randomInteger(0, 1);
         }
       } else {
-        this.angleRotation += 1 / 2400;
+        this.angleRotation += this.minusSpeed;
         if (this.angleRotation >= 0) {
           this.countRotation = 0;
           this.numRotation = 0;
           this.randomRotationToChange();
-          this.rotateDirection = _helper_utils__WEBPACK_IMPORTED_MODULE_6__.Util.randomInteger(0, 1);
+          this.rotateDirection = _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.randomInteger(0, 1);
         }
       }
     } else if (this.angleRotation < 0.05 && this.rotateDirection === 1) {
-      this.angleRotation += 1 / 2e3;
+      this.angleRotation += this.plusSpeed;
     } else if (this.angleRotation > -0.05 && this.rotateDirection === 0) {
-      this.angleRotation -= 1 / 2e3;
+      this.angleRotation -= this.plusSpeed;
     }
   }
   onHit() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.Tween(this).to({ y: this.y - 10 }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
       this.boardFilter.gamma = 1.5;
     }).onComplete(() => {
       this.boardFilter.gamma = 1;
     }).start(this.currentDt);
   }
   randomRotationToChange() {
-    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_6__.Util.random(1, 3);
+    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.random(1, 2.5);
   }
 }
 
@@ -5029,7 +5048,8 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Knife: () => (/* binding */ Knife)
+/* harmony export */   Knife: () => (/* binding */ Knife),
+/* harmony export */   KnifeState: () => (/* binding */ KnifeState)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
@@ -5041,15 +5061,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const KnifeState = Object.freeze({
+  DEFAULT: "default",
+  ACTIVATED: "activated",
+  ACTIVATING: "activating",
+  ACTIVE: "active",
+  MOVE: "move",
+  OBSTACLE: "obstacle",
+  FALL: "fall"
+});
 class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
   constructor(texture) {
     super(texture);
     this.anchor.set(0.5);
-    this.isMove = false;
-    this.isActive = false;
-    this.startActive = false;
-    this.isObs = false;
-    this.isFall = false;
+    this.state = KnifeState.DEFAULT;
     this.speed = 0;
     this.angleRotation = 0;
     this.currentTime = 0;
@@ -5062,25 +5087,24 @@ class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.addChild(this.collider);
   }
   move() {
+    this.state = KnifeState.MOVE;
     this.speed = 70;
-    this.isMove = true;
   }
-  _toActive(dt) {
-    if (this.y > _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.KNIFE_Y_POSITION) {
-      this.y -= 70 * dt;
-    } else {
-      this.y = _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.KNIFE_Y_POSITION;
-      this.isActive = true;
-    }
+  _toActive() {
+    this.state = KnifeState.ACTIVATING;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.KNIFE_Y_POSITION }, 1).onComplete(() => {
+      this.state = KnifeState.ACTIVATED;
+    }).start(this.currentTime);
   }
   setActivate() {
-    this.startActive = true;
     this.visible = true;
+    this.state = KnifeState.ACTIVE;
   }
   setFall() {
-    this.isFall = true;
+    this.state = KnifeState.FALL;
   }
-  setEndFall() {
+  setAnotherObsFall() {
+    this.setFall();
     if (this.angle % 360 <= 180) {
       if (this.angle % 360 >= 90) {
         this.isFallUpLeft = true;
@@ -5099,66 +5123,63 @@ class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.fallY = _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.random(15, 20);
     this.pushForce = 50;
   }
-  setLastFall() {
-    this.isLast = true;
+  setLastObsFall() {
+    this.setFall();
+    this.isLastOne = true;
     this.fallRotation = _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.random(0.05, 0.1);
     this.fallX = _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.random(-5, 5);
     this.fallY = _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.random(15, 20);
     this.pushForce = 50;
   }
   beObs() {
-    this.isObs = true;
-    this.isMove = false;
+    this.state = KnifeState.OBSTACLE;
   }
   update(dt) {
-    if (!this.isObs) {
-      if (!this.isActive) {
-        if (this.startActive) {
-          this._toActive(dt);
-        }
-      } else {
-        if (this.isMove) {
-          this.y -= this.speed * dt;
-        }
-        if (this.isFall) {
-          this.speed = 0;
+    this.currentTime += dt;
+    switch (this.state) {
+      case "move":
+        this.y -= this.speed * dt;
+        break;
+      case "active":
+        this._toActive();
+        break;
+      case "fall":
+        if (this.isFallDownLeft) {
+          this.x += this.fallX * dt;
+          this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt;
+          this.rotation += this.fallRotation;
+        } else if (this.isFallDownRight) {
+          this.x -= this.fallX * dt;
+          this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt;
+          this.rotation -= this.fallRotation;
+        } else if (this.isFallUpLeft) {
+          this.x += this.fallX * dt;
+          this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
+          this.rotation -= this.fallRotation;
+          this.pushForce--;
+        } else if (this.isFallUpRight) {
+          this.x -= this.fallX * dt;
+          this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
+          this.rotation -= this.fallRotation;
+          this.pushForce--;
+        } else if (this.isLastOne) {
+          this.x -= this.fallX * dt;
+          ;
+          this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
+          this.rotation -= this.fallRotation;
+          this.pushForce--;
+        } else {
           this.y += 20 + 1 / 2 * 9.8 * dt * dt;
           this.rotation += 0.1;
         }
-      }
-    } else {
-      if (this.isFallDownLeft) {
-        this.x += this.fallX * dt;
-        this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt;
-        this.rotation += this.fallRotation;
-      } else if (this.isFallDownRight) {
-        this.x -= this.fallX * dt;
-        this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt;
-        this.rotation -= this.fallRotation;
-      } else if (this.isFallUpLeft) {
-        this.x += this.fallX * dt;
-        this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
-        this.rotation -= this.fallRotation;
-        this.pushForce--;
-      } else if (this.isFallUpRight) {
-        this.x -= this.fallX * dt;
-        this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
-        this.rotation -= this.fallRotation;
-        this.pushForce--;
-      } else if (this.isLast) {
-        this.x -= this.fallX * dt;
-        ;
-        this.y += this.fallY * dt + 1 / 2 * 9.8 * dt * dt - this.pushForce * dt;
-        this.rotation -= this.fallRotation;
-        this.pushForce--;
-      } else {
-        this.rotation += this.angleRotation;
-      }
+        break;
+      case "obstacle":
+        this.rotation += this.angleRotation * dt;
+        break;
     }
-    this.currentTime += dt;
   }
   moveUpABit() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: this.y - 10 }, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
   }
 }
 
@@ -5189,11 +5210,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
-  constructor() {
+  constructor(data) {
     super();
+    this.knifeData = data;
+    console.log(this.knifeData);
     this.knives = [];
     this.obsKnives = [];
-    this.numOfKnife = _scenes_playScene__WEBPACK_IMPORTED_MODULE_1__.Level1.KNIFE_NUMBER - 1;
+    this.numOfKnife = this.knifeData.knifeNumber - 1;
     this.boardAngleRotation = 0;
     this.graphic = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
     this.addChild(this.graphic);
@@ -5205,24 +5228,28 @@ class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
       this._spawnAnotherKnife();
     }
   }
+  //sinh dao dau tien
   _spawnFirstKnife() {
     let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
     knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
     knife.y = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_Y_POSITION;
-    knife.isActive = true;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.ACTIVATED;
     this.knives.push(knife);
     this.addChild(knife);
   }
+  //sinh cac dao con lai
   _spawnAnotherKnife() {
     let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
     knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
     knife.y = 1080;
     knife.visible = false;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.DEFAULT;
     this.knives.push(knife);
     this.addChild(knife);
   }
+  //sinh obstacle knife
   spawnObsKnives(avaiAngle) {
-    let numOfDefautObs = _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.randomInteger(0, 3);
+    let numOfDefautObs = _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
     for (let i = 0; i < numOfDefautObs; i++) {
       this._spawnObs(avaiAngle);
     }
@@ -5238,6 +5265,7 @@ class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.obsKnives.push(knife);
     this.addChild(knife);
   }
+  //dat goc ban dau cho dao gam tren go
   _setObsAng(obs, avaiAngle) {
     let i = _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.randomInteger(0, 17);
     while (!avaiAngle[i].available) {
@@ -5267,16 +5295,15 @@ class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
       obs.anchor.set(0.5);
       obs.collider.anchor.set(0.5);
       if (this.obsKnives.indexOf(obs) === this.obsKnives.length - 1) {
-        obs.setLastFall();
+        obs.setLastObsFall();
       } else {
-        obs.setEndFall();
+        obs.setAnotherObsFall();
       }
     });
   }
   onClicky(e) {
-    if (this.knives[0].isActive) {
+    if (this.knives[0].state === "activated") {
       this.knives[0].move();
-      console.log(this.obsKnives.length, this.knives.length);
       return true;
     } else {
       return false;
@@ -5286,6 +5313,50 @@ class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.obsKnives.forEach((obs) => {
       obs.moveUpABit();
     });
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/level/dataManager.js":
+/*!******************************************!*\
+  !*** ./src/objects/level/dataManager.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DataManager: () => (/* binding */ DataManager)
+/* harmony export */ });
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+
+class DataManager {
+  constructor(currentLevel) {
+    this.currentLevel = currentLevel;
+    this.dataLevel = _game__WEBPACK_IMPORTED_MODULE_0__.Game.dataLevel[currentLevel - 1];
+  }
+  getDataLevel() {
+    return this.dataLevel;
+  }
+  getKnifeData() {
+    return this.dataLevel.knifeData;
+  }
+  getBoardData() {
+    return this.dataLevel.boardData;
+  }
+  getAppleData() {
+    return this.dataLevel.appleData;
+  }
+  haveAppleOnBoard() {
+    return this.dataLevel.appleData.haveOnBoard;
+  }
+  haveKnifeOnBoard() {
+    return this.dataLevel.knifeData.haveOnBoard;
+  }
+  numOfKnife() {
+    return this.dataLevel.knifeData.knifeNumber;
   }
 }
 
@@ -5362,7 +5433,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_playUI__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../ui/playUI */ "./src/objects/ui/playUI.js");
 /* harmony import */ var _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../ui/tutorialUI */ "./src/objects/ui/tutorialUI.js");
 /* harmony import */ var _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ui/resultGameUI */ "./src/objects/ui/resultGameUI.js");
-/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
+/* harmony import */ var _level_dataManager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../level/dataManager */ "./src/objects/level/dataManager.js");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+
+
 
 
 
@@ -5392,14 +5467,16 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.state = GameState.Tutorial;
     this.score = 0;
     this.appleScore = 0;
+    this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
   }
   _initGamePlay() {
+    this._initDataManager();
     this.gameplay = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
-    this.knifeNumber = Level1.KNIFE_NUMBER;
+    this.knifeNumber = this.dataManager.numOfKnife();
     this.currentDt = 0;
     this.addChild(this.gameplay);
     this._initBackground();
@@ -5408,21 +5485,23 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initObstacle();
     this._initParticles();
     this._initSound();
-    this._initWhiteCircle();
-    this._initCircleLine();
+    this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
+    console.log(this.dataManager.getDataLevel());
   }
   _initUI() {
-    this.playUI = new _ui_playUI__WEBPACK_IMPORTED_MODULE_10__.PlayUI(this.score, this.appleScore);
+    this.playUI = new _ui_playUI__WEBPACK_IMPORTED_MODULE_10__.PlayUI(this.dataManager, this.score, this.appleScore);
     this.addChild(this.playUI);
     this.resultUI = new _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__.ResultGameUI();
     this.addChild(this.resultUI);
     this.tutorialUI = new _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__.TutorialUI();
-    this.tutorialUI.zIndex = 200;
     this.addChild(this.tutorialUI);
     this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
+  }
+  _initDataManager() {
+    this.dataManager = new _level_dataManager__WEBPACK_IMPORTED_MODULE_14__.DataManager(this.currentLevel);
   }
   _initBackground() {
     this.background = new _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__.Background(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.background);
@@ -5431,18 +5510,41 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.gameplay.addChild(this.background);
   }
   _initBoard() {
-    this.board = new _boards_board__WEBPACK_IMPORTED_MODULE_4__.Board();
+    this.board = new _boards_board__WEBPACK_IMPORTED_MODULE_4__.Board(this.dataManager.getBoardData());
     this.board.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.BOARD_X_POSITION;
     this.board.y = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.BOARD_Y_POSITION;
     this.gameplay.addChild(this.board);
     this.board.zIndex = 100;
   }
   _initKnifeManager() {
-    this.knifeManager = new _knives_knifeManager__WEBPACK_IMPORTED_MODULE_3__.KnifeManager();
+    this.knifeManager = new _knives_knifeManager__WEBPACK_IMPORTED_MODULE_3__.KnifeManager(this.dataManager.getKnifeData());
     this.knifeManager.x = 0;
     this.knifeManager.y = 0;
     this.gameplay.addChild(this.knifeManager);
     this.knifeManager.zIndex = 0;
+  }
+  _initObstacle() {
+    this.avaiAngle = [];
+    for (let i = 0; i < 18; i++) {
+      this.avaiAngle[i] = {
+        angle: i * 20,
+        available: true
+      };
+    }
+    if (this.dataManager.haveKnifeOnBoard()) {
+      this.knifeManager.spawnObsKnives(this.avaiAngle);
+    }
+    this._initAppleManager();
+    if (this.dataManager.haveAppleOnBoard()) {
+      this.appleManager.spawnApples(this.avaiAngle);
+    }
+  }
+  _initAppleManager() {
+    this.appleManager = new _apple_appleManager__WEBPACK_IMPORTED_MODULE_9__.AppleManager(this.dataManager.getAppleData());
+    this.appleManager.x = 0;
+    this.appleManager.y = 0;
+    this.gameplay.addChild(this.appleManager);
+    this.appleManager.zIndex = 101;
   }
   // Check if win or lose
   _onContOrRestart() {
@@ -5454,6 +5556,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // Xử lí click tiếp tục
   _onContGame() {
+    this.currentLevel++;
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
     this._initGamePlay();
@@ -5466,6 +5569,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // xử lí click restart
   _onRestartGame() {
+    this.currentLevel = 1;
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
     this.score = 0;
@@ -5477,43 +5581,15 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initUI();
     console.log("choi lai");
   }
-  _initObstacle() {
-    this.avaiAngle = [];
-    for (let i = 0; i < 18; i++) {
-      this.avaiAngle[i] = {
-        angle: i * 20,
-        available: true
-      };
-    }
-    this.knifeManager.spawnObsKnives(this.avaiAngle);
-    this._initAppleManager();
-    this.appleManager.spawnApples(this.avaiAngle);
-  }
-  _initAppleManager() {
-    this.appleManager = new _apple_appleManager__WEBPACK_IMPORTED_MODULE_9__.AppleManager();
-    this.appleManager.x = 0;
-    this.appleManager.y = 0;
-    this.gameplay.addChild(this.appleManager);
-    this.appleManager.zIndex = 101;
-  }
-  _initWhiteCircle() {
+  _initCircleFlare() {
     this.whiteCircle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.circleWhite);
-    this.addChild(this.whiteCircle);
-    this.whiteCircle.x = this.board.x;
-    this.whiteCircle.y = this.board.y;
+    this.gameplay.addChild(this.whiteCircle);
     this.whiteCircle.anchor.set(0.5);
-    this.whiteCircle.alpha = 0.2;
-    this.whiteCircle.scale.set(0.8);
     this.whiteCircle.zIndex = 150;
     this.whiteCircle.visible = false;
-  }
-  _initCircleLine() {
     this.circleLine = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.circleLineWhite);
-    this.addChild(this.circleLine);
-    this.circleLine.x = this.board.x;
-    this.circleLine.y = this.board.y;
+    this.gameplay.addChild(this.circleLine);
     this.circleLine.anchor.set(0.5);
-    this.circleLine.alpha = 0.3;
     this.circleLine.zIndex = 150;
     this.circleLine.visible = false;
   }
@@ -5531,7 +5607,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   update(dt) {
     this.currentDt += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__.update(this.currentDt);
+    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.update(this.currentDt);
     this.knifeManager.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);
@@ -5545,20 +5621,43 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     }
   }
   // Hình tròn xuất hiện khi bảng vỡ ra
-  circleFlare() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__.Tween(this.whiteCircle).to({ scale: { x: 0.5, y: 0.5 } }, 4).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__.Tween(this.whiteCircle).to({ scale: { x: 1.5, y: 1.5 } }, 8).onComplete(() => {
+  _showCircleFlare() {
+    this.whiteCircle.x = this.board.x;
+    this.whiteCircle.y = this.board.y;
+    this.whiteCircle.scale.set(0.8);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.2;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.5, y: 0.5 } }, 4).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 1.5, y: 1.5 } }, 8).onComplete(() => {
         this.whiteCircle.visible = false;
       }).start(this.currentDt);
     }).start(this.currentDt);
-  }
-  // Vòng tròn xuất hiện khi bảng vỡ ra
-  circleLineZoom() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__.Tween(this.circleLine).to({ scale: { x: 1.5, y: 1.5 } }, 5).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_13__.Tween(this.circleLine).to({ scale: { x: 2, y: 2 } }, 8).onComplete(() => {
+    this.circleLine.x = this.board.x;
+    this.circleLine.y = this.board.y;
+    this.circleLine.visible = true;
+    this.circleLine.alpha = 0.3;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 1.5, y: 1.5 } }, 5).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 2, y: 2 } }, 8).onComplete(() => {
         this.circleLine.alpha = 0.01;
         this.circleLine.visible = false;
       }).start(this.currentDt);
+    }).start(this.currentDt);
+  }
+  _showKnifeCollisionFlare(knife) {
+    this.whiteCircle.x = knife.x;
+    this.whiteCircle.y = knife.y - knife.height / 4;
+    this.whiteCircle.scale.set(0.1);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.5;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.7, y: 0.7 } }, 6).onComplete(() => {
+      this.whiteCircle.visible = false;
+    }).start(this.currentDt);
+    let sceneFilter = new _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_13__.AdjustmentFilter();
+    this.gameplay.filters = [sceneFilter];
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.gameplay).to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 8).yoyo(true).repeat(1).onUpdate(() => {
+      sceneFilter.gamma = 2;
+    }).onComplete(() => {
+      sceneFilter.gamma = 1;
     }).start(this.currentDt);
   }
   _onStart(e) {
@@ -5568,13 +5667,18 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   _onCollision() {
     if (this.knifeManager.knives[0] != null) {
-      if (this.knifeManager.knives[0].isMove) {
-        if (this.knifeManager.knives[0].y >= 610) {
+      if (this.knifeManager.knives[0].state === "move") {
+        if (this.knifeManager.knives[0].y >= 590) {
           this.knifeManager.obsKnives.forEach((knife) => {
             if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.find4Vertex(knife))) {
               console.log("aaaaa");
               this.kHitKSound.play();
               this.knifeManager.knives[0].setFall();
+              this._showKnifeCollisionFlare(this.knifeManager.knives[0]);
+              this.board.setStop();
+              this.board.onHit();
+              this.knifeManager.onBoardHit();
+              this.appleManager.onBoardHit();
               setTimeout(() => {
                 this.state = GameState.Lose;
                 this.resultUI.show();
@@ -5625,10 +5729,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
               this.state = GameState.Win;
               this.resultUI.show();
             }, 1500);
-            this.whiteCircle.visible = true;
-            this.circleFlare();
-            this.circleLine.visible = true;
-            this.circleLineZoom();
+            this._showCircleFlare();
           }
         }
       }
@@ -5655,7 +5756,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     if (this.state === GameState.Playing) {
       if (this.knifeNumber > 0) {
         if (this.knifeManager.onClicky(e)) {
-          this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - this.knifeNumber--);
+          this.playUI.updateKnifeIcon(this.dataManager.numOfKnife() - this.knifeNumber--);
         }
       }
     }
@@ -5685,22 +5786,29 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
-  constructor(score, appleScore) {
+  constructor(data, score, appleScore) {
     super();
+    this.levelData = data;
     this.playTime = 0;
     this.score = score;
     this.appleScore = appleScore;
+    this._initLevel();
     this._initTimer();
     this._initScore();
     this._initAppleCount();
     this._initKnifeCount();
     this.resize();
   }
+  _initLevel() {
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 45, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
+    this.levelText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`Level ${this.levelData.currentLevel}`, textStyle);
+    this.levelText.anchor.set(0.5, 0);
+    this.addChild(this.levelText);
+  }
   _initTimer() {
     let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 45, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
     this.timerText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this._formatTime(0)}`, textStyle);
     this.timerText.anchor.set(0.5, 0);
-    this.addChild(this.timerText);
   }
   _formatTime(totalSeconds) {
     var minutes = Math.floor(totalSeconds / 60);
@@ -5732,7 +5840,7 @@ class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.knifeIcons = [];
     this.knifeIconsContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
     this.addChild(this.knifeIconsContainer);
-    for (let i = 0; i < _scenes_playScene__WEBPACK_IMPORTED_MODULE_3__.Level1.KNIFE_NUMBER; i++) {
+    for (let i = 0; i < this.levelData.numOfKnife(); i++) {
       let knife = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_white_icon);
       knife.y = i * 45;
       this.knifeIcons.push(knife);
@@ -5761,6 +5869,8 @@ class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   resize() {
     this.timerText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH / 2;
     this.timerText.y = 10;
+    this.levelText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH / 2;
+    this.levelText.y = 10;
     this.scoreText.x = 50;
     this.scoreText.y = 10;
     this.appleScoreContainer.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 70;
