@@ -7,18 +7,18 @@ import { Apple } from "./apple";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export class AppleManager extends Container {
-    constructor() {
+    constructor(data) {
         super();
+        this.appleData = data;
         this.apples = [];
-        this.numOfApple = Util.randomInteger(0, 2);
         this.boardAngleRotation = 0;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
-        //this._spawnSlices();
         this.currentTime = 0;
     }
 
     spawnApples(avaiAngle) {
+        this.numOfApple = Util.randomInteger(this.appleData.minOnBoard, this.appleData.maxOnBoard);
         for (let i = 0; i < this.numOfApple; i++) {
             this._spawnApple(avaiAngle);
         }
