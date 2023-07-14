@@ -1,0 +1,68 @@
+{
+    "level": [{
+        "id": 1,
+        "knifeData": {
+            "knifeNumber": 7,
+            "haveOnBoard": false
+        },
+        "boardData": {
+            "isChangeSpeed": false,
+            "rotationSpeed": 0.04
+        },
+        "appleData": {
+            "haveOnBoard": false
+        }
+    },
+    {
+        "id": 2,
+        "knifeData": {
+            "knifeNumber": 8,
+            "haveOnBoard": false
+        },
+        "boardData": {
+            "isChangeSpeed": false,
+            "rotationSpeed": 0.04
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 0,
+            "maxOnBoard": 1
+        }
+    },
+    {
+        "id": 3,
+        "knifeData": {
+            "knifeNumber": 9,
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard" : 2
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.05
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard": 2
+        }
+    },
+    {
+        "id": 4,
+        "knifeData": {
+            "knifeNumber": 10,
+            "haveOnBoard": true,
+            "minOnBoard": 2,
+            "maxOnBoard" : 3
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.05
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard": 4
+        }
+    }]
+}
