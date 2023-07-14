@@ -9,16 +9,17 @@ import { Util } from "../../helper/utils";
 
 
 export class KnifeManager extends Container {
-    constructor() {
+    constructor(data) {
         super();
+        this.knifeData = data;
+        console.log(this.knifeData);
         this.knives = [];
         this.obsKnives = [];
-        this.numOfKnife = Level1.KNIFE_NUMBER - 1; //so dao trong pool
+        this.numOfKnife = this.knifeData.knifeNumber - 1; //so dao trong pool
         this.boardAngleRotation = 0;
         this.graphic = new Graphics();
         this.addChild(this.graphic);
         this._spawnKnives(); // sinh dao
-        
     }
 
     _spawnKnives() {
@@ -52,7 +53,7 @@ export class KnifeManager extends Container {
 
     //sinh obstacle knife
     spawnObsKnives(avaiAngle) {
-        let numOfDefautObs = Util.randomInteger(0, 3);
+        let numOfDefautObs = Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
         for (let i = 0; i < numOfDefautObs; i++) {
             this._spawnObs(avaiAngle);
         }        
@@ -129,7 +130,6 @@ export class KnifeManager extends Container {
     onClicky(e) {
         if (this.knives[0].state === "activated") {
             this.knives[0].move();
-            console.log(this.obsKnives.length, this.knives.length);
             return true;
         } else {return false;}
         

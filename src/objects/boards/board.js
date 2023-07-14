@@ -2,26 +2,37 @@ import { AnimatedSprite, Sprite, Texture, Container } from "pixi.js";
 import { Collider } from "../physics/collider";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
+import { DataManager } from "../level/dataManager";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Util } from "../../helper/utils";
+
 export class Board extends Sprite {
-  constructor() {
+  constructor(data) {
     super();
+    this.boardData = data;
+
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
-    this.angleRotation = 0.05; 
+    this.addChild(this.boardSprite);
+    
+    this.angleRotation = this.boardData.rotationSpeed;
     this.countRotation = 0;
     this.numRotation = 0;
     this.rotateDirection = 1;
     this.isStop = false;
+    this.currentDt = 0;
+
     this._initCollider();
     this._initFragments();
     this.randomRotationToChange();
     this._initFilter();
-    this.addChild(this.boardSprite);
-    this.currentDt = 0;
+
+    if (this.boardData.isChangeSpeed) {
+      this.minusSpeed = this.angleRotation/60/2;
+      this.plusSpeed = this.angleRotation/60;
+    }
   }
 
   _initCollider() {
@@ -89,7 +100,7 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},40)
+      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},25)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
           .to({ x: 280, y: 1200, rotation:this.fragments1.rotation + 4 },50)
@@ -99,20 +110,20 @@ export class Board extends Sprite {
 
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },40)
+      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },25)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },55)
+          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },40)
+      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },60)
+          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -134,22 +145,27 @@ export class Board extends Sprite {
       this.boardSprite.texture = null;
       this.angleRotation = 0;
     } else if (this.isStop) {
-      this.angleRotation = 0;
+      this.angleRotation = 0; //dung quay
     } else {
       this.fragments1.rotation += this.angleRotation * dt;
       this.fragments2.rotation += this.angleRotation * dt;
       this.fragments3.rotation += this.angleRotation * dt;
       this.boardSprite.rotation += this.angleRotation * dt;
-      this.changeRotation();
+      
+      //kiem tra co quay bang hay khong
+      if (this.boardData.isChangeSpeed) {    
+        this.changeRotation();  
+      }
     }
   }
 
+  //thay doi toc do va huong quay
   changeRotation() {
     this.countRotation += Math.abs(this.angleRotation);
     this.numRotation = this.countRotation / (Math.PI * 2);
     if (this.numRotation >= this.numRotationToChange) {
       if (this.rotateDirection === 1) {
-        this.angleRotation -= 1/2400;
+        this.angleRotation -= this.minusSpeed;
         if (this.angleRotation <= 0) {
           this.countRotation = 0;
           this.numRotation = 0;
@@ -157,7 +173,7 @@ export class Board extends Sprite {
           this.rotateDirection = Util.randomInteger(0, 1);
         } 
       } else {
-        this.angleRotation += 1/2400;
+        this.angleRotation += this.minusSpeed;
         if (this.angleRotation >= 0) {
           this.countRotation = 0;
           this.numRotation = 0;
@@ -167,16 +183,16 @@ export class Board extends Sprite {
       }
       
     } else if (this.angleRotation < 0.05 && this.rotateDirection === 1) {
-      this.angleRotation += 1/2000;
+      this.angleRotation += this.plusSpeed;
     } else if (this.angleRotation > -0.05 && this.rotateDirection === 0) {
-      this.angleRotation -= 1/2000;
+      this.angleRotation -= this.plusSpeed;
     }
     
     
   }
 
   onHit() {
-    new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
+    new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
       this.boardFilter.gamma = 1.5;
     }).onComplete(() => {
       this.boardFilter.gamma = 1;
@@ -184,7 +200,7 @@ export class Board extends Sprite {
   }
 
   randomRotationToChange() {
-    this.numRotationToChange = Util.random(1, 3);
+    this.numRotationToChange = Util.random(1, 2.5);
   }
 
 }

@@ -12,6 +12,7 @@ import { PlayUI } from "../ui/playUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
+import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export const GameState = Object.freeze({
@@ -35,10 +36,11 @@ export class PlayScene extends Container {
   }
 
   _initGamePlay() {
+    this._initDataManager();
     this.gameplay = new Container();
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
-    this.knifeNumber = Level1.KNIFE_NUMBER;
+    this.knifeNumber = this.dataManager.numOfKnife();
     this.currentDt = 0;
     this.addChild(this.gameplay);
     this._initBackground();
@@ -50,12 +52,12 @@ export class PlayScene extends Container {
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
     //window.addEventListener("pointerdown", (e) => this._onClicky(e));
-    console.log(this.currentLevel);
+    console.log(this.dataManager.getDataLevel());
   }
 
   _initUI() {
     //tao play UI
-    this.playUI = new PlayUI(this.score, this.appleScore);
+    this.playUI = new PlayUI(this.dataManager, this.score, this.appleScore);
     this.addChild(this.playUI);
     // result UI
     this.resultUI = new ResultGameUI();
@@ -69,6 +71,10 @@ export class PlayScene extends Container {
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
   }
 
+  _initDataManager() {
+    this.dataManager = new DataManager(this.currentLevel);
+  }
+
   _initBackground() {
     this.background = new Background(Game.bundle.background);
     this.background.x = 0;
@@ -77,7 +83,7 @@ export class PlayScene extends Container {
   }
 
   _initBoard() {
-    this.board = new Board();
+    this.board = new Board(this.dataManager.getBoardData());
     this.board.x = GameConstant.BOARD_X_POSITION;
     this.board.y = GameConstant.BOARD_Y_POSITION;
     this.gameplay.addChild(this.board);
@@ -85,11 +91,41 @@ export class PlayScene extends Container {
   }
 
   _initKnifeManager() {
-    this.knifeManager = new KnifeManager();
+    this.knifeManager = new KnifeManager(this.dataManager.getKnifeData());
     this.knifeManager.x = 0;
     this.knifeManager.y = 0;
     this.gameplay.addChild(this.knifeManager);
     this.knifeManager.zIndex = 0;
+  }
+
+  _initObstacle() {
+    this.avaiAngle = [];
+    for (let i = 0; i < 18; i++) {
+      this.avaiAngle[i] = {
+        angle: i * 20,
+        available: true,
+      };
+    }
+
+    // create dao can tren board
+    if (this.dataManager.haveKnifeOnBoard()) {
+      this.knifeManager.spawnObsKnives(this.avaiAngle);
+    }
+    
+    // create tao can tren board
+    this._initAppleManager();
+    if (this.dataManager.haveAppleOnBoard()) {
+      this.appleManager.spawnApples(this.avaiAngle);
+    }
+    //console.log(...this.avaiAngle);
+  }
+
+  _initAppleManager() {
+    this.appleManager = new AppleManager(this.dataManager.getAppleData());
+    this.appleManager.x = 0;
+    this.appleManager.y = 0;
+    this.gameplay.addChild(this.appleManager);
+    this.appleManager.zIndex = 101;
   }
 
   // Check if win or lose
@@ -140,27 +176,6 @@ export class PlayScene extends Container {
     console.log("choi lai");
   }
 
-  _initObstacle() {
-    this.avaiAngle = [];
-    for (let i = 0; i < 18; i++) {
-      this.avaiAngle[i] = {
-        angle: i * 20,
-        available: true,
-      };
-    }
-    this.knifeManager.spawnObsKnives(this.avaiAngle);
-    this._initAppleManager();
-    this.appleManager.spawnApples(this.avaiAngle);
-    //console.log(...this.avaiAngle);
-  }
-
-  _initAppleManager() {
-    this.appleManager = new AppleManager();
-    this.appleManager.x = 0;
-    this.appleManager.y = 0;
-    this.gameplay.addChild(this.appleManager);
-    this.appleManager.zIndex = 101;
-  }
   _initCircleFlare() {
     //tao hin tron loe sang
     this.whiteCircle = new Sprite(Game.bundle.circleWhite);
@@ -410,7 +425,7 @@ export class PlayScene extends Container {
         if (this.knifeNumber > 0) {
             
             if (this.knifeManager.onClicky(e)) {
-            this.playUI.updateKnifeIcon(Level1.KNIFE_NUMBER - this.knifeNumber--);
+            this.playUI.updateKnifeIcon(this.dataManager.numOfKnife() - this.knifeNumber--);
             }
           }
     }

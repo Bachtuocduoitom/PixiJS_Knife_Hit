@@ -4,11 +4,13 @@ import { GameConstant } from "../../gameConstant";
 import { Level1 } from "../scenes/playScene";
 
 export class PlayUI extends Container {
-    constructor(score, appleScore) {
+    constructor(data, score, appleScore) {
         super();
+        this.levelData = data;
         this.playTime = 0;
         this.score = score;
         this.appleScore = appleScore;
+        this._initLevel();
         this._initTimer();
         this._initScore();
         this._initAppleCount();
@@ -16,11 +18,18 @@ export class PlayUI extends Container {
         this.resize();
     }
 
+    _initLevel() {
+        let textStyle = new TextStyle({ fontSize: 45, align: "center", fill: 0xe6b85f, fontWeight: "bold", fontFamily: "Comic Sans MS" });
+        this.levelText = new Text(`Level ${this.levelData.currentLevel}`, textStyle);
+        this.levelText.anchor.set(0.5, 0);
+        this.addChild(this.levelText);
+    }
+
     _initTimer() {
         let textStyle = new TextStyle({ fontSize: 45, align: "center", fill: 0xe6b85f, fontWeight: "bold", fontFamily: "Comic Sans MS" });
         this.timerText = new Text(`${this._formatTime(0)}`, textStyle);
         this.timerText.anchor.set(0.5, 0);
-        this.addChild(this.timerText);
+        //this.addChild(this.timerText);
     }
 
     _formatTime(totalSeconds) {
@@ -58,7 +67,7 @@ export class PlayUI extends Container {
         this.knifeIconsContainer = new Container();
         this.addChild(this.knifeIconsContainer);
 
-        for (let i = 0; i < Level1.KNIFE_NUMBER; i++) {
+        for (let i = 0; i < this.levelData.numOfKnife(); i++) {
             let knife = Sprite.from(Game.bundle.knife_white_icon);
             knife.y = i * 45;
             this.knifeIcons.push(knife);
@@ -94,6 +103,8 @@ export class PlayUI extends Container {
     resize() {
         this.timerText.x = GameConstant.GAME_WIDTH/2;
         this.timerText.y = 10;
+        this.levelText.x = GameConstant.GAME_WIDTH/2;
+        this.levelText.y = 10;
         this.scoreText.x = 50;
         this.scoreText.y = 10;
         this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 70;

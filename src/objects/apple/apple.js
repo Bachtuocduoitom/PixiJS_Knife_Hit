@@ -40,7 +40,7 @@ export class Apple extends Sprite {
     }
 
     moveUpABit() {
-        new TWEEN.Tween(this).to({y: this.y - 10}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+        new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
     }
     
 }
