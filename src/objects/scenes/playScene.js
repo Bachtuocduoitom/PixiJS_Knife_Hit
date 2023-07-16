@@ -324,7 +324,7 @@ export class PlayScene extends Container {
                     this.state = GameState.Lose;
                     this.resultUI.show();
                     this.resultUI.messageText.text = "You lose";
-                    this.resultUI.buttonText.text = "Chơi lại";
+                    this.resultUI.buttonText.text = "Restart";
                     this.resultUI.messageText.style.fill = "red";
                   }, 1500);
                 }

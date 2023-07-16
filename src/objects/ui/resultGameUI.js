@@ -48,7 +48,7 @@ export class ResultGameUI extends Container {
         fill: "#ADFF2F",
         fontWeight: "bold",
         textAlign: "center",
-        fontFamily : "verdana",
+        fontFamily : "Comic Sans MS",
     });
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
@@ -62,10 +62,11 @@ export class ResultGameUI extends Container {
     this.button.buttonMode = true;
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
-    this.buttonText = new Text("Tiếp tục", {
+    this.buttonText = new Text("Next", {
       fontSize: 40,
       fill: "#FFFFFF",
       fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
     });
     this.buttonText.zIndex = 100;
     this.addChild(this.button);
