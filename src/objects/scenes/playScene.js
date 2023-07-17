@@ -21,9 +21,7 @@ export const GameState = Object.freeze({
   Win: "win",
   Lose: "lose",
 });
-export const Level1 = Object.freeze({
-  KNIFE_NUMBER: 7,
-});
+
 export class PlayScene extends Container {
   constructor() {
     super();
@@ -63,10 +61,15 @@ export class PlayScene extends Container {
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
     //tao tutorial UI
-    this.tutorialUI = new TutorialUI();
-    this.addChild(this.tutorialUI);
+    if (this.currentLevel === 1) {
+      this.tutorialUI = new TutorialUI();
+      this.addChild(this.tutorialUI);
+      this.tutorialUI.on("tapped", (e) => this._onStart(e));
+    } else {
+    this.state = GameState.Playing;
+      
+    }
 
-    this.tutorialUI.on("tapped", (e) => this._onStart(e));
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
   }
@@ -130,8 +133,8 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
-      if(this.resultUI.messageText.text === "You lose") {
-        this._onRestartGame();
+      if(this.resultUI.messageText.text === "You lose" || this.currentLevel === 4) {
+        this._onRestartGame(); 
       } else {
         this._onContGame();
       }

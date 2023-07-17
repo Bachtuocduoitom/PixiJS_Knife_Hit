@@ -21,7 +21,6 @@ export class ResultGameUI extends Container {
     this.overlay.drawRect(0, 0, GameConstant.GAME_WIDTH, GameConstant.GAME_HEIGHT);
     this.overlay.endFill();
     this.overlay.eventMode = 'static';
-    this.overlay.buttonMode = true;
     this.addChild(this.overlay);
   }
  _initBox() {
@@ -59,7 +58,6 @@ export class ResultGameUI extends Container {
     this.button.width = 300;
     this.button.height = 80;   
     this.button.eventMode = 'static';
-    this.button.buttonMode = true;
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
     this.buttonText = new Text("Tiếp tục", {
