@@ -33,7 +33,7 @@ export class KnifeManager extends Container {
     _spawnFirstKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = GameConstant.KNIFE_Y_POSITION + 200;
+        knife.y = GameConstant.KNIFE_Y_POSITION;
         knife.state = KnifeState.ACTIVATED;
         this.knives.push(knife);
         this.addChild(knife);
@@ -63,7 +63,7 @@ export class KnifeManager extends Container {
     _spawnObs(avaiAngle) {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.BOARD_X_POSITION;
-        knife.y = GameConstant.BOARD_Y_POSITION * 1.7;
+        knife.y = GameConstant.BOARD_Y_POSITION;
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
         this._setObsAng(knife, avaiAngle);

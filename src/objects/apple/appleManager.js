@@ -27,7 +27,7 @@ export class AppleManager extends Container {
     _spawnApple(avaiAngle) {
         let apple = new Apple(Game.bundle.apple);
         apple.x = GameConstant.BOARD_X_POSITION;
-        apple.y = GameConstant.BOARD_Y_POSITION * 1.7;
+        apple.y = GameConstant.BOARD_Y_POSITION;
         apple.anchor.set(0.5, -2.7);
         apple.collider.anchor.set(0.5, -3);
         this._setAppleAng(apple, avaiAngle);
