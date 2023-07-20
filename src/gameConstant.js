@@ -8,6 +8,8 @@ export const GameConstant = Object.freeze({
     BOARD_X_POSITION: 360,
     BOARD_Y_POSITION: 386,
 
+    KNIFE_P1_Y_POSITION:  656.2,
+
     JUMP_TIMER: 2,
     JUMP_DISTANCE: 10,
 

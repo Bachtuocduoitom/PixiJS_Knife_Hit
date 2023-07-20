@@ -93,14 +93,13 @@ export class Board extends Sprite {
     this.fragments3.loop = false;
 
     this.fragmentsMin.visible = true;
-    this.setBroken();
   }
 
   setBroken() {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},25)
+      .to({ x: 150, y: -2, rotation: this.fragments1.rotation + 3},25)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
           .to({ x: 280, y: 1200, rotation:this.fragments1.rotation + 4 },50)
@@ -113,7 +112,7 @@ export class Board extends Sprite {
       .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },25)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },50)
+          .to({ x: 700, y: 1250, rotation: this.fragments2.rotation + 3 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -123,7 +122,7 @@ export class Board extends Sprite {
       .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },30)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },50)
+          .to({ x: -600, y: 1350, rotation:this.fragments3.rotation -5 },50)
           .start(this.currentDt);
       })
       .start(this.currentDt);
@@ -133,7 +132,43 @@ export class Board extends Sprite {
       .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },80)
       .start(this.currentDt);
   }
+  setBroken2() {
+    this.isBroken = true;
+    // set rơi manh 1
+    new TWEEN.Tween(this.fragments1)
+      .to({ x: -120, y: -170, rotation: this.fragments1.rotation + 3},20)
+      .onComplete(() => {
+        new TWEEN.Tween(this.fragments1)
+          .to({ x: -680, y: -320, rotation:this.fragments1.rotation + 4 },25)
+          .start(this.currentDt);
+      })
+      .start(this.currentDt);
 
+    // set rơi manh 2
+    new TWEEN.Tween(this.fragments2)
+      .to({ x: 200, y: -230, rotation:this.fragments2.rotation + 2 },25)
+      .onComplete(() => {
+        new TWEEN.Tween(this.fragments2)
+          .to({ x: 600, y: -620, rotation: this.fragments2.rotation + 3 },40)
+          .start(this.currentDt);
+      })
+      .start(this.currentDt);
+
+    // set rơi manh 3
+    new TWEEN.Tween(this.fragments3)
+      .to({ x: 400, y: 60, rotation:this.fragments3.rotation -3 },30)
+      .onComplete(() => {
+        new TWEEN.Tween(this.fragments3)
+          .to({ x: 980, y: 450, rotation:this.fragments3.rotation -5 },50)
+          .start(this.currentDt);
+      })
+      .start(this.currentDt);
+
+      // set rơi mảnh vụn
+      new TWEEN.Tween(this.fragmentsMin)
+      .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },80)
+      .start(this.currentDt);
+  }
   setStop() {
     this.isStop = true;
   }

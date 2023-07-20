@@ -26,16 +26,11 @@ export class TutorialUI extends Container{
     }
   
     _initText() {
-      let textStyle = new TextStyle({ fontSize: 50, align: "center", fill: 0xffffff, fontFamily: "Comic Sans MS", fontWeight: "bold"});
+      let textStyle = new TextStyle({ fontSize: 50, align: "center", fill: 0xffffff, fontFamily: "Comic Sans MS", fontWeight: "bold", dropShadow: true, dropShadowColor: 'black' });
       this.tutorialText = new Text("TAP TO PLAY", textStyle);
       this.tutorialText.anchor.set(0.5);
       this.addChild(this.tutorialText);
       this._startBlink();
-    }
-
-    updateUI(dt) {
-      this.currentTime += dt;
-      TWEEN.update(this.currentTime);
     }
 
     _startBlink() {
@@ -46,7 +41,7 @@ export class TutorialUI extends Container{
       this.fakeBg.width = GameConstant.GAME_WIDTH;
       this.fakeBg.height = GameConstant.GAME_HEIGHT;
       this.tutorialText.x = GameConstant.GAME_WIDTH / 2;
-      this.tutorialText.y = GameConstant.GAME_HEIGHT / 2 + 70;
+      this.tutorialText.y = GameConstant.GAME_HEIGHT / 2;
     }
   
     hide() {

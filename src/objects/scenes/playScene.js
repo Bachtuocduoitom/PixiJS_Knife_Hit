@@ -21,9 +21,6 @@ export const GameState = Object.freeze({
   Win: "win",
   Lose: "lose",
 });
-export const Level1 = Object.freeze({
-  KNIFE_NUMBER: 7,
-});
 export class PlayScene extends Container {
   constructor() {
     super();
@@ -33,6 +30,7 @@ export class PlayScene extends Container {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
+    this._initParticlesResultgame();
   }
 
   _initGamePlay() {
@@ -51,8 +49,6 @@ export class PlayScene extends Container {
     this._initSound();
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
-    //window.addEventListener("pointerdown", (e) => this._onClicky(e));
-    console.log(this.dataManager.getDataLevel());
   }
 
   _initUI() {
@@ -85,7 +81,7 @@ export class PlayScene extends Container {
   _initBoard() {
     this.board = new Board(this.dataManager.getBoardData());
     this.board.x = GameConstant.BOARD_X_POSITION;
-    this.board.y = GameConstant.BOARD_Y_POSITION;
+    this.board.y = GameConstant.BOARD_Y_POSITION * 1.7;
     this.gameplay.addChild(this.board);
     this.board.zIndex = 100;
   }
@@ -110,6 +106,7 @@ export class PlayScene extends Container {
     // create dao can tren board
     if (this.dataManager.haveKnifeOnBoard()) {
       this.knifeManager.spawnObsKnives(this.avaiAngle);
+      
     }
     
     // create tao can tren board
@@ -117,7 +114,6 @@ export class PlayScene extends Container {
     if (this.dataManager.haveAppleOnBoard()) {
       this.appleManager.spawnApples(this.avaiAngle);
     }
-    //console.log(...this.avaiAngle);
   }
 
   _initAppleManager() {
@@ -130,7 +126,7 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
-      if(this.resultUI.messageText.text === "You lose") {
+      if(this.resultUI.buttonText.text === "Restart") {
         this._onRestartGame();
       } else {
         this._onContGame();
@@ -154,19 +150,18 @@ export class PlayScene extends Container {
     this.resultUI.destroy();
     this._initUI();
     console.log("tiep tuc");
+    this.boardZoom();
   }
 
   // xử lí click restart
   _onRestartGame() {
     //update level
     this.currentLevel = 1;
-
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
     this.score = 0; //reset score
     this._initGamePlay();
-
     //destroy UI and initial new ones
     this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
     this.playUI.destroy();
@@ -174,6 +169,43 @@ export class PlayScene extends Container {
     this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
+  }
+
+  _initParticles() {
+    this.particleContainer = new Container();
+    this.gameplay.addChild(this.particleContainer);
+  }
+
+  _initParticlesResultgame() {
+    this.particleContainerResult = new Container();
+    this.addChild(this.particleContainerResult);
+  }
+
+  _initSound() {
+    //tieng va cham dao
+    this.kHitKSound = Sound.from(Game.bundle.knife_hit_knife);
+    this.kHitKSound.volume = 0.3;
+    //tieng va cham go
+    this.kHitWSound = Sound.from(Game.bundle.knife_hit_wood);
+    //tieng va cham tao
+    this.kHitApple = Sound.from(Game.bundle.knife_hit_apple);
+    // tiếng bảng vỡ
+    this.boardBroken = Sound.from(Game.bundle.brokenBoard);
+    this.boardBroken.volume = 100;
+    //tiếng win game
+    this.winGame = Sound.from(Game.bundle.winGame);
+    // tiếng lose game
+    this.loseGame = Sound.from(Game.bundle.loseGame);
+  }
+  update(dt) {
+    this.currentDt += dt;
+    TWEEN.update(this.currentDt);
+    this.knifeManager.update(dt);
+    this.appleManager.update(dt);
+    this.board.update(dt);
+    this._onCollision();
+    this._syncRotate();
+
   }
 
   _initCircleFlare() {
@@ -192,42 +224,6 @@ export class PlayScene extends Container {
     this.circleLine.visible = false;
   }
 
-  _initParticles() {
-    this.particleContainer = new Container();
-    this.gameplay.addChild(this.particleContainer);
-  }
-
-  _initSound() {
-    //tieng va cham dao
-    this.kHitKSound = Sound.from(Game.bundle.knife_hit_knife);
-    this.kHitKSound.volume = 0.3;
-    //tieng va cham go
-    this.kHitWSound = Sound.from(Game.bundle.knife_hit_wood);
-    //tieng va cham tao
-    this.kHitApple = Sound.from(Game.bundle.knife_hit_apple);
-    // tiếng bảng vỡ
-    this.boardBroken = Sound.from(Game.bundle.brokenBoard);
-    this.boardBroken.volume = 100;
-  }
-  update(dt) {
-    this.currentDt += dt;
-    TWEEN.update(this.currentDt);
-    this.knifeManager.update(dt);
-    this.appleManager.update(dt);
-    this.board.update(dt);
-    this._onCollision();
-    this._syncRotate();
-
-    if (this.state === GameState.Playing) {
-      this.playUI.updateTime(dt);
-    }
-
-    if (this.state === GameState.Tutorial) {
-      this.tutorialUI.updateUI(dt);
-    }
-  }
-
- // Hình tròn xuất hiện khi bảng vỡ ra
   _showCircleFlare() {
     //hinh tron loe sang
     this.whiteCircle.x = this.board.x;
@@ -297,11 +293,78 @@ export class PlayScene extends Container {
     .start(this.currentDt);
   }
 
+    // Bảng zoom ra khi qua màn mới
+    boardZoom() {
+      new TWEEN.Tween(this.board)
+      .to({scale: {x:0.05, y: 0.05}}, 9)
+      .onComplete(() => {
+        new TWEEN.Tween(this.board)
+        .to({scale: {x:1 ,y: 1}}, 15)
+        .start(this.currentDt)
+      })
+      .start(this.currentDt);
+  
+      new TWEEN.Tween(this.appleManager)
+      .to({scale: {x:0.05, y: 0.05}}, 9)
+      .onComplete(() => {
+        new TWEEN.Tween(this.appleManager)
+        .to({scale: {x:1 ,y: 1}}, 15)
+        .start(this.currentDt)
+      })
+      .start(this.currentDt);
+    }
+    
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
     this._onClicky(e);
   }
+  _onWin() {
+        // tạo âm thanh
+        this.boardBroken.play();
+        // Hiện và xử lí các mảnh vỡ bay ra
+        this.board.breakUp();
+        this.knifeManager.setObsFall();
+        this.appleManager.setApplesFall();
+        // Hiện UI result và sound
+        setTimeout(() => {
+          this.winGame.play();
+        }, 1000);
+        setTimeout(() => {
+          this.state = GameState.Win;
+          this.resultUI.show();
+          //tao hiệu ứng chiến thắng
+          let winGameParticle = new Emitter(
+            this.particleContainerResult,
+            upgradeConfig(Game.bundle.winGameParticle, [Game.bundle.particleStar, Game.bundle.particle])
+          );
+          winGameParticle.updateSpawnPos(
+            this.resultUI.messageText.x + this.resultUI.messageText.width /2 ,
+            this.resultUI.messageText.y
+      );
+        winGameParticle.playOnceAndDestroy();
+        }, 1500);
+      // hình tròn và vòng tròn xuất hiện
+      this._showCircleFlare();        
+  }
+
+  _onLose() {
+       // Tạo âm thanh va dao
+        this.kHitKSound.play();
+      // Dao rơi
+        this.knifeManager.knives[0].setFall();
+        this._showKnifeCollisionFlare(this.knifeManager.knives[0]); // Tạo hiệu ứng
+        this.board.setStop();
+        
+        setTimeout(() => {
+          this.loseGame.play(); // âm thanh thua
+        }, 500);
+        setTimeout(() => {
+          this.state = GameState.Lose;
+          this.resultUI.show(); // Hiện result UI
+        }, 1500);
+  }
+
   _onCollision() {
     if (this.knifeManager.knives[0] != null) {
       if (this.knifeManager.knives[0].state === "move") {
@@ -309,24 +372,10 @@ export class PlayScene extends Container {
         if (this.knifeManager.knives[0].y >= 590) {
             this.knifeManager.obsKnives.forEach((knife) => {
                 if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
-                  console.log("aaaaa");
-                  this.kHitKSound.play();
-                  this.knifeManager.knives[0].setFall();
-                  this._showKnifeCollisionFlare(this.knifeManager.knives[0]);
-                  this.board.setStop();
-
-                  //dich chuyen nhe go tao va  dao
-                  this.board.onHit();
-                  this.knifeManager.onBoardHit();
-                  this.appleManager.onBoardHit();
-                  
-                  setTimeout(() => {
-                    this.state = GameState.Lose;
-                    this.resultUI.show();
-                    this.resultUI.messageText.text = "You lose";
-                    this.resultUI.buttonText.text = "Restart";
-                    this.resultUI.messageText.style.fill = "red";
-                  }, 1500);
+                  this._onLose();
+                  this.resultUI.messageText.text = "You lose";
+                  this.resultUI.buttonText.text = "Restart";
+                  this.resultUI.messageText.style.fill = "red";
                 }
               });
         }
@@ -337,7 +386,6 @@ export class PlayScene extends Container {
             console.log("xuyen tao");
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
-
             //tang diem
             this.playUI.updateAppleScore(++this.appleScore);
           }
@@ -381,25 +429,14 @@ export class PlayScene extends Container {
 
           // phóng hết dao
           if (this.knifeNumber === 0) {
-            // tạo âm thanh
-            this.boardBroken.play();
-            // Hiện và xử lí các mảnh vỡ bay ra
-            this.board.breakUp();
-            this.knifeManager.setObsFall();
-            this.appleManager.setApplesFall();
-            // Hiện UI result
-            setTimeout(() => {
-              this.state = GameState.Win;
-              this.resultUI.show();
-            }, 1500);
-          // hình tròn và vòng tròn xuất hiện
-          this._showCircleFlare();
-          
+            this._onWin();
+            this.board.setBroken();
           }
         }
       }
     }
   }
+
   _rotateKnife(knife) {
     knife.x = this.board.x;
     knife.y = this.board.y;
