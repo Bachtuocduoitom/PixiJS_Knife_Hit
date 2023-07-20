@@ -1,7 +1,12 @@
 import { Container, Sprite, Graphics, Text } from "pixi.js";
 import { Game } from "../../game";
+import { Sound } from "@pixi/sound";
 import { PlayScene } from "./playScene";
+import { KnifeManager1 } from "../knives/knifeManager1";
 import { KnifeManager2 } from "../knives/knifeManager2";
+import { Background } from "../backgrounds/background";
+import { AppleManager } from "../apple/appleManager";
+import { DataManager } from "../level/dataManager";
 import { Board } from "../boards/board";
 import { GameConstant } from "../../gameConstant";
 import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
@@ -9,7 +14,9 @@ import { Util } from "../../helper/utils";
 import { MultipleUI } from "../ui/multipleUI";
 import { TutorialUI } from "../ui/tutorialUI";
 import { ResultGameUI } from "../ui/resultGameUI";
+import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import * as TWEEN from "@tweenjs/tween.js";
+
 
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
@@ -17,7 +24,7 @@ export const GameState = Object.freeze({
   Win: "win",
   Lose: "lose",
 });
-export class DualScene extends PlayScene {
+export class DualScene extends Container {
   constructor() {
     super();
     // this.state = GameState.Tutorial;
@@ -28,11 +35,11 @@ export class DualScene extends PlayScene {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
-    super._initParticlesResultgame();
+    // this._initParticlesResultgame();
   }
 
   _initGamePlay() {
-    super._initDataManager();
+    this._initDataManager();
     this.gameplay = new Container();
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
@@ -40,20 +47,25 @@ export class DualScene extends PlayScene {
     this.knifeNumber2 = this.dataManager.numOfKnife();
     this.currentDt = 0;
     this.addChild(this.gameplay);
-    super._initBackground();
+    this._initBackground();
     this._initBoard();
     this._initContKnifeManager1();
     this._initContKnifeManager2();
-    super._initObstacle();
-    super._initParticles();
-    super._initSound();
-    super._initCircleFlare();
+    this._initObstacle();
+    // this._initParticles();
+    this._initSound();
+    this._initCircleFlare();
+    console.log(this.gameplay);
+  }
+
+  _initDataManager() {
+    this.dataManager = new DataManager(this.currentLevel);
   }
 
   _initContKnifeManager1() {
     this.contKnifeMan1 = new Container();
     this.contKnifeMan1.eventMode = "static";
-    super._initKnifeManager();
+    this._initKnifeManager1();
     this.gameplay.addChild(this.contKnifeMan1);
     this._initBackgroundCont1();
   }
@@ -109,15 +121,60 @@ export class DualScene extends PlayScene {
     this.addChild(this.tutorialUI);
     this.tutorialUI.on("tapped", (e) => {this.tutorialUI.hide()});
     this.resultUI.hide();
-    this.resultUI.on("tapped", (e) => super._onContOrRestart(e));
+    this.resultUI.on("tapped", (e) => this._onRestartGame(e));
+    this.resultUI.on("home", (e) => this._backHome(e));
   }
-
+  _initBackground() {
+    this.background = new Background(Game.bundle.background);
+    this.background.x = 0;
+    this.background.y = 0;
+    this.gameplay.addChild(this.background);
+  }
   _initBoard() {
     this.board = new Board(this.dataManager.getBoardData());
+    console.log(this.dataManager.getBoardData());
     this.board.x = GameConstant.BOARD_X_POSITION;
     this.board.y = GameConstant.BOARD_Y_POSITION * 1.7;
     this.gameplay.addChild(this.board);
     this.board.zIndex = 100;
+  }
+
+  _initKnifeManager1() {
+    this.knifeManager1 = new KnifeManager1(this.dataManager.getKnifeData());
+    this.knifeManager1.x = 0;
+    this.knifeManager1.y = 0;
+    this.gameplay.addChild(this.knifeManager1);
+    this.knifeManager1.zIndex = 0;
+  } 
+
+  _initObstacle() {
+    this.avaiAngle = [];
+    for (let i = 0; i < 18; i++) {
+      this.avaiAngle[i] = {
+        angle: i * 20,
+        available: true,
+      };
+    }
+
+    // create dao can tren board
+    if (this.dataManager.haveKnifeOnBoard()) {
+      this.knifeManager1.spawnObsKnives(this.avaiAngle);
+      
+    }
+    
+    // create tao can tren board
+    this._initAppleManager();
+    if (this.dataManager.haveAppleOnBoard()) {
+      this.appleManager.spawnApples(this.avaiAngle);
+    }
+  }
+
+  _initAppleManager() {
+    this.appleManager = new AppleManager(this.dataManager.getAppleData());
+    this.appleManager.x = 0;
+    this.appleManager.y = 0;
+    this.gameplay.addChild(this.appleManager);
+    this.appleManager.zIndex = 101;
   }
 
   _initKnifeManager2() {
@@ -125,31 +182,12 @@ export class DualScene extends PlayScene {
     this.knifeManager2.x = 0;
     this.knifeManager2.y = 0;
     this.gameplay.addChild(this.knifeManager2);
-    this.knifeManager.zIndex = 0;
-  }
-
-  // Xử lí click tiếp tục
-  _onContGame() {
-    //update level
-    this.currentLevel++;
-    //destroy gameplay and initial new one
-    this.removeChild(this.gameplay);
-    this.gameplay.destroy();
-    this._initGamePlay();
-    //destroy UI and initial new ones
-    this.removeChild(this.multipleUI, this.resultUI);
-    this.multipleUI.destroy();
-    this.resultUI.destroy();
-    this._initUI();
-    console.log("tiep tuc");
-    super._initParticlesResultgame();
-    super.boardZoom();
+    this.knifeManager1.zIndex = 0;
   }
 
   // xử lí click restart
   _onRestartGame() {
-    //update level
-    this.currentLevel = 1;
+
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
@@ -161,13 +199,44 @@ export class DualScene extends PlayScene {
     this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
-    super._initParticlesResultgame();
+    this._initParticlesResultgame();
+  }
+
+  _backHome(e) {
+    this.parent.dualToHome();
+  }
+
+  _initParticles() {
+    this.particleContainer = new Container();
+    this.gameplay.addChild(this.particleContainer);
+  }
+
+  _initParticlesResultgame() {
+    this.particleContainerResult = new Container();
+    this.addChild(this.particleContainerResult);
+  }
+
+  _initSound() {
+    //tieng va cham dao
+    this.kHitKSound = Sound.from(Game.bundle.knife_hit_knife);
+    this.kHitKSound.volume = 0.3;
+    //tieng va cham go
+    this.kHitWSound = Sound.from(Game.bundle.knife_hit_wood);
+    //tieng va cham tao
+    this.kHitApple = Sound.from(Game.bundle.knife_hit_apple);
+    // tiếng bảng vỡ
+    this.boardBroken = Sound.from(Game.bundle.brokenBoard);
+    this.boardBroken.volume = 100;
+    //tiếng win game
+    this.winGame = Sound.from(Game.bundle.winGame);
+    // tiếng lose game
+    this.loseGame = Sound.from(Game.bundle.loseGame);
   }
 
   update(dt) {
     this.currentDt += dt;
     TWEEN.update(this.currentDt);
-    this.knifeManager.update(dt);
+    this.knifeManager1.update(dt);
     this.knifeManager2.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);
@@ -175,6 +244,116 @@ export class DualScene extends PlayScene {
     this._syncRotate();
   }
 
+  _initCircleFlare() {
+    //tao hin tron loe sang
+    this.whiteCircle = new Sprite(Game.bundle.circleWhite);
+    this.gameplay.addChild(this.whiteCircle);
+    this.whiteCircle.anchor.set(0.5);
+    this.whiteCircle.zIndex = 150;
+    this.whiteCircle.visible = false;
+
+    //tao vong tron loe sang
+    this.circleLine = new Sprite(Game.bundle.circleLineWhite);
+    this.gameplay.addChild(this.circleLine);
+    this.circleLine.anchor.set(0.5);
+    this.circleLine.zIndex = 150;
+    this.circleLine.visible = false;
+  }
+
+  _showCircleFlare() {
+    //hinh tron loe sang
+    this.whiteCircle.x = this.board.x;
+    this.whiteCircle.y = this.board.y;
+    this.whiteCircle.scale.set(0.8);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.2;
+
+    new TWEEN.Tween(this.whiteCircle)
+    .to({scale: {x:0.5, y: 0.5}}, 100)
+    .onComplete(() => {
+      new TWEEN.Tween(this.whiteCircle)
+      .to({scale: {x:1.5 ,y: 1.5}}, 150)
+      .onComplete(() => {this.whiteCircle.visible = false})
+      .start()
+    })
+    .start();
+
+    //vong tron loe sang
+    this.circleLine.x = this.board.x;
+    this.circleLine.y = this.board.y;
+    this.circleLine.visible = true;
+    this.circleLine.alpha = 0.3;
+    
+    new TWEEN.Tween(this.circleLine)
+    .to({scale: {x:1.5, y: 1.5}}, 100)
+    .onComplete(() => {
+      new TWEEN.Tween(this.circleLine)
+      .to({scale: {x:2 ,y: 2}}, 150)
+      .onComplete(() => {
+        this.circleLine.alpha = 0.01;
+        this.circleLine.visible = false;
+      })
+      .start()
+    })
+    .start();
+  }
+
+  _showKnifeCollisionFlare(knife) {
+    //hinh tron loe sang
+    this.whiteCircle.x = knife.x;
+    this.whiteCircle.y = knife.y - knife.height/4;
+    this.whiteCircle.scale.set(0.1);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.5;
+
+    new TWEEN.Tween(this.whiteCircle)
+    .to({scale: {x:0.7, y: 0.7}}, 60)
+    .onComplete(() => {
+      this.whiteCircle.visible = false;
+    })
+    .start();
+
+    //man hinh loe sang
+    let sceneFilter = new AdjustmentFilter();
+    this.gameplay.filters = [sceneFilter];
+    new TWEEN.Tween(this.gameplay)
+    .to({alpha : 1,scale: {x:1.05, y: 1.05}}, 150)
+    .yoyo(true).repeat(1)
+    .onUpdate(() => {
+      sceneFilter.gamma = 2;
+
+    })
+    .onComplete(() => {
+      sceneFilter.gamma = 1;
+    })
+    .start();
+  }
+
+
+  _onLose1() {
+     // Tạo âm thanh va dao
+     this.kHitKSound.play();
+     // Dao rơi
+       this.knifeManager1.knives[0].setFall();
+       this._showKnifeCollisionFlare(this.knifeManager1.knives[0]); // Tạo hiệu ứng
+       this.board.setStop();
+
+       //dich chuyen nhe go tao va  dao
+       this.board.onHit();
+       this.knifeManager1.onBoardHit();
+       this.appleManager.onBoardHit();
+       
+       setTimeout(() => {
+         this.loseGame.play(); // âm thanh thua
+       }, 500);
+       setTimeout(() => {
+         this.state = GameState.Lose;
+         this.resultUI.showLoseBox();// Hiện result UI
+         this.resultUI.messageText.text = "Player2 Win";
+         this.resultUI.buttonText.text = "Restart";
+         this.resultUI.messageText.style.fill = "#ADFF2F";
+       }, 1500);
+  }
   _onLose2() {
       this.kHitKSound.play();
       this.knifeManager2.knives[0].setFall();
@@ -196,15 +375,44 @@ export class DualScene extends PlayScene {
       }, 1500);
  }
 
+ _onWin() {
+          // tạo âm thanh
+          this.boardBroken.play();
+          // Hiện và xử lí các mảnh vỡ bay ra
+          this.board.breakUp();
+          this.knifeManager1.setObsFall();
+          this.appleManager.setApplesFall();
+          // Hiện UI result và sound
+          setTimeout(() => {
+            this.winGame.play();
+          }, 1000);
+          setTimeout(() => {
+            this.state = GameState.Win;
+            this.resultUI.show();
+            //tao hiệu ứng chiến thắng
+            let winGameParticle = new Emitter(
+              this.particleContainerResult,
+              upgradeConfig(Game.bundle.winGameParticle, [Game.bundle.particleStar, Game.bundle.particle])
+            );
+            winGameParticle.updateSpawnPos(
+              this.resultUI.messageText.x + this.resultUI.messageText.width /2 ,
+              this.resultUI.messageText.y
+        );
+          winGameParticle.playOnceAndDestroy();
+          }, 1500);
+        // hình tròn và vòng tròn xuất hiện
+        this._showCircleFlare();  
+ }
+
   _onCollision() {
     // xét va chạm của knife 1
-    if (this.knifeManager.knives[0] != null) {
-      if (this.knifeManager.knives[0].state === "move") {
+    if (this.knifeManager1.knives[0] != null) {
+      if (this.knifeManager1.knives[0].state === "move") {
         //va cham dao
-        if (this.knifeManager.knives[0].y >= 590) {
-            this.knifeManager.obsKnives.forEach((knife) => {
-                if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
-                  super._onLose();
+        if (this.knifeManager1.knives[0].y >= 590) {
+            this.knifeManager1.obsKnives.forEach((knife) => {
+                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager1.knives[0]), Util.find4Vertex(knife))) {
+                  this._onLose1();
                   this.resultUI.messageText.text = "Player2 Win";
                   this.resultUI.buttonText.text = "Restart";
                   this.resultUI.messageText.style.fill = "#ADFF2F";
@@ -212,9 +420,9 @@ export class DualScene extends PlayScene {
               });
 
               this.knifeManager2.obsKnives.forEach((knife) => {
-                if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
+                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager1.knives[0]), Util.find4Vertex(knife))) {
                   console.log("va chạm dao p1 với p2");
-                  super._onLose();
+                  this._onLose1();
                   this.resultUI.messageText.text = "Player2 Win";
                   this.resultUI.buttonText.text = "Restart";
                 }
@@ -222,7 +430,7 @@ export class DualScene extends PlayScene {
         }
         //va cham tao
         this.appleManager.apples.forEach((apple) => {
-          if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(apple))) {
+          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager1.knives[0]), Util.find4Vertex(apple))) {
             console.log("xuyen tao");
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
@@ -231,7 +439,7 @@ export class DualScene extends PlayScene {
           }
         });
         //va cham go
-        if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
+        if (Util.AABBCheck(this.knifeManager1.knives[0].collider, this.board.collider)) {
           //tao am thanh
           this.kHitWSound.play();
           //tao vun go khi va cham
@@ -240,29 +448,29 @@ export class DualScene extends PlayScene {
             upgradeConfig(Game.bundle.logParticle, [Game.bundle.particle])
           );
           logParticle.updateSpawnPos(
-            this.knifeManager.knives[0].x,
-            this.knifeManager.knives[0].y - 30
+            this.knifeManager1.knives[0].x,
+            this.knifeManager1.knives[0].y - 30
           );
           logParticle.playOnceAndDestroy();
           //dich chuyen nhe go tao va  dao
           this.board.onHit();
-          this.knifeManager.onBoardHit();
+          this.knifeManager1.onBoardHit();
           this.appleManager.onBoardHit();
           //tang diem
           this.multipleUI.updateScore(++this.score);
           console.log("va roi!");
           //bien dao thanh vat can
-          this.knifeManager.knives[0].beObs();
+          this.knifeManager1.knives[0].beObs();
           //quay dao theo khoi go
-          super._rotateKnife(this.knifeManager.knives[0]);
-          this.knifeManager.obsKnives.push(this.knifeManager.knives.shift());
-          if (this.knifeManager.numOfKnife > 0) {
-            this.knifeManager.knives[0].setActivate();
+          this._rotateKnife(this.knifeManager1.knives[0]);
+          this.knifeManager1.obsKnives.push(this.knifeManager1.knives.shift());
+          if (this.knifeManager1.numOfKnife > 0) {
+            this.knifeManager1.knives[0].setActivate1();
           }
-          this.knifeManager.numOfKnife--;
+          this.knifeManager1.numOfKnife--;
           // phóng hết dao
           if (this.knifeNumber === 0) {
-            super._onWin();
+            this._onWin();
             this.board.setBroken2();
             this.resultUI.messageText.text = "Player1 Win";
             this.resultUI.buttonText.text = "Restart";
@@ -277,12 +485,12 @@ export class DualScene extends PlayScene {
         //va cham dao
         if (this.knifeManager2.knives[0].y <= 590) {
             this.knifeManager2.obsKnives.forEach((knife) => {
-                if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(knife))) {
+                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(knife))) {
                   this._onLose2();
                 }
               });
-              this.knifeManager.obsKnives.forEach((knife) => {
-                if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(knife))) {
+              this.knifeManager1.obsKnives.forEach((knife) => {
+                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(knife))) {
                   console.log("va chạm dao p2 với p1");
                   this._onLose2();
                 }
@@ -290,7 +498,7 @@ export class DualScene extends PlayScene {
         }
         //va cham tao
         this.appleManager.apples.forEach((apple) => {
-          if (Util.SATPolygonPolygon(super._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(apple))) {
+          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager2.knives[0]), Util.find4Vertex(apple))) {
             console.log("xuyen tao");
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
@@ -308,8 +516,8 @@ export class DualScene extends PlayScene {
             upgradeConfig(Game.bundle.logParticle, [Game.bundle.particle])
           );
           logParticle.updateSpawnPos(
-            this.knifeManager.knives[0].x,
-            this.knifeManager.knives[0].y - 30
+            this.knifeManager1.knives[0].x,
+            this.knifeManager1.knives[0].y - 30
           );
           logParticle.playOnceAndDestroy();
           //dich chuyen nhe go tao va  dao
@@ -330,7 +538,7 @@ export class DualScene extends PlayScene {
           this.knifeManager2.numOfKnife--;
           // phóng hết dao
           if (this.knifeNumber2 === 0) {
-            super._onWin();
+            this._onWin();
             this.knifeManager2.setObsFall();
             this.board.setBroken2();
             this.resultUI.messageText.text = "Player2 Win";
@@ -341,6 +549,13 @@ export class DualScene extends PlayScene {
     }
   }
 
+  _rotateKnife(knife) {
+    knife.x = this.board.x;
+    knife.y = this.board.y;
+    knife.anchor.set(0.5, -0.5);
+    knife.collider.anchor.set(0.5, -0.5);
+  }
+
   _rotateKnife2(knife) {
     knife.x = this.board.x;
     knife.y = this.board.y;
@@ -349,15 +564,23 @@ export class DualScene extends PlayScene {
   }
 
   _syncRotate() {
-    this.knifeManager.boardAngleRotation = this.board.angleRotation;
+    this.knifeManager1.boardAngleRotation = this.board.angleRotation;
     this.knifeManager2.boardAngleRotation = this.board.angleRotation;
     this.appleManager.boardAngleRotation = this.board.angleRotation;
+  }
+
+  _cal4PointKnife(knife) {
+    let w = knife.collider.getBounds().width;
+    let h = knife.collider.getBounds().height;
+    let x = knife.collider.getBounds().x;
+    let y = knife.collider.getBounds().y;
+    return [x, y, x + w, y, x + w, y + h, x, y + h];
   }
 
   _onClicky(e) {
     if (this.state === GameState.Playing) {
         if (this.knifeNumber > 0) {
-            if (this.knifeManager.onClicky(e)) {
+            if (this.knifeManager1.onClicky(e)) {
             this.multipleUI.updateKnifeIcon(this.dataManager.numOfKnife() - this.knifeNumber--);
             }
           }

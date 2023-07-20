@@ -9,6 +9,7 @@ export const KnifeState = Object.freeze({
     ACTIVATED: "activated",
     ACTIVATING: "activating",
     ACTIVE: "active",
+    ACTIVE1: "active1",
     ACTIVE2: "active2",
     MOVE: "move",
     MOVE2: "move2",
@@ -46,7 +47,14 @@ export class Knife extends Sprite {
     
     _toActive() {
         this.state= KnifeState.ACTIVATING;
-        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION}, 1).onComplete(() => {
+        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION }, 1).onComplete(() => {
+            this.state = KnifeState.ACTIVATED;
+        }).start();
+    }
+
+    _toActive1() {
+        this.state= KnifeState.ACTIVATING;
+        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION + 170}, 1).onComplete(() => {
             this.state = KnifeState.ACTIVATED;
         }).start();
     }
@@ -61,6 +69,11 @@ export class Knife extends Sprite {
     setActivate() {
         this.visible = true;
         this.state = KnifeState.ACTIVE;
+    }
+
+    setActivate1() {
+        this.visible = true;
+        this.state = KnifeState.ACTIVE1;
     }
 
     setActivate2() {
@@ -117,6 +130,9 @@ export class Knife extends Sprite {
                 break;
             case "active":
                 this._toActive();
+                break;
+            case "active1":
+                this._toActive1();
                 break;
             case "active2":
                 this._toActive2();
