@@ -65,6 +65,8 @@ export class KnifeManager extends Container {
         knife.y = GameConstant.BOARD_Y_POSITION;
         knife.anchor.set(0.5, -0.5);
         knife.collider.anchor.set(0.5, -0.5);
+        knife.scale.set(0.5);
+        knife.zoomOut();
         this._setObsAng(knife, avaiAngle);
         knife.beObs();
         this.obsKnives.push(knife);

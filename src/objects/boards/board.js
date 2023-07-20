@@ -15,7 +15,9 @@ export class Board extends Sprite {
     this.anchor.set(0.5);
     this.boardSprite = new Sprite(Game.bundle.board);
     this.boardSprite.anchor.set(0.5);
+    this.boardSprite.scale.set(0.5);
     this.addChild(this.boardSprite);
+    this.boardZoomOut();
     
     this.angleRotation = this.boardData.rotationSpeed;
     this.countRotation = 0;
@@ -30,8 +32,8 @@ export class Board extends Sprite {
     this._initFilter();
 
     if (this.boardData.isChangeSpeed) {
-      this.minusSpeed = this.angleRotation/60/2;
-      this.plusSpeed = this.angleRotation/60;
+      this.minusSpeed = (this.angleRotation/60)/2;
+      this.plusSpeed = (this.angleRotation/40);
     }
   }
 
@@ -217,9 +219,9 @@ export class Board extends Sprite {
         } 
       }
       
-    } else if (this.angleRotation < 0.05 && this.rotateDirection === 1) {
+    } else if (this.angleRotation < this.boardData.rotationSpeed && this.rotateDirection === 1) {
       this.angleRotation += this.plusSpeed;
-    } else if (this.angleRotation > -0.05 && this.rotateDirection === 0) {
+    } else if (this.angleRotation > -this.boardData.rotationSpeed && this.rotateDirection === 0) {
       this.angleRotation -= this.plusSpeed;
     }
     
@@ -235,7 +237,11 @@ export class Board extends Sprite {
   }
 
   randomRotationToChange() {
-    this.numRotationToChange = Util.random(1, 2);
+    this.numRotationToChange = Util.random(0.5, 1);
+  }
+
+  boardZoomOut() {
+    new TWEEN.Tween(this.boardSprite).to({scale: {x:1 ,y: 1}}, 200).start(); 
   }
 
 }

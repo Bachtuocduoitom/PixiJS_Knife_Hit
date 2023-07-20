@@ -32,7 +32,6 @@ export class PlayScene extends Container {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
-    this._initParticlesResultgame();
   }
 
   _initGamePlay() {
@@ -73,6 +72,8 @@ export class PlayScene extends Container {
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
     this.resultUI.on("home", (e) => this._backHome(e));
     
+    this._initParticlesResultgame();
+
   }
 
   _initDataManager() {
@@ -161,7 +162,6 @@ export class PlayScene extends Container {
     this._initGamePlay();
     this._initUI();
     console.log("tiep tuc");
-    this.boardZoom();
   }
 
   // xử lí click restart
@@ -314,27 +314,6 @@ export class PlayScene extends Container {
     })
     .start();
   }
-
-    // Bảng zoom ra khi qua màn mới
-    boardZoom() {
-      new TWEEN.Tween(this.board)
-      .to({scale: {x:0.05, y: 0.05}}, 9)
-      .onComplete(() => {
-        new TWEEN.Tween(this.board)
-        .to({scale: {x:1 ,y: 1}}, 15)
-        .start()
-      })
-      .start();
-  
-      new TWEEN.Tween(this.appleManager)
-      .to({scale: {x:0.05, y: 0.05}}, 9)
-      .onComplete(() => {
-        new TWEEN.Tween(this.appleManager)
-        .to({scale: {x:1 ,y: 1}}, 15)
-        .start()
-      })
-      .start();
-    }
     
   _onStart(e) {
     this.state = GameState.Playing;
