@@ -41,7 +41,7 @@ export class Knife extends Sprite {
         this.state= KnifeState.ACTIVATING;
         new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION}, 1).onComplete(() => {
             this.state = KnifeState.ACTIVATED;
-        }).start(this.currentTime);
+        }).start();
     }
     setActivate() {
         this.visible = true;
@@ -88,7 +88,6 @@ export class Knife extends Sprite {
 
     update(dt) {
         this.currentTime += dt;
-
         switch (this.state) {
             case "move":
                 this.y -= this.speed * dt;
@@ -137,6 +136,6 @@ export class Knife extends Sprite {
     }
    
     moveUpABit() {
-        new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+        new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
       }
 }

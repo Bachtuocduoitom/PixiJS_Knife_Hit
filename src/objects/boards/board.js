@@ -100,38 +100,38 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},25)
+      .to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3},350)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: 280, y: 1200, rotation:this.fragments1.rotation + 4 },50)
-          .start(this.currentDt);
+          .to({ x: 280, y: 1200, rotation:this.fragments1.rotation + 4 },850)
+          .start();
       })
-      .start(this.currentDt);
+      .start();
 
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },25)
+      .to({ x: 180, y: -350, rotation:this.fragments2.rotation + 2 },350)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },50)
-          .start(this.currentDt);
+          .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },850)
+          .start();
       })
-      .start(this.currentDt);
+      .start();
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },30)
+      .to({ x: -200, y: -350, rotation:this.fragments3.rotation -3 },400)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },50)
-          .start(this.currentDt);
+          .to({ x: -400, y: 1350, rotation:this.fragments3.rotation -5 },850)
+          .start();
       })
-      .start(this.currentDt);
+      .start();
 
       // set rơi mảnh vụn
       new TWEEN.Tween(this.fragmentsMin)
-      .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },80)
-      .start(this.currentDt);
+      .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },800)
+      .start();
   }
 
   setStop() {
@@ -140,7 +140,7 @@ export class Board extends Sprite {
 
   update(dt) {
     this.currentDt += dt;
-    TWEEN.update(this.currentDt);
+    //TWEEN.update(this.currentDt);
     if (this.isBroken) {
       this.boardSprite.texture = null;
       this.angleRotation = 0;
@@ -196,11 +196,11 @@ export class Board extends Sprite {
       this.boardFilter.gamma = 1.5;
     }).onComplete(() => {
       this.boardFilter.gamma = 1;
-    }).start(this.currentDt);
+    }).start();
   }
 
   randomRotationToChange() {
-    this.numRotationToChange = Util.random(1, 2.5);
+    this.numRotationToChange = Util.random(1, 2);
   }
 
 }

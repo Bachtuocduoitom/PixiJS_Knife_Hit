@@ -2,6 +2,7 @@ import { Application, Assets } from "pixi.js";
 import { GameConstant } from "./gameConstant";
 import { PlayScene } from "./objects/scenes/playScene";
 import { manifest } from "./manifest";
+import { SceneManager } from "./objects/scenes/sceneManager";
 
 export class Game {
     static init() {
@@ -17,11 +18,15 @@ export class Game {
             this._loadGameDataLevel().then((data) => {
                 this.dataLevel = data.level;
 
-                this._initScene();
+                // this._initSceneManager();
+                
+                // this.app.ticker.add(this.update, this);
+
+                this._initSceneManager();
                 
                 this.app.ticker.add(this.update, this);
             })
-           .catch(err => console.log("lỗi"))
+          
         })
         this.resize();
         window.addEventListener("resize", this.resize);
@@ -37,12 +42,18 @@ export class Game {
     }
 
     static update(dt) {
-        this.playScene.update(dt);
+        //this.playScene.update(dt);
+        this.sceneManager.update(dt);
     }
 
     static _initScene() {
         this.playScene = new PlayScene();
         this.app.stage.addChild(this.playScene);
+    }
+
+    static _initSceneManager() {
+        this.sceneManager = new SceneManager();
+        this.app.stage.addChild(this.sceneManager);
     }
 
     static resize() {

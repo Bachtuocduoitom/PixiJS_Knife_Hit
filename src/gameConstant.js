@@ -8,7 +8,7 @@ export const GameConstant = Object.freeze({
     BOARD_X_POSITION: 360,
     BOARD_Y_POSITION: 386,
 
-    JUMP_TIMER: 2,
+    JUMP_TIMER: 20,
     JUMP_DISTANCE: 10,
 
     DEBUG_DRAW_COLLIDER: false,

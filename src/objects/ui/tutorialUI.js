@@ -35,11 +35,11 @@ export class TutorialUI extends Container{
 
     updateUI(dt) {
       this.currentTime += dt;
-      TWEEN.update(this.currentTime);
+      //TWEEN.update(this.currentTime);
     }
 
     _startBlink() {
-      new TWEEN.Tween(this.tutorialText).to({alpha: 0}, 35).yoyo(true).repeat(Infinity).start(this.currentTime);
+      new TWEEN.Tween(this.tutorialText).to({alpha: 0}, 750).yoyo(true).repeat(Infinity).start();
     }
 
     resize() {

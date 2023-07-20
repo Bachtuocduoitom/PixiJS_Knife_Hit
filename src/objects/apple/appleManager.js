@@ -52,7 +52,6 @@ export class AppleManager extends Container {
 
     update(dt) {
         this.currentTime += dt;
-        TWEEN.update(this.currentTime);
         this.graphic.clear();
         this.apples.forEach(apple => {
             apple.angleRotation = this.boardAngleRotation;
@@ -93,12 +92,12 @@ export class AppleManager extends Container {
         this.addChild(flare);
 
 
-        new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 13).onComplete(() => {
-            new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+        new TWEEN.Tween(slice1).to({x: slice1.x - 90, y: slice1.y - 120}, 150).onComplete(() => {
+            new TWEEN.Tween(slice1).to({x: slice1.x - 150, y: 1350}, 380).start().onComplete(() => {
                 this.removeChild(slice1);
                 slice1.destroy();
             });
-        }).start(this.currentTime);
+        }).start();
         // new TWEEN.Tween(slice1).to({x: slice1.x - 200, y: 1350}, 35)
         // .onUpdate(() => {
         //     slice1.y -= acceleration;
@@ -111,13 +110,13 @@ export class AppleManager extends Container {
         // }).start(this.currentTime);
 
         //new TWEEN.Tween(this.slice2).to({x: this.slice2.x + 40, y: this.slice2.y - 50}, 9).onComplete(() => {
-            new TWEEN.Tween(slice2).to({x: slice2.x + 150, y: 1350}, 35).start(this.currentTime).onComplete(() => {
+            new TWEEN.Tween(slice2).to({x: slice2.x + 150, y: 1350}, 450).start().onComplete(() => {
                 this.removeChild(slice2);
                 slice2.destroy();
             });
         //}).start(this.currentTime);
 
-        new TWEEN.Tween(flare).to({alpha: 1, scale: { x: 1.0, y: 1.0 }}, 5).yoyo(true).repeat(1).start(this.currentTime).onComplete(() => {
+        new TWEEN.Tween(flare).to({alpha: 1, scale: { x: 1.0, y: 1.0 }}, 50).yoyo(true).repeat(1).start().onComplete(() => {
             this.removeChild(flare);
             flare.destroy();
         });;

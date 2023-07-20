@@ -11,6 +11,22 @@ export const manifest = {
                 srcs: 'assets/images/bg.png'
             },
             {
+                name: 'logo',
+                srcs: 'assets/images/bang1.png'
+            },
+            {
+                name: 'knife_logo',
+                srcs: 'assets/images/knife_logo.png'
+            },
+            {
+                name: 'flying_knife_logo',
+                srcs: 'assets/images/flying_knife_logo.png'
+            },
+            {
+                name: 'hit_logo',
+                srcs: 'assets/images/hit_logo.png'
+            },
+            {
                 name: 'knife',
                 srcs: 'assets/images/knife.png'
             },
@@ -65,6 +81,18 @@ export const manifest = {
             {
                 name: 'bgButton',
                 srcs: 'assets/images/bgButton.png'
+            },
+            {
+                name: 'greenButton',
+                srcs: 'assets/images/greenButton.png'
+            },
+            {
+                name: 'redpinkButton',
+                srcs: 'assets/images/redpinkButton.png'
+            },
+            {
+                name: 'blueButton',
+                srcs: 'assets/images/blueButton.png'
             },
             {
                 name: 'victoryParticle',

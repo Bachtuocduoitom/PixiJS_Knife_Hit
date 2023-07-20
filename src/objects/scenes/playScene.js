@@ -14,6 +14,7 @@ import { ResultGameUI } from "../ui/resultGameUI";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
+import { MenuUI } from "../ui/menuUI";
 
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
@@ -66,12 +67,13 @@ export class PlayScene extends Container {
       this.addChild(this.tutorialUI);
       this.tutorialUI.on("tapped", (e) => this._onStart(e));
     } else {
-    this.state = GameState.Playing;
-      
+      this.state = GameState.Playing;
     }
 
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
+    this.resultUI.on("home", (e) => this._backHome(e));
+    
   }
 
   _initDataManager() {
@@ -148,13 +150,15 @@ export class PlayScene extends Container {
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
-    this._initGamePlay();
 
     //destroy UI and initial new ones
     this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
     this.playUI.destroy();
     this.tutorialUI.destroy();
     this.resultUI.destroy();
+
+    //init new UI and gameplay
+    this._initGamePlay();
     this._initUI();
     console.log("tiep tuc");
   }
@@ -177,6 +181,12 @@ export class PlayScene extends Container {
     this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
+
+    
+  }
+
+  _backHome(e) {
+    this.parent.newGame();
   }
 
   _initCircleFlare() {
@@ -212,9 +222,10 @@ export class PlayScene extends Container {
     this.boardBroken = Sound.from(Game.bundle.brokenBoard);
     this.boardBroken.volume = 100;
   }
+  
   update(dt) {
     this.currentDt += dt;
-    TWEEN.update(this.currentDt);
+    // /TWEEN.update(this.currentDt);
     this.knifeManager.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);
@@ -240,14 +251,14 @@ export class PlayScene extends Container {
     this.whiteCircle.alpha = 0.2;
 
     new TWEEN.Tween(this.whiteCircle)
-    .to({scale: {x:0.5, y: 0.5}}, 4)
+    .to({scale: {x:0.5, y: 0.5}}, 100)
     .onComplete(() => {
       new TWEEN.Tween(this.whiteCircle)
-      .to({scale: {x:1.5 ,y: 1.5}}, 8)
+      .to({scale: {x:1.5 ,y: 1.5}}, 150)
       .onComplete(() => {this.whiteCircle.visible = false})
-      .start(this.currentDt)
+      .start()
     })
-    .start(this.currentDt);
+    .start();
 
     //vong tron loe sang
     this.circleLine.x = this.board.x;
@@ -256,17 +267,17 @@ export class PlayScene extends Container {
     this.circleLine.alpha = 0.3;
     
     new TWEEN.Tween(this.circleLine)
-    .to({scale: {x:1.5, y: 1.5}}, 5)
+    .to({scale: {x:1.5, y: 1.5}}, 100)
     .onComplete(() => {
       new TWEEN.Tween(this.circleLine)
-      .to({scale: {x:2 ,y: 2}}, 8)
+      .to({scale: {x:2 ,y: 2}}, 150)
       .onComplete(() => {
         this.circleLine.alpha = 0.01;
         this.circleLine.visible = false;
       })
-      .start(this.currentDt)
+      .start()
     })
-    .start(this.currentDt);
+    .start();
   }
 
   _showKnifeCollisionFlare(knife) {
@@ -278,17 +289,17 @@ export class PlayScene extends Container {
     this.whiteCircle.alpha = 0.5;
 
     new TWEEN.Tween(this.whiteCircle)
-    .to({scale: {x:0.7, y: 0.7}}, 6)
+    .to({scale: {x:0.7, y: 0.7}}, 60)
     .onComplete(() => {
       this.whiteCircle.visible = false;
     })
-    .start(this.currentDt);
+    .start();
 
     //man hinh loe sang
     let sceneFilter = new AdjustmentFilter();
     this.gameplay.filters = [sceneFilter];
     new TWEEN.Tween(this.gameplay)
-    .to({alpha : 1,scale: {x:1.05, y: 1.05}}, 8)
+    .to({alpha : 1,scale: {x:1.05, y: 1.05}}, 150)
     .yoyo(true).repeat(1)
     .onUpdate(() => {
       sceneFilter.gamma = 2;
@@ -297,7 +308,7 @@ export class PlayScene extends Container {
     .onComplete(() => {
       sceneFilter.gamma = 1;
     })
-    .start(this.currentDt);
+    .start();
   }
 
   _onStart(e) {
@@ -325,10 +336,7 @@ export class PlayScene extends Container {
                   
                   setTimeout(() => {
                     this.state = GameState.Lose;
-                    this.resultUI.show();
-                    this.resultUI.messageText.text = "You lose";
-                    this.resultUI.buttonText.text = "Chơi lại";
-                    this.resultUI.messageText.style.fill = "red";
+                    this.resultUI.showLoseBox();
                   }, 1500);
                 }
               });

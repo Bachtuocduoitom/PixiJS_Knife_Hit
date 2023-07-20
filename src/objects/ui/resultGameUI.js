@@ -11,6 +11,7 @@ export class ResultGameUI extends Container {
     this._initBox();
     this._initMessage();
     this._initButton();
+    this._initHomeButton()
     this.resize();
     this.sortableChildren = true;
   }
@@ -23,7 +24,7 @@ export class ResultGameUI extends Container {
     this.overlay.eventMode = 'static';
     this.addChild(this.overlay);
   }
- _initBox() {
+  _initBox() {
     // Hộp chính
     this.box = new Sprite(Game.bundle.resultGameBg);
     this.box.width = 600;
@@ -39,8 +40,9 @@ export class ResultGameUI extends Container {
     // this.addChild(this.box);
     // // Bắt đầu phát lại hình ảnh chuyển động
     // this.box.play();
-    }
- _initMessage() {
+  }
+    
+  _initMessage() {
     // Message
     this.messageText = new Text('You win', {
         fontSize: 80,
@@ -51,28 +53,57 @@ export class ResultGameUI extends Container {
     });
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
- }
- _initButton() {
+  }
+  _initButton() {
     // option 1
-    this.button = new Sprite(Game.bundle.bgButton);
-    this.button.width = 300;
+    this.button = new Sprite(Game.bundle.greenButton);
+    this.button.width = 200;
     this.button.height = 80;   
+    this.button.anchor.set(0.5);
     this.button.eventMode = 'static';
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
-    this.buttonText = new Text("Tiếp tục", {
+    this.buttonText = new Text("Next", {
       fontSize: 40,
       fill: "#FFFFFF",
       fontWeight: "bold",
     });
     this.buttonText.zIndex = 100;
+    this.buttonText.anchor.set(0.5);
     this.addChild(this.button);
     this.addChild(this.buttonText);
     Util.registerOnPointerDown(this.button, this._onTapButton, this);
  }
+
   _onTapButton() {
     this.emit("tapped");
   }
+
+  _initHomeButton() {
+    // option 1
+    this.homeButton = new Sprite(Game.bundle.blueButton);
+    this.homeButton.width = 200;
+    this.homeButton.height = 80;   
+    this.homeButton.anchor.set(0.5);
+    this.homeButton.eventMode = 'static';
+    this.homeButton.zIndex = 0;
+    // Thêm văn bản cho option 1
+    this.homeButtonText = new Text("Home", {
+      fontSize: 40,
+      fill: "#FFFFFF",
+      fontWeight: "bold",
+    });
+    this.homeButtonText.zIndex = 100;
+    this.homeButtonText.anchor.set(0.5);
+    this.addChild(this.homeButton);
+    this.addChild(this.homeButtonText);
+    Util.registerOnPointerDown(this.homeButton, this._onTapHomeButton, this);
+ }
+
+  _onTapHomeButton() {
+    this.emit("home");
+  }
+
   hide() {
     this.visible = false;
   }
@@ -80,6 +111,7 @@ export class ResultGameUI extends Container {
   show() {
     this.visible = true;
   }
+
   resize(){
     this.box.x = GameConstant.GAME_WIDTH - this.box.width - 60;
     this.box.y = (GameConstant.GAME_HEIGHT - this.box.height) / 2 - this.box.height /6;
@@ -87,10 +119,26 @@ export class ResultGameUI extends Container {
     this.messageText.x = GameConstant.GAME_WIDTH /2 - this.messageText.width /2;
     this.messageText.y =this.box.y + this.box.y / 4 ;
 
-    this.button.x = this.box.x /2 + this.button.width /1.6  ;
-    this.button.y = 2 * this.box.y - 1.5 * this.button.height;
+    this.homeButton.x = this.box.x/2 + this.homeButton.width  ;
+    this.homeButton.y = this.box.y + this.box.height/2 +  this.homeButton.height + 30;
 
-    this.buttonText.x = GameConstant.GAME_WIDTH /2 - this.buttonText.width /2;
-    this.buttonText.y = GameConstant.GAME_HEIGHT /2;
+    this.homeButtonText.x = this.homeButton.x;
+    this.homeButtonText.y = this.homeButton.y;
+    
+    this.button.x = this.box.x/2 + this.box.width/2 +  this.button.width - 50;
+    this.button.y = this.box.y + this.box.height/2 +  this.button.height + 30;
+
+    this.buttonText.x = this.button.x;
+    this.buttonText.y = this.button.y;
+
+  }
+
+  showLoseBox() {
+    this.show();
+    this.messageText.text = "You lose";
+    this.buttonText.text = "Replay";
+    this.messageText.style.fill = "red";
+
+    this.button.texture = Game.bundle.redpinkButton;
   }
 }
