@@ -6,8 +6,6 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 
-
-
 export class KnifeManager2 extends Container {
     constructor(data) {
         super();
@@ -61,7 +59,7 @@ export class KnifeManager2 extends Container {
 
 
     // _spawnObs(avaiAngle) {
-    //     let knife = new Knife(Game.bundle.knife);
+    //     let knife = new Knife(Game.bundle.knife2);
     //     knife.x = GameConstant.BOARD_X_POSITION;
     //     knife.y = GameConstant.BOARD_Y_POSITION;
     //     knife.anchor.set(0.5, -0.5);
@@ -88,36 +86,32 @@ export class KnifeManager2 extends Container {
 
     update(dt) {
         this.graphic.clear();
-
         this.knives.forEach(knife => {
-            knife.update(dt);          
-
+            knife.update(dt);
             //ve bound
             // this.graphic.beginFill(0x880808, 1);
             // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
             // this.graphic.endFill();
         });
-      
-        // this.obsKnives.forEach(obs => {
-        //     obs.angleRotation = this.boardAngleRotation;
-        //     obs.update(dt);
-        // })
+        this.obsKnives.forEach(obs => {
+            obs.angleRotation = this.boardAngleRotation;
+            obs.update(dt);
+        })
     }
 
-    // setObsFall() {
-    //     this.obsKnives.forEach(obs => {
-    //         obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width/2;
-    //         obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height/2;
-    //         obs.anchor.set(0.5);
-    //         obs.collider.anchor.set(0.5);
-    //         if (this.obsKnives.indexOf(obs) === (this.obsKnives.length - 1)) {
-    //             obs.setLastObsFall();
-    //         } else {
-    //             obs.setAnotherObsFall();
-    //         }
-            
-    //     })
-    // }
+    setObsFall() {
+        this.obsKnives.forEach(obs => {
+            obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width/2;
+            obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height/2;
+            obs.anchor.set(0.5);
+            obs.collider.anchor.set(0.5);
+            if (this.obsKnives.indexOf(obs) === (this.obsKnives.length - 1)) {
+                obs.setLastObsFall();
+            } else {
+                obs.setAnotherObsFall();
+            }
+        })
+    }
 
     onClicky(e) {
         if (this.knives[0].state === "activated") {

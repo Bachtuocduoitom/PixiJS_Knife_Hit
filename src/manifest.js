@@ -107,6 +107,10 @@ export const manifest = {
                 srcs: 'assets/images/cirleLine.png'
             },
             {
+                name: 'iconPlayer',
+                srcs: 'assets/images/iconPlayer.png'
+            },
+            {
                 name: 'frgLg',
                 srcs: 'assets/spritesheet/frgLg.json'
             },

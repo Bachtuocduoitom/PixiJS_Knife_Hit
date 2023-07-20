@@ -59,7 +59,6 @@ export class KnifeManager extends Container {
         }        
     }
 
-
     _spawnObs(avaiAngle) {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.BOARD_X_POSITION;
