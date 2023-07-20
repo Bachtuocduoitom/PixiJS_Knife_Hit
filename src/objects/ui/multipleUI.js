@@ -7,6 +7,7 @@ export class MultipleUI extends Container {
     constructor(data, score, appleScore, score2, appleScore2) {
         super();
         this.playTime = 0;
+        this.levelData = data;
         this.score = score;
         this.score2 = score2;
         this.appleScore = appleScore;
@@ -91,7 +92,7 @@ export class MultipleUI extends Container {
         this.knifeIcons = [];
         this.knifeIconsContainer = new Container();
         this.addChild(this.knifeIconsContainer);
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < this.levelData.numOfKnife(); i++) {
             let knife = Sprite.from(Game.bundle.knife_white_icon);
             knife.y = i * 45;
             this.knifeIcons.push(knife);
@@ -104,7 +105,7 @@ export class MultipleUI extends Container {
         this.knifeIconsContainer2 = new Container();
         this.knifeIconsContainer2.rotation = Math.PI;
         this.addChild(this.knifeIconsContainer2);
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < this.levelData.numOfKnife(); i++) {
             let knife2 = Sprite.from(Game.bundle.knife_white_icon);
             knife2.y = i * 45;
             this.knifeIcons2.push(knife2);

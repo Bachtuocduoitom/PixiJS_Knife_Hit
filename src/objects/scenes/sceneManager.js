@@ -71,6 +71,9 @@ export class SceneManager extends Container {
         if (this.playScene != null) {
             this.playScene.update(dt);
         }
+        if (this.dualScene != null) {
+            this.dualScene.update(dt);
+        }
     }
 
     _initNorMode(e) {

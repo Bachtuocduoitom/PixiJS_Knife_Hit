@@ -1,7 +1,6 @@
 import { Application, Assets } from "pixi.js";
 import { GameConstant } from "./gameConstant";
 import { PlayScene } from './objects/scenes/playScene'
-import { DualScene } from "./objects/scenes/dualScene";
 import { manifest } from "./manifest";
 import { SceneManager } from "./objects/scenes/sceneManager";
 
