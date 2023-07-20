@@ -5005,7 +5005,7 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.fragments3.visible = false;
     this.fragmentsMin = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from("../assets/images/minFrg.png");
     this.fragmentsMin.anchor.set(0.5);
-    this.fragmentsMin.scale.set(0.8);
+    this.fragmentsMin.scale.set(1.5);
     this.fragmentsMin.visible = false;
     this.addChild(this.fragments1, this.fragments2, this.fragments3, this.fragmentsMin);
   }
@@ -6002,7 +6002,6 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   _onRestartGame() {
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
-    this.score = 0;
     this._initGamePlay();
     this.removeChild(this.dualUI, this.resultUI);
     this.dualUI.destroy();
