@@ -5,6 +5,7 @@ import { Game } from "../../game";
 import { PlayScene } from "./playScene";
 import { GameConstant } from "../../gameConstant";
 import * as TWEEN from "@tweenjs/tween.js";
+import { DualScene } from "./dualScene";
 
 export class SceneManager extends Container {
     constructor() {
@@ -80,6 +81,8 @@ export class SceneManager extends Container {
 
     _initDualMode(e) {
         console.log("dual button tapped");
+        this.dualScene = new DualScene();
+        this.addChild(this.dualScene);
     }
 
     hideUI() {
@@ -87,15 +90,20 @@ export class SceneManager extends Container {
         this.menuUI.hide();
     }
 
-    newGame() {
+    norToHome() {
         this.removeChild(this.playScene);
         this.playScene.destroy();
         
     }
 
+    dualToHome() {
+        this.removeChild(this.dualScene);
+        this.dualScene.destroy();
+    }
+
     _addTweenLogo() {
-        new TWEEN.Tween(this.knifeLogo).to({rotation: -Math.PI/30}, 1000).easing(TWEEN.Easing.Circular.Out).yoyo(true).repeat(Infinity).start();
-        new TWEEN.Tween(this.hitLogo).to({rotation: Math.PI/40}, 1000).easing(TWEEN.Easing.Circular.Out).yoyo(true).repeat(Infinity).start();
+        new TWEEN.Tween(this.knifeLogo).to({rotation: -Math.PI/30}, 1000).yoyo(true).repeat(Infinity).start();
+        new TWEEN.Tween(this.hitLogo).to({rotation: Math.PI/40}, 1000).yoyo(true).repeat(Infinity).start();
     }
 
 }

@@ -6,9 +6,7 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 
-
-
-export class KnifeManager extends Container {
+export class KnifeManager2 extends Container {
     constructor(data) {
         super();
         this.knifeData = data;
@@ -31,9 +29,9 @@ export class KnifeManager extends Container {
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new Knife(Game.bundle.knife2);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = GameConstant.KNIFE_Y_POSITION;
+        knife.y = 170;
         knife.state = KnifeState.ACTIVATED;
         this.knives.push(knife);
         this.addChild(knife);
@@ -41,9 +39,9 @@ export class KnifeManager extends Container {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new Knife(Game.bundle.knife2);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = 1080;
+        knife.y = -1080;
         knife.visible = false;
         knife.state = KnifeState.DEFAULT;
         //knife.alpha = 0;
@@ -52,62 +50,52 @@ export class KnifeManager extends Container {
     }
 
     //sinh obstacle knife
-    spawnObsKnives(avaiAngle) {
-        let numOfDefautObs = Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
-        for (let i = 0; i < numOfDefautObs; i++) {
-            this._spawnObs(avaiAngle);
-        }        
-    }
+    // spawnObsKnives(avaiAngle) {
+    //     let numOfDefautObs = Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
+    //     for (let i = 0; i < numOfDefautObs; i++) {
+    //         this._spawnObs(avaiAngle);
+    //     }        
+    // }
 
-    _spawnObs(avaiAngle) {
-        let knife = new Knife(Game.bundle.knife);
-        knife.x = GameConstant.BOARD_X_POSITION;
-        knife.y = GameConstant.BOARD_Y_POSITION;
-        knife.anchor.set(0.5, -0.5);
-        knife.collider.anchor.set(0.5, -0.5);
-        this._setObsAng(knife, avaiAngle);
-        knife.beObs();
-        this.obsKnives.push(knife);
-        this.addChild(knife);
-    }
+
+    // _spawnObs(avaiAngle) {
+    //     let knife = new Knife(Game.bundle.knife2);
+    //     knife.x = GameConstant.BOARD_X_POSITION;
+    //     knife.y = GameConstant.BOARD_Y_POSITION;
+    //     knife.anchor.set(0.5, -0.5);
+    //     knife.collider.anchor.set(0.5, -0.5);
+    //     this._setObsAng(knife, avaiAngle);
+    //     knife.beObs();
+    //     this.obsKnives.push(knife);
+    //     this.addChild(knife);
+    // }
 
     //dat goc ban dau cho dao gam tren go
-    _setObsAng(obs, avaiAngle) {
-        let i = Util.randomInteger(0, 17);
-        while (!avaiAngle[i].available) {
-            if (i === 17) {
-                i = 0;
-            } else {
-                ++i;
-            }
-        }
-        obs.angle = avaiAngle[i].angle;
-        avaiAngle[i].available = false;
-    }
+    // _setObsAng(obs, avaiAngle) {
+    //     let i = Util.randomInteger(0, 17);
+    //     while (!avaiAngle[i].available) {
+    //         if (i === 17) {
+    //             i = 0;
+    //         } else {
+    //             ++i;
+    //         }
+    //     }
+    //     obs.angle = avaiAngle[i].angle;
+    //     avaiAngle[i].available = false;
+    // }
 
     update(dt) {
         this.graphic.clear();
-
         this.knives.forEach(knife => {
-            knife.update(dt);          
-
+            knife.update(dt);
             //ve bound
             // this.graphic.beginFill(0x880808, 1);
             // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
             // this.graphic.endFill();
         });
-      
         this.obsKnives.forEach(obs => {
             obs.angleRotation = this.boardAngleRotation;
             obs.update(dt);
-
-            //ve bound
-            // this.graphic.beginFill(0x880808, 1);
-            // this.graphic.drawRect(obs.collider.getBounds().x, obs.collider.getBounds().y, obs.collider.getBounds().width, obs.collider.getBounds().height);
-            // this.graphic.endFill();
-            // console.log(- obs.angle *Math.PI / 180 % (2* Math.PI));
-            // let bb = obs.collider.getBounds()
-            // console.log(bb.x + bb.width/2, bb.y + bb.height/2);
         })
     }
 
@@ -122,13 +110,12 @@ export class KnifeManager extends Container {
             } else {
                 obs.setAnotherObsFall();
             }
-            
         })
     }
 
     onClicky(e) {
         if (this.knives[0].state === "activated") {
-            this.knives[0].move();
+            this.knives[0].move2();
             return true;
         } else {return false;}
         
@@ -139,6 +126,4 @@ export class KnifeManager extends Container {
            obs.moveUpABit();
         })
     }
-
-
 }

@@ -1,6 +1,7 @@
 import { Application, Assets } from "pixi.js";
 import { GameConstant } from "./gameConstant";
-import { PlayScene } from "./objects/scenes/playScene";
+import { PlayScene } from './objects/scenes/playScene'
+import { DualScene } from "./objects/scenes/dualScene";
 import { manifest } from "./manifest";
 import { SceneManager } from "./objects/scenes/sceneManager";
 
@@ -46,9 +47,10 @@ export class Game {
         this.sceneManager.update(dt);
     }
 
-    static _initScene() {
+    static _initPlayScene() {
         this.playScene = new PlayScene();
         this.app.stage.addChild(this.playScene);
+        console.log(this.playScene);
     }
 
     static _initSceneManager() {

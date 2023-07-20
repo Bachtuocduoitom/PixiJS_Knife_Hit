@@ -1,4 +1,11 @@
-import { AnimatedSprite, Container, Graphics, Sprite, Text, Texture } from "pixi.js";
+import {
+  AnimatedSprite,
+  Container,
+  Graphics,
+  Sprite,
+  Text,
+  Texture,
+} from "pixi.js";
 import { GameConstant } from "../../gameConstant";
 import { manifest } from "../../manifest";
 import { Game } from "../../game";
@@ -19,7 +26,7 @@ export class ResultGameUI extends Container {
   _initOverLay() {
     this.overlay = new Graphics();
     this.overlay.beginFill(0x000000, 0.5);
-    this.overlay.drawRect(0, 0, GameConstant.GAME_WIDTH, GameConstant.GAME_HEIGHT);
+    this.overlay.drawRect(0,0,GameConstant.GAME_WIDTH,GameConstant.GAME_HEIGHT);
     this.overlay.endFill();
     this.overlay.eventMode = 'static';
     this.addChild(this.overlay);
@@ -31,25 +38,16 @@ export class ResultGameUI extends Container {
     this.box.height = 400;
     this.box.opacity = 0.6;
     this.addChild(this.box);
-    // const gifTexture = Texture.from('../assets/images/victory.gif');
-    // this.box = new AnimatedSprite([gifTexture]);
-    // // Thiết lập vị trí và kích thước của this.box
-    // this.box.width = 400;
-    // this.box.height =400;
-    // // Thêm this.box vào stage
-    // this.addChild(this.box);
-    // // Bắt đầu phát lại hình ảnh chuyển động
-    // this.box.play();
   }
-    
+
   _initMessage() {
     // Message
-    this.messageText = new Text('You win', {
-        fontSize: 80,
-        fill: "#ADFF2F",
-        fontWeight: "bold",
-        textAlign: "center",
-        fontFamily : "verdana",
+    this.messageText = new Text("You win", {
+      fontSize: 80,
+      fill: "#ADFF2F",
+      fontWeight: "bold",
+      align: "center",
+      fontFamily: "Comic Sans MS",
     });
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
@@ -67,6 +65,8 @@ export class ResultGameUI extends Container {
       fontSize: 40,
       fill: "#FFFFFF",
       fontWeight: "bold",
+      align : "center",
+      fontFamily: "Comic Sans MS",
     });
     this.buttonText.zIndex = 100;
     this.buttonText.anchor.set(0.5);
@@ -104,6 +104,7 @@ export class ResultGameUI extends Container {
     this.emit("home");
   }
 
+
   hide() {
     this.visible = false;
   }
@@ -114,10 +115,11 @@ export class ResultGameUI extends Container {
 
   resize(){
     this.box.x = GameConstant.GAME_WIDTH - this.box.width - 60;
-    this.box.y = (GameConstant.GAME_HEIGHT - this.box.height) / 2 - this.box.height /6;
+    this.box.y =
+      (GameConstant.GAME_HEIGHT - this.box.height) / 2 - this.box.height / 6;
 
-    this.messageText.x = GameConstant.GAME_WIDTH /2 - this.messageText.width /2;
-    this.messageText.y =this.box.y + this.box.y / 4 ;
+    this.messageText.x = this.box.width / 2 - this.messageText.width / 3.2;
+    this.messageText.y = this.box.y + this.box.y / 4;
 
     this.homeButton.x = this.box.x/2 + this.homeButton.width  ;
     this.homeButton.y = this.box.y + this.box.height/2 +  this.homeButton.height + 30;
@@ -130,7 +132,6 @@ export class ResultGameUI extends Container {
 
     this.buttonText.x = this.button.x;
     this.buttonText.y = this.button.y;
-
   }
 
   showLoseBox() {

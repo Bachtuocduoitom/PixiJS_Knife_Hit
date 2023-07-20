@@ -31,6 +31,10 @@ export const manifest = {
                 srcs: 'assets/images/knife.png'
             },
             {
+                name: 'knife2',
+                srcs: 'assets/images/knife2.png'
+            },
+            {
                 name: 'apple',
                 srcs: 'assets/images/apple.png'
             },
@@ -59,8 +63,20 @@ export const manifest = {
                 srcs: 'assets/images/particle.png'
             },
             {
+                name: 'particleStar',
+                srcs: 'assets/images/particleStar.png'
+            },
+            {
                 name: 'logParticle',
                 srcs: 'assets/particles/log_particle.json'
+            },
+            {
+                name: 'winGameParticle',
+                srcs: 'assets/particles/winGame_particle.json'
+            },
+            {
+                name: 'loseGameParticle',
+                srcs: 'assets/particles/loseGame.json'
             },
             {
                 name: 'knife_hit_wood',
@@ -77,6 +93,14 @@ export const manifest = {
             {
                 name: 'brokenBoard',
                 srcs: 'assets/sounds/brokenBoard.mp3'
+            },
+            {
+                name: 'winGame',
+                srcs: 'assets/sounds/wingame.wav'
+            },
+            {
+                name: 'loseGame',
+                srcs: 'assets/sounds/losegame.wav'
             },
             {
                 name: 'bgButton',
@@ -109,6 +133,10 @@ export const manifest = {
             {
                 name: 'circleLineWhite',
                 srcs: 'assets/images/cirleLine.png'
+            },
+            {
+                name: 'iconPlayer',
+                srcs: 'assets/images/iconPlayer.png'
             },
             {
                 name: 'frgLg',
