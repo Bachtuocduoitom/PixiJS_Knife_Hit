@@ -5849,6 +5849,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
+    this._initParticlesResultgame();
   }
   _initGamePlay() {
     this._initDataManager();
@@ -5864,6 +5865,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initContKnifeManager1();
     this._initContKnifeManager2();
     this._initObstacle();
+    this._initParticles();
     this._initSound();
     this._initCircleFlare();
     console.log(this.gameplay);
@@ -6270,9 +6272,10 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
             this.particleContainer,
             (0,_pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.upgradeConfig)(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.logParticle, [_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particle])
           );
+          logParticle.rotation = Math.PI;
           logParticle.updateSpawnPos(
             this.knifeManager2.knives[0].x,
-            this.knifeManager2.knives[0].y - 30
+            this.knifeManager2.knives[0].y + 30
           );
           logParticle.playOnceAndDestroy();
           this.board.onHit();
@@ -6650,7 +6653,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
         this.resultUI.messageText.y
       );
       winGameParticle.playOnceAndDestroy();
-    }, 1500);
+    }, 1200);
     this._showCircleFlare();
   }
   _onLose() {
