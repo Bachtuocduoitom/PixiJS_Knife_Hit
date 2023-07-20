@@ -4343,6 +4343,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gameConstant */ "./src/gameConstant.js");
 /* harmony import */ var _objects_scenes_playScene__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./objects/scenes/playScene */ "./src/objects/scenes/playScene.js");
 /* harmony import */ var _manifest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./manifest */ "./src/manifest.js");
+/* harmony import */ var _objects_scenes_sceneManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./objects/scenes/sceneManager */ "./src/objects/scenes/sceneManager.js");
 var __async = (__this, __arguments, generator) => {
   return new Promise((resolve, reject) => {
     var fulfilled = (value) => {
@@ -4367,6 +4368,7 @@ var __async = (__this, __arguments, generator) => {
 
 
 
+
 class Game {
   static init() {
     this.app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Application({
@@ -4379,9 +4381,9 @@ class Game {
       this.bundle = bundle;
       this._loadGameDataLevel().then((data) => {
         this.dataLevel = data.level;
-        this._initScene();
+        this._initSceneManager();
         this.app.ticker.add(this.update, this);
-      }).catch((err) => console.log("l\u1ED7i"));
+      });
     });
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -4398,11 +4400,16 @@ class Game {
     });
   }
   static update(dt) {
-    this.playScene.update(dt);
+    this.sceneManager.update(dt);
   }
-  static _initScene() {
+  static _initPlayScene() {
     this.playScene = new _objects_scenes_playScene__WEBPACK_IMPORTED_MODULE_2__.PlayScene();
     this.app.stage.addChild(this.playScene);
+    console.log(this.playScene);
+  }
+  static _initSceneManager() {
+    this.sceneManager = new _objects_scenes_sceneManager__WEBPACK_IMPORTED_MODULE_4__.SceneManager();
+    this.app.stage.addChild(this.sceneManager);
   }
   static resize() {
     const screenWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -4443,7 +4450,8 @@ const GameConstant = Object.freeze({
   KNIFE_Y_POSITION: 950,
   BOARD_X_POSITION: 360,
   BOARD_Y_POSITION: 386,
-  JUMP_TIMER: 2,
+  KNIFE_P1_Y_POSITION: 656.2,
+  JUMP_TIMER: 20,
   JUMP_DISTANCE: 10,
   DEBUG_DRAW_COLLIDER: false
 });
@@ -4560,8 +4568,28 @@ const manifest = {
         srcs: "assets/images/bg.png"
       },
       {
+        name: "logo",
+        srcs: "assets/images/bang1.png"
+      },
+      {
+        name: "knife_logo",
+        srcs: "assets/images/knife_logo.png"
+      },
+      {
+        name: "flying_knife_logo",
+        srcs: "assets/images/flying_knife_logo.png"
+      },
+      {
+        name: "hit_logo",
+        srcs: "assets/images/hit_logo.png"
+      },
+      {
         name: "knife",
         srcs: "assets/images/knife.png"
+      },
+      {
+        name: "knife2",
+        srcs: "assets/images/knife2.png"
       },
       {
         name: "apple",
@@ -4592,8 +4620,20 @@ const manifest = {
         srcs: "assets/images/particle.png"
       },
       {
+        name: "particleStar",
+        srcs: "assets/images/particleStar.png"
+      },
+      {
         name: "logParticle",
         srcs: "assets/particles/log_particle.json"
+      },
+      {
+        name: "winGameParticle",
+        srcs: "assets/particles/winGame_particle.json"
+      },
+      {
+        name: "loseGameParticle",
+        srcs: "assets/particles/loseGame.json"
       },
       {
         name: "knife_hit_wood",
@@ -4612,8 +4652,32 @@ const manifest = {
         srcs: "assets/sounds/brokenBoard.mp3"
       },
       {
+        name: "winGame",
+        srcs: "assets/sounds/wingame.wav"
+      },
+      {
+        name: "loseGame",
+        srcs: "assets/sounds/losegame.wav"
+      },
+      {
         name: "bgButton",
         srcs: "assets/images/bgButton.png"
+      },
+      {
+        name: "greenButton",
+        srcs: "assets/images/greenButton.png"
+      },
+      {
+        name: "redpinkButton",
+        srcs: "assets/images/redpinkButton.png"
+      },
+      {
+        name: "blueButton",
+        srcs: "assets/images/blueButton.png"
+      },
+      {
+        name: "backHomeButton",
+        srcs: "assets/images/backHomeIcon.png"
       },
       {
         name: "victoryParticle",
@@ -4630,6 +4694,10 @@ const manifest = {
       {
         name: "circleLineWhite",
         srcs: "assets/images/cirleLine.png"
+      },
+      {
+        name: "iconPlayer",
+        srcs: "assets/images/iconPlayer.png"
       },
       {
         name: "frgLg",
@@ -4700,7 +4768,7 @@ class Apple extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.currentTime += dt;
   }
   moveUpABit() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_2__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_2__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
   }
 }
 
@@ -4772,7 +4840,6 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   update(dt) {
     this.currentTime += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.update(this.currentTime);
     this.graphic.clear();
     this.apples.forEach((apple) => {
       apple.angleRotation = this.boardAngleRotation;
@@ -4804,17 +4871,17 @@ class AppleManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     flare.x = apple.getBounds().x;
     flare.y = apple.getBounds().y + apple.getBounds().height;
     this.addChild(flare);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 90, y: slice1.y - 120 }, 13).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 90, y: slice1.y - 120 }, 150).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice1).to({ x: slice1.x - 150, y: 1350 }, 380).start().onComplete(() => {
         this.removeChild(slice1);
         slice1.destroy();
       });
-    }).start(this.currentTime);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice2).to({ x: slice2.x + 150, y: 1350 }, 35).start(this.currentTime).onComplete(() => {
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(slice2).to({ x: slice2.x + 150, y: 1350 }, 450).start().onComplete(() => {
       this.removeChild(slice2);
       slice2.destroy();
     });
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(flare).to({ alpha: 1, scale: { x: 1, y: 1 } }, 5).yoyo(true).repeat(1).start(this.currentTime).onComplete(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(flare).to({ alpha: 1, scale: { x: 1, y: 1 } }, 50).yoyo(true).repeat(1).start().onComplete(() => {
       this.removeChild(flare);
       flare.destroy();
     });
@@ -4960,27 +5027,38 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.fragments3.animationSpeed = 0.12;
     this.fragments3.loop = false;
     this.fragmentsMin.visible = true;
-    this.setBroken();
   }
   setBroken() {
     this.isBroken = true;
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3 }, 25).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 280, y: 1200, rotation: this.fragments1.rotation + 4 }, 50).start(this.currentDt);
-    }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 180, y: -350, rotation: this.fragments2.rotation + 2 }, 25).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 }, 50).start(this.currentDt);
-    }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -200, y: -350, rotation: this.fragments3.rotation - 3 }, 30).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -400, y: 1350, rotation: this.fragments3.rotation - 5 }, 50).start(this.currentDt);
-    }).start(this.currentDt);
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragmentsMin).to({ x: -200, y: 1500, rotation: this.fragmentsMin.rotation - 5e-3 }, 80).start(this.currentDt);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 200, y: -2, rotation: this.fragments1.rotation + 3 }, 350).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: 280, y: 1200, rotation: this.fragments1.rotation + 4 }, 850).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 180, y: -350, rotation: this.fragments2.rotation + 2 }, 350).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 }, 850).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -200, y: -350, rotation: this.fragments3.rotation - 3 }, 400).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: -400, y: 1350, rotation: this.fragments3.rotation - 5 }, 850).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragmentsMin).to({ x: -200, y: 1500, rotation: this.fragmentsMin.rotation - 5e-3 }, 800).start();
+  }
+  setBroken2() {
+    this.isBroken = true;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: -220, y: -170, rotation: this.fragments1.rotation + 1 }, 350).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments1).to({ x: -680, y: -320, rotation: this.fragments1.rotation + 2 }, 300).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 200, y: -130, rotation: this.fragments2.rotation + 2 }, 350).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments2).to({ x: 500, y: -350, rotation: this.fragments2.rotation + 3 }, 300).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: 200, y: 60, rotation: this.fragments3.rotation - 3 }, 200).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragments3).to({ x: 680, y: 450, rotation: this.fragments3.rotation - 4 }, 350).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.fragmentsMin).to({ x: -200, y: 1500, rotation: this.fragmentsMin.rotation - 5e-3 }, 600).start();
   }
   setStop() {
     this.isStop = true;
   }
   update(dt) {
     this.currentDt += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.update(this.currentDt);
     if (this.isBroken) {
       this.boardSprite.texture = null;
       this.angleRotation = 0;
@@ -5029,10 +5107,10 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
       this.boardFilter.gamma = 1.5;
     }).onComplete(() => {
       this.boardFilter.gamma = 1;
-    }).start(this.currentDt);
+    }).start();
   }
   randomRotationToChange() {
-    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.random(1, 2.5);
+    this.numRotationToChange = _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.random(1, 2);
   }
 }
 
@@ -5066,7 +5144,10 @@ const KnifeState = Object.freeze({
   ACTIVATED: "activated",
   ACTIVATING: "activating",
   ACTIVE: "active",
+  ACTIVE1: "active1",
+  ACTIVE2: "active2",
   MOVE: "move",
+  MOVE2: "move2",
   OBSTACLE: "obstacle",
   FALL: "fall"
 });
@@ -5090,15 +5171,39 @@ class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.state = KnifeState.MOVE;
     this.speed = 70;
   }
+  move2() {
+    this.state = KnifeState.MOVE2;
+    this.speed = 70;
+  }
   _toActive() {
     this.state = KnifeState.ACTIVATING;
     new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.KNIFE_Y_POSITION }, 1).onComplete(() => {
+      this.state = KnifeState.ACTIVATED;
+    }).start();
+  }
+  _toActive1() {
+    this.state = KnifeState.ACTIVATING;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.KNIFE_Y_POSITION + 170 }, 1).onComplete(() => {
+      this.state = KnifeState.ACTIVATED;
+    }).start();
+  }
+  _toActive2() {
+    this.state = KnifeState.ACTIVATING;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: 170 }, 1).onComplete(() => {
       this.state = KnifeState.ACTIVATED;
     }).start(this.currentTime);
   }
   setActivate() {
     this.visible = true;
     this.state = KnifeState.ACTIVE;
+  }
+  setActivate1() {
+    this.visible = true;
+    this.state = KnifeState.ACTIVE1;
+  }
+  setActivate2() {
+    this.visible = true;
+    this.state = KnifeState.ACTIVE2;
   }
   setFall() {
     this.state = KnifeState.FALL;
@@ -5140,8 +5245,17 @@ class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
       case "move":
         this.y -= this.speed * dt;
         break;
+      case "move2":
+        this.y += this.speed * dt;
+        break;
       case "active":
         this._toActive();
+        break;
+      case "active1":
+        this._toActive1();
+        break;
+      case "active2":
+        this._toActive2();
         break;
       case "fall":
         if (this.isFallDownLeft) {
@@ -5179,7 +5293,7 @@ class Knife extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     }
   }
   moveUpABit() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start(this.currentTime);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this).to({ y: this.y - _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_DISTANCE }, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
   }
 }
 
@@ -5319,6 +5433,272 @@ class KnifeManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
 
 /***/ }),
 
+/***/ "./src/objects/knives/knifeManager1.js":
+/*!*********************************************!*\
+  !*** ./src/objects/knives/knifeManager1.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KnifeManager1: () => (/* binding */ KnifeManager1)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _scenes_playScene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../scenes/playScene */ "./src/objects/scenes/playScene.js");
+/* harmony import */ var _knife__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./knife */ "./src/objects/knives/knife.js");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+
+
+
+
+
+
+class KnifeManager1 extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor(data) {
+    super();
+    this.knifeData = data;
+    console.log(this.knifeData);
+    this.knives = [];
+    this.obsKnives = [];
+    this.numOfKnife = this.knifeData.knifeNumber - 1;
+    this.boardAngleRotation = 0;
+    this.graphic = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+    this.addChild(this.graphic);
+    this._spawnKnives();
+  }
+  _spawnKnives() {
+    this._spawnFirstKnife();
+    for (let i = 0; i < this.numOfKnife; i++) {
+      this._spawnAnotherKnife();
+    }
+  }
+  //sinh dao dau tien
+  _spawnFirstKnife() {
+    let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
+    knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
+    knife.y = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_Y_POSITION + 170;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.ACTIVATED;
+    this.knives.push(knife);
+    this.addChild(knife);
+  }
+  //sinh cac dao con lai
+  _spawnAnotherKnife() {
+    let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
+    knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
+    knife.y = 1080;
+    knife.visible = false;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.DEFAULT;
+    this.knives.push(knife);
+    this.addChild(knife);
+  }
+  //sinh obstacle knife
+  spawnObsKnives(avaiAngle) {
+    let numOfDefautObs = _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
+    for (let i = 0; i < numOfDefautObs; i++) {
+      this._spawnObs(avaiAngle);
+    }
+  }
+  _spawnObs(avaiAngle) {
+    let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
+    knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.BOARD_X_POSITION;
+    knife.y = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.BOARD_Y_POSITION;
+    knife.anchor.set(0.5, -0.5);
+    knife.collider.anchor.set(0.5, -0.5);
+    this._setObsAng(knife, avaiAngle);
+    knife.beObs();
+    this.obsKnives.push(knife);
+    this.addChild(knife);
+  }
+  //dat goc ban dau cho dao gam tren go
+  _setObsAng(obs, avaiAngle) {
+    let i = _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.randomInteger(0, 17);
+    while (!avaiAngle[i].available) {
+      if (i === 17) {
+        i = 0;
+      } else {
+        ++i;
+      }
+    }
+    obs.angle = avaiAngle[i].angle;
+    avaiAngle[i].available = false;
+  }
+  update(dt) {
+    this.graphic.clear();
+    this.knives.forEach((knife) => {
+      knife.update(dt);
+    });
+    this.obsKnives.forEach((obs) => {
+      obs.angleRotation = this.boardAngleRotation;
+      obs.update(dt);
+    });
+  }
+  setObsFall() {
+    this.obsKnives.forEach((obs) => {
+      obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width / 2;
+      obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height / 2;
+      obs.anchor.set(0.5);
+      obs.collider.anchor.set(0.5);
+      if (this.obsKnives.indexOf(obs) === this.obsKnives.length - 1) {
+        obs.setLastObsFall();
+      } else {
+        obs.setAnotherObsFall();
+      }
+    });
+  }
+  onClicky(e) {
+    if (this.knives[0].state === "activated") {
+      this.knives[0].move();
+      return true;
+    } else {
+      return false;
+    }
+  }
+  onBoardHit() {
+    this.obsKnives.forEach((obs) => {
+      obs.moveUpABit();
+    });
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/knives/knifeManager2.js":
+/*!*********************************************!*\
+  !*** ./src/objects/knives/knifeManager2.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KnifeManager2: () => (/* binding */ KnifeManager2)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _scenes_playScene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../scenes/playScene */ "./src/objects/scenes/playScene.js");
+/* harmony import */ var _knife__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./knife */ "./src/objects/knives/knife.js");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+
+
+
+
+
+
+class KnifeManager2 extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor(data) {
+    super();
+    this.knifeData = data;
+    console.log(this.knifeData);
+    this.knives = [];
+    this.obsKnives = [];
+    this.numOfKnife = this.knifeData.knifeNumber - 1;
+    this.boardAngleRotation = 0;
+    this.graphic = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+    this.addChild(this.graphic);
+    this._spawnKnives();
+  }
+  _spawnKnives() {
+    this._spawnFirstKnife();
+    for (let i = 0; i < this.numOfKnife; i++) {
+      this._spawnAnotherKnife();
+    }
+  }
+  //sinh dao dau tien
+  _spawnFirstKnife() {
+    let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife2);
+    knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
+    knife.y = 170;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.ACTIVATED;
+    this.knives.push(knife);
+    this.addChild(knife);
+  }
+  //sinh cac dao con lai
+  _spawnAnotherKnife() {
+    let knife = new _knife__WEBPACK_IMPORTED_MODULE_2__.Knife(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife2);
+    knife.x = _gameConstant__WEBPACK_IMPORTED_MODULE_4__.GameConstant.KNIFE_X_POSITION;
+    knife.y = -1080;
+    knife.visible = false;
+    knife.state = _knife__WEBPACK_IMPORTED_MODULE_2__.KnifeState.DEFAULT;
+    this.knives.push(knife);
+    this.addChild(knife);
+  }
+  //sinh obstacle knife
+  // spawnObsKnives(avaiAngle) {
+  //     let numOfDefautObs = Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
+  //     for (let i = 0; i < numOfDefautObs; i++) {
+  //         this._spawnObs(avaiAngle);
+  //     }        
+  // }
+  // _spawnObs(avaiAngle) {
+  //     let knife = new Knife(Game.bundle.knife2);
+  //     knife.x = GameConstant.BOARD_X_POSITION;
+  //     knife.y = GameConstant.BOARD_Y_POSITION;
+  //     knife.anchor.set(0.5, -0.5);
+  //     knife.collider.anchor.set(0.5, -0.5);
+  //     this._setObsAng(knife, avaiAngle);
+  //     knife.beObs();
+  //     this.obsKnives.push(knife);
+  //     this.addChild(knife);
+  // }
+  //dat goc ban dau cho dao gam tren go
+  // _setObsAng(obs, avaiAngle) {
+  //     let i = Util.randomInteger(0, 17);
+  //     while (!avaiAngle[i].available) {
+  //         if (i === 17) {
+  //             i = 0;
+  //         } else {
+  //             ++i;
+  //         }
+  //     }
+  //     obs.angle = avaiAngle[i].angle;
+  //     avaiAngle[i].available = false;
+  // }
+  update(dt) {
+    this.graphic.clear();
+    this.knives.forEach((knife) => {
+      knife.update(dt);
+    });
+    this.obsKnives.forEach((obs) => {
+      obs.angleRotation = this.boardAngleRotation;
+      obs.update(dt);
+    });
+  }
+  setObsFall() {
+    this.obsKnives.forEach((obs) => {
+      obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width / 2;
+      obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height / 2;
+      obs.anchor.set(0.5);
+      obs.collider.anchor.set(0.5);
+      if (this.obsKnives.indexOf(obs) === this.obsKnives.length - 1) {
+        obs.setLastObsFall();
+      } else {
+        obs.setAnotherObsFall();
+      }
+    });
+  }
+  onClicky(e) {
+    if (this.knives[0].state === "activated") {
+      this.knives[0].move2();
+      return true;
+    } else {
+      return false;
+    }
+  }
+  onBoardHit() {
+    this.obsKnives.forEach((obs) => {
+      obs.moveUpABit();
+    });
+  }
+}
+
+
+/***/ }),
+
 /***/ "./src/objects/level/dataManager.js":
 /*!******************************************!*\
   !*** ./src/objects/level/dataManager.js ***!
@@ -5407,35 +5787,36 @@ class Collider extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
 
 /***/ }),
 
-/***/ "./src/objects/scenes/playScene.js":
+/***/ "./src/objects/scenes/dualScene.js":
 /*!*****************************************!*\
-  !*** ./src/objects/scenes/playScene.js ***!
+  !*** ./src/objects/scenes/dualScene.js ***!
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   GameState: () => (/* binding */ GameState),
-/* harmony export */   Level1: () => (/* binding */ Level1),
-/* harmony export */   PlayScene: () => (/* binding */ PlayScene)
+/* harmony export */   DualScene: () => (/* binding */ DualScene),
+/* harmony export */   GameState: () => (/* binding */ GameState)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../game */ "./src/game.js");
-/* harmony import */ var _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../backgrounds/background */ "./src/objects/backgrounds/background.js");
-/* harmony import */ var _knives_knifeManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../knives/knifeManager */ "./src/objects/knives/knifeManager.js");
-/* harmony import */ var _boards_board__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../boards/board */ "./src/objects/boards/board.js");
-/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
-/* harmony import */ var _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @pixi/particle-emitter */ "./node_modules/@pixi/particle-emitter/lib/particle-emitter.es.js");
-/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
-/* harmony import */ var _pixi_sound__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @pixi/sound */ "./node_modules/@pixi/sound/lib/index.mjs");
-/* harmony import */ var _apple_appleManager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../apple/appleManager */ "./src/objects/apple/appleManager.js");
-/* harmony import */ var _ui_playUI__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../ui/playUI */ "./src/objects/ui/playUI.js");
-/* harmony import */ var _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../ui/tutorialUI */ "./src/objects/ui/tutorialUI.js");
-/* harmony import */ var _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ui/resultGameUI */ "./src/objects/ui/resultGameUI.js");
-/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
-/* harmony import */ var _level_dataManager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../level/dataManager */ "./src/objects/level/dataManager.js");
-/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+/* harmony import */ var _pixi_sound__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/sound */ "./node_modules/@pixi/sound/lib/index.mjs");
+/* harmony import */ var _knives_knifeManager1__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../knives/knifeManager1 */ "./src/objects/knives/knifeManager1.js");
+/* harmony import */ var _knives_knifeManager2__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../knives/knifeManager2 */ "./src/objects/knives/knifeManager2.js");
+/* harmony import */ var _backgrounds_background__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../backgrounds/background */ "./src/objects/backgrounds/background.js");
+/* harmony import */ var _apple_appleManager__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../apple/appleManager */ "./src/objects/apple/appleManager.js");
+/* harmony import */ var _level_dataManager__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../level/dataManager */ "./src/objects/level/dataManager.js");
+/* harmony import */ var _boards_board__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../boards/board */ "./src/objects/boards/board.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @pixi/particle-emitter */ "./node_modules/@pixi/particle-emitter/lib/particle-emitter.es.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+/* harmony import */ var _ui_dualUI__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ui/dualUI */ "./src/objects/ui/dualUI.js");
+/* harmony import */ var _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../ui/tutorialUI */ "./src/objects/ui/tutorialUI.js");
+/* harmony import */ var _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../ui/resultGameUI */ "./src/objects/ui/resultGameUI.js");
+/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+
 
 
 
@@ -5458,8 +5839,567 @@ const GameState = Object.freeze({
   Win: "win",
   Lose: "lose"
 });
-const Level1 = Object.freeze({
-  KNIFE_NUMBER: 7
+class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor() {
+    super();
+    this.score = 0;
+    this.appleScore = 0;
+    this.score2 = 0;
+    this.appleScore2 = 0;
+    this.currentLevel = 1;
+    this._initGamePlay();
+    this._initUI();
+  }
+  _initGamePlay() {
+    this._initDataManager();
+    this.gameplay = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.gameplay.eventMode = "static";
+    this.gameplay.sortableChildren = true;
+    this.knifeNumber = this.dataManager.numOfKnife();
+    this.knifeNumber2 = this.dataManager.numOfKnife();
+    this.currentDt = 0;
+    this.addChild(this.gameplay);
+    this._initBackground();
+    this._initBoard();
+    this._initContKnifeManager1();
+    this._initContKnifeManager2();
+    this._initObstacle();
+    this._initSound();
+    this._initCircleFlare();
+    console.log(this.gameplay);
+  }
+  _initDataManager() {
+    this.dataManager = new _level_dataManager__WEBPACK_IMPORTED_MODULE_7__.DataManager(this.currentLevel);
+  }
+  _initContKnifeManager1() {
+    this.contKnifeMan1 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.contKnifeMan1.eventMode = "static";
+    this._initKnifeManager1();
+    this.gameplay.addChild(this.contKnifeMan1);
+    this._initBackgroundCont1();
+  }
+  _initBackgroundCont1() {
+    this.bgCont1 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+    this.bgCont1.beginFill(0, 5e-3);
+    this.bgCont1.drawRect(
+      0,
+      0,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_WIDTH,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_HEIGHT / 2
+    );
+    this.bgCont1.y = _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_HEIGHT / 2;
+    this.bgCont1.endFill();
+    this.bgCont1.eventMode = "static";
+    this.contKnifeMan1.addChild(this.bgCont1);
+    this.bgCont1.on("pointerdown", (e) => {
+      this.state = GameState.Playing;
+      this._onClicky(e);
+      console.log("click cont1");
+    });
+  }
+  _initContKnifeManager2() {
+    this.contKnifeMan2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this._initKnifeManager2();
+    this.contKnifeMan2.width = _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_WIDTH;
+    this.contKnifeMan2.height = this.y / 2;
+    this.gameplay.addChild(this.contKnifeMan2);
+    this._initBackgroundCont2();
+  }
+  _initBackgroundCont2() {
+    this.bgCont2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+    this.bgCont2.beginFill(16777215, 5e-3);
+    this.bgCont2.drawRect(
+      0,
+      0,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_WIDTH,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_HEIGHT / 2
+    );
+    this.bgCont2.endFill();
+    this.bgCont2.eventMode = "static";
+    this.contKnifeMan2.addChild(this.bgCont2);
+    this.bgCont2.on("pointerdown", (e) => {
+      this.state = GameState.Playing;
+      this._onClicky2(e);
+      console.log("click cont2");
+    });
+  }
+  _initUI() {
+    this.dualUI = new _ui_dualUI__WEBPACK_IMPORTED_MODULE_12__.DualUI(
+      this.dataManager,
+      this.score,
+      this.appleScore,
+      this.score2,
+      this.appleScore2
+    );
+    this.dualUI.on("backHome", (e) => this._backHome(e));
+    this.addChild(this.dualUI);
+    this.resultUI = new _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_14__.ResultGameUI();
+    this.addChild(this.resultUI);
+    this.resultUI.messageText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.GAME_WIDTH / 2 - this.resultUI.messageText.width / 1.3;
+    this.tutorialUI = new _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_13__.TutorialUI();
+    this.addChild(this.tutorialUI);
+    this.tutorialUI.on("tapped", (e) => {
+      this.tutorialUI.hide();
+    });
+    this.resultUI.hide();
+    this.resultUI.on("tapped", (e) => this._onRestartGame(e));
+    this.resultUI.on("home", (e) => this._backHome(e));
+  }
+  _initBackground() {
+    this.background = new _backgrounds_background__WEBPACK_IMPORTED_MODULE_5__.Background(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.background);
+    this.background.x = 0;
+    this.background.y = 0;
+    this.gameplay.addChild(this.background);
+  }
+  _initBoard() {
+    this.board = new _boards_board__WEBPACK_IMPORTED_MODULE_8__.Board(this.dataManager.getBoardData());
+    console.log(this.dataManager.getBoardData());
+    this.board.x = _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.BOARD_X_POSITION;
+    this.board.y = _gameConstant__WEBPACK_IMPORTED_MODULE_9__.GameConstant.BOARD_Y_POSITION * 1.7;
+    this.gameplay.addChild(this.board);
+    this.board.zIndex = 100;
+  }
+  _initKnifeManager1() {
+    this.knifeManager1 = new _knives_knifeManager1__WEBPACK_IMPORTED_MODULE_3__.KnifeManager1(this.dataManager.getKnifeData());
+    this.knifeManager1.x = 0;
+    this.knifeManager1.y = 0;
+    this.gameplay.addChild(this.knifeManager1);
+    this.knifeManager1.zIndex = 0;
+  }
+  _initObstacle() {
+    this.avaiAngle = [];
+    for (let i = 0; i < 18; i++) {
+      this.avaiAngle[i] = {
+        angle: i * 20,
+        available: true
+      };
+    }
+    if (this.dataManager.haveKnifeOnBoard()) {
+      this.knifeManager1.spawnObsKnives(this.avaiAngle);
+    }
+    this._initAppleManager();
+    if (this.dataManager.haveAppleOnBoard()) {
+      this.appleManager.spawnApples(this.avaiAngle);
+    }
+  }
+  _initAppleManager() {
+    this.appleManager = new _apple_appleManager__WEBPACK_IMPORTED_MODULE_6__.AppleManager(this.dataManager.getAppleData());
+    this.appleManager.x = 0;
+    this.appleManager.y = 0;
+    this.gameplay.addChild(this.appleManager);
+    this.appleManager.zIndex = 101;
+  }
+  _initKnifeManager2() {
+    this.knifeManager2 = new _knives_knifeManager2__WEBPACK_IMPORTED_MODULE_4__.KnifeManager2(this.dataManager.getKnifeData());
+    this.knifeManager2.x = 0;
+    this.knifeManager2.y = 0;
+    this.gameplay.addChild(this.knifeManager2);
+    this.knifeManager1.zIndex = 0;
+  }
+  // xử lí click restart
+  _onRestartGame() {
+    this.removeChild(this.gameplay);
+    this.gameplay.destroy();
+    this.score = 0;
+    this._initGamePlay();
+    this.removeChild(this.dualUI, this.resultUI);
+    this.dualUI.destroy();
+    this.resultUI.destroy();
+    this._initUI();
+    console.log("choi lai");
+    this._initParticlesResultgame();
+  }
+  _backHome(e) {
+    this.parent.dualToHome();
+  }
+  _initParticles() {
+    this.particleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.gameplay.addChild(this.particleContainer);
+  }
+  _initParticlesResultgame() {
+    this.particleContainerResult = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.particleContainerResult);
+  }
+  _initSound() {
+    this.kHitKSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_knife);
+    this.kHitKSound.volume = 0.3;
+    this.kHitWSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_wood);
+    this.kHitApple = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_apple);
+    this.boardBroken = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.brokenBoard);
+    this.boardBroken.volume = 100;
+    this.winGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.winGame);
+    this.loseGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.loseGame);
+  }
+  update(dt) {
+    this.currentDt += dt;
+    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.update(this.currentDt);
+    this.knifeManager1.update(dt);
+    this.knifeManager2.update(dt);
+    this.appleManager.update(dt);
+    this.board.update(dt);
+    this._onCollision();
+    this._syncRotate();
+  }
+  _initCircleFlare() {
+    this.whiteCircle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.circleWhite);
+    this.gameplay.addChild(this.whiteCircle);
+    this.whiteCircle.anchor.set(0.5);
+    this.whiteCircle.zIndex = 150;
+    this.whiteCircle.visible = false;
+    this.circleLine = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.circleLineWhite);
+    this.gameplay.addChild(this.circleLine);
+    this.circleLine.anchor.set(0.5);
+    this.circleLine.zIndex = 150;
+    this.circleLine.visible = false;
+  }
+  _showCircleFlare() {
+    this.whiteCircle.x = this.board.x;
+    this.whiteCircle.y = this.board.y;
+    this.whiteCircle.scale.set(0.8);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.2;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.whiteCircle).to({ scale: { x: 0.5, y: 0.5 } }, 100).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.whiteCircle).to({ scale: { x: 1.5, y: 1.5 } }, 150).onComplete(() => {
+        this.whiteCircle.visible = false;
+      }).start();
+    }).start();
+    this.circleLine.x = this.board.x;
+    this.circleLine.y = this.board.y;
+    this.circleLine.visible = true;
+    this.circleLine.alpha = 0.3;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.circleLine).to({ scale: { x: 1.5, y: 1.5 } }, 100).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.circleLine).to({ scale: { x: 2, y: 2 } }, 150).onComplete(() => {
+        this.circleLine.alpha = 0.01;
+        this.circleLine.visible = false;
+      }).start();
+    }).start();
+  }
+  _showKnifeCollisionFlare(knife) {
+    this.whiteCircle.x = knife.x;
+    this.whiteCircle.y = knife.y - knife.height / 4;
+    this.whiteCircle.scale.set(0.1);
+    this.whiteCircle.visible = true;
+    this.whiteCircle.alpha = 0.5;
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.whiteCircle).to({ scale: { x: 0.7, y: 0.7 } }, 60).onComplete(() => {
+      this.whiteCircle.visible = false;
+    }).start();
+    let sceneFilter = new _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_15__.AdjustmentFilter();
+    this.gameplay.filters = [sceneFilter];
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_16__.Tween(this.gameplay).to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 150).yoyo(true).repeat(1).onUpdate(() => {
+      sceneFilter.gamma = 2;
+    }).onComplete(() => {
+      sceneFilter.gamma = 1;
+    }).start();
+  }
+  _onLose1() {
+    this.kHitKSound.play();
+    this.knifeManager1.knives[0].setFall();
+    this._showKnifeCollisionFlare(this.knifeManager1.knives[0]);
+    this.board.setStop();
+    this.board.onHit();
+    this.knifeManager1.onBoardHit();
+    this.appleManager.onBoardHit();
+    setTimeout(() => {
+      this.loseGame.play();
+    }, 500);
+    setTimeout(() => {
+      this.state = GameState.Lose;
+      this.resultUI.showLoseBox();
+      this.resultUI.messageText.text = "Player2 Win";
+      this.resultUI.buttonText.text = "Restart";
+      this.resultUI.messageText.style.fill = "#ADFF2F";
+      this.resultUI.button.texture = _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.greenButton;
+    }, 1500);
+  }
+  _onLose2() {
+    this.kHitKSound.play();
+    this.knifeManager2.knives[0].setFall();
+    this._showKnifeCollisionFlare(this.knifeManager2.knives[0]);
+    this.board.setStop();
+    this.board.onHit();
+    this.knifeManager2.onBoardHit();
+    this.appleManager.onBoardHit();
+    setTimeout(() => {
+      this.winGame.play();
+    }, 500);
+    setTimeout(() => {
+      this.state = GameState.Lose;
+      this.resultUI.show();
+      this.resultUI.messageText.text = "Player1 Win";
+      this.resultUI.buttonText.text = "Restart";
+    }, 1500);
+  }
+  _onWin() {
+    this.boardBroken.play();
+    this.board.breakUp();
+    this.knifeManager1.setObsFall();
+    this.knifeManager2.setObsFall();
+    this.appleManager.setApplesFall();
+    setTimeout(() => {
+      this.winGame.play();
+    }, 1e3);
+    setTimeout(() => {
+      this.state = GameState.Win;
+      this.resultUI.show();
+      let winGameParticle = new _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.Emitter(
+        this.particleContainerResult,
+        (0,_pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.upgradeConfig)(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.winGameParticle, [
+          _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particleStar,
+          _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particle
+        ])
+      );
+      winGameParticle.updateSpawnPos(
+        this.resultUI.messageText.x + this.resultUI.messageText.width / 2,
+        this.resultUI.messageText.y
+      );
+      winGameParticle.playOnceAndDestroy();
+    }, 1500);
+    this._showCircleFlare();
+  }
+  _onCollision() {
+    if (this.knifeManager1.knives[0] != null) {
+      if (this.knifeManager1.knives[0].state === "move") {
+        if (this.knifeManager1.knives[0].y >= 590) {
+          this.knifeManager1.obsKnives.forEach((knife) => {
+            if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+              this._cal4PointKnife(this.knifeManager1.knives[0]),
+              _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(knife)
+            )) {
+              this._onLose1();
+              this.resultUI.messageText.text = "Player2 Win";
+              this.resultUI.buttonText.text = "Restart";
+              this.resultUI.messageText.style.fill = "#ADFF2F";
+            }
+          });
+          this.knifeManager2.obsKnives.forEach((knife) => {
+            if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+              this._cal4PointKnife(this.knifeManager1.knives[0]),
+              _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(knife)
+            )) {
+              console.log("va ch\u1EA1m dao p1 v\u1EDBi p2");
+              this._onLose1();
+              this.resultUI.messageText.text = "Player2 Win";
+              this.resultUI.buttonText.text = "Restart";
+            }
+          });
+        }
+        this.appleManager.apples.forEach((apple) => {
+          if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+            this._cal4PointKnife(this.knifeManager1.knives[0]),
+            _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(apple)
+          )) {
+            console.log("xuyen tao");
+            this.kHitApple.play();
+            this.appleManager.removeApple(apple);
+            this.dualUI.updateAppleScore(++this.appleScore);
+          }
+        });
+        if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.AABBCheck(
+          this.knifeManager1.knives[0].collider,
+          this.board.collider
+        )) {
+          this.kHitWSound.play();
+          let logParticle = new _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.Emitter(
+            this.particleContainer,
+            (0,_pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.upgradeConfig)(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.logParticle, [_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particle])
+          );
+          logParticle.updateSpawnPos(
+            this.knifeManager1.knives[0].x,
+            this.knifeManager1.knives[0].y - 30
+          );
+          logParticle.playOnceAndDestroy();
+          this.board.onHit();
+          this.knifeManager1.onBoardHit();
+          this.appleManager.onBoardHit();
+          this.dualUI.updateScore(++this.score);
+          console.log("va roi!");
+          this.knifeManager1.knives[0].beObs();
+          this._rotateKnife(this.knifeManager1.knives[0]);
+          this.knifeManager1.obsKnives.push(this.knifeManager1.knives.shift());
+          if (this.knifeManager1.numOfKnife > 0) {
+            this.knifeManager1.knives[0].setActivate1();
+          }
+          this.knifeManager1.numOfKnife--;
+          if (this.knifeNumber === 0) {
+            this._onWin();
+            this.board.setBroken2();
+            this.resultUI.messageText.text = "Player1 Win";
+            this.resultUI.buttonText.text = "Restart";
+          }
+        }
+      }
+    }
+    if (this.knifeManager2.knives[0] != null) {
+      if (this.knifeManager2.knives[0].state === "move2") {
+        if (this.knifeManager2.knives[0].y <= 590) {
+          this.knifeManager2.obsKnives.forEach((knife) => {
+            if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+              this._cal4PointKnife(this.knifeManager2.knives[0]),
+              _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(knife)
+            )) {
+              this._onLose2();
+            }
+          });
+          this.knifeManager1.obsKnives.forEach((knife) => {
+            if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+              this._cal4PointKnife(this.knifeManager2.knives[0]),
+              _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(knife)
+            )) {
+              console.log("va ch\u1EA1m dao p2 v\u1EDBi p1");
+              this._onLose2();
+            }
+          });
+        }
+        this.appleManager.apples.forEach((apple) => {
+          if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.SATPolygonPolygon(
+            this._cal4PointKnife(this.knifeManager2.knives[0]),
+            _helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.find4Vertex(apple)
+          )) {
+            console.log("xuyen tao");
+            this.kHitApple.play();
+            this.appleManager.removeApple(apple);
+            this.dualUI.updateAppleScore2(++this.appleScore2);
+          }
+        });
+        if (_helper_utils__WEBPACK_IMPORTED_MODULE_11__.Util.AABBCheck(
+          this.knifeManager2.knives[0].collider,
+          this.board.collider
+        )) {
+          this.kHitWSound.play();
+          let logParticle = new _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.Emitter(
+            this.particleContainer,
+            (0,_pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_10__.upgradeConfig)(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.logParticle, [_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particle])
+          );
+          logParticle.updateSpawnPos(
+            this.knifeManager2.knives[0].x,
+            this.knifeManager2.knives[0].y - 30
+          );
+          logParticle.playOnceAndDestroy();
+          this.board.onHit();
+          this.knifeManager2.onBoardHit();
+          this.appleManager.onBoardHit();
+          this.dualUI.updateScore2(++this.score2);
+          console.log("va roi!");
+          this.knifeManager2.knives[0].beObs();
+          this._rotateKnife2(this.knifeManager2.knives[0]);
+          this.knifeManager2.obsKnives.push(this.knifeManager2.knives.shift());
+          if (this.knifeManager2.numOfKnife > 0) {
+            this.knifeManager2.knives[0].setActivate2();
+          }
+          this.knifeManager2.numOfKnife--;
+          if (this.knifeNumber2 === 0) {
+            this._onWin();
+            this.knifeManager2.setObsFall();
+            this.board.setBroken2();
+            this.resultUI.messageText.text = "Player2 Win";
+            this.resultUI.buttonText.text = "Restart";
+          }
+        }
+      }
+    }
+  }
+  _rotateKnife(knife) {
+    knife.x = this.board.x;
+    knife.y = this.board.y;
+    knife.anchor.set(0.5, -0.5);
+    knife.collider.anchor.set(0.5, -0.5);
+  }
+  _rotateKnife2(knife) {
+    knife.x = this.board.x;
+    knife.y = this.board.y;
+    knife.anchor.set(0.5, 1.5);
+    knife.collider.anchor.set(0.5, 1.5);
+  }
+  _syncRotate() {
+    this.knifeManager1.boardAngleRotation = this.board.angleRotation;
+    this.knifeManager2.boardAngleRotation = this.board.angleRotation;
+    this.appleManager.boardAngleRotation = this.board.angleRotation;
+  }
+  _cal4PointKnife(knife) {
+    let w = knife.collider.getBounds().width;
+    let h = knife.collider.getBounds().height;
+    let x = knife.collider.getBounds().x;
+    let y = knife.collider.getBounds().y;
+    return [x, y, x + w, y, x + w, y + h, x, y + h];
+  }
+  _onClicky(e) {
+    if (this.state === GameState.Playing) {
+      if (this.knifeNumber > 0) {
+        if (this.knifeManager1.onClicky(e)) {
+          this.dualUI.updateKnifeIcon(
+            this.dataManager.numOfKnife() - this.knifeNumber--
+          );
+        }
+      }
+    }
+  }
+  _onClicky2(e) {
+    if (this.state === GameState.Playing) {
+      if (this.knifeNumber2 > 0) {
+        if (this.knifeManager2.onClicky(e)) {
+          this.dualUI.updateKnifeIcon2(
+            this.dataManager.numOfKnife() - this.knifeNumber2--
+          );
+        }
+      }
+    }
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/scenes/playScene.js":
+/*!*****************************************!*\
+  !*** ./src/objects/scenes/playScene.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GameState: () => (/* binding */ GameState),
+/* harmony export */   PlayScene: () => (/* binding */ PlayScene)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../backgrounds/background */ "./src/objects/backgrounds/background.js");
+/* harmony import */ var _knives_knifeManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../knives/knifeManager */ "./src/objects/knives/knifeManager.js");
+/* harmony import */ var _boards_board__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../boards/board */ "./src/objects/boards/board.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @pixi/particle-emitter */ "./node_modules/@pixi/particle-emitter/lib/particle-emitter.es.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+/* harmony import */ var _pixi_sound__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @pixi/sound */ "./node_modules/@pixi/sound/lib/index.mjs");
+/* harmony import */ var _apple_appleManager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../apple/appleManager */ "./src/objects/apple/appleManager.js");
+/* harmony import */ var _ui_playUI__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../ui/playUI */ "./src/objects/ui/playUI.js");
+/* harmony import */ var _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../ui/tutorialUI */ "./src/objects/ui/tutorialUI.js");
+/* harmony import */ var _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ui/resultGameUI */ "./src/objects/ui/resultGameUI.js");
+/* harmony import */ var _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @pixi/filter-adjustment */ "./node_modules/@pixi/filter-adjustment/dist/filter-adjustment.mjs");
+/* harmony import */ var _level_dataManager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../level/dataManager */ "./src/objects/level/dataManager.js");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+/* harmony import */ var _ui_menuUI__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../ui/menuUI */ "./src/objects/ui/menuUI.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const GameState = Object.freeze({
+  Tutorial: "tutorial",
+  Playing: "playing",
+  Win: "win",
+  Lose: "lose"
 });
 class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   constructor() {
@@ -5470,6 +6410,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
+    this._initParticlesResultgame();
   }
   _initGamePlay() {
     this._initDataManager();
@@ -5487,18 +6428,23 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initSound();
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
-    console.log(this.dataManager.getDataLevel());
   }
   _initUI() {
     this.playUI = new _ui_playUI__WEBPACK_IMPORTED_MODULE_10__.PlayUI(this.dataManager, this.score, this.appleScore);
     this.addChild(this.playUI);
+    this.playUI.on("backHome", (e) => this._backHome(e));
     this.resultUI = new _ui_resultGameUI__WEBPACK_IMPORTED_MODULE_12__.ResultGameUI();
     this.addChild(this.resultUI);
-    this.tutorialUI = new _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__.TutorialUI();
-    this.addChild(this.tutorialUI);
-    this.tutorialUI.on("tapped", (e) => this._onStart(e));
+    if (this.currentLevel === 1) {
+      this.tutorialUI = new _ui_tutorialUI__WEBPACK_IMPORTED_MODULE_11__.TutorialUI();
+      this.addChild(this.tutorialUI);
+      this.tutorialUI.on("tapped", (e) => this._onStart(e));
+    } else {
+      this.state = GameState.Playing;
+    }
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
+    this.resultUI.on("home", (e) => this._backHome(e));
   }
   _initDataManager() {
     this.dataManager = new _level_dataManager__WEBPACK_IMPORTED_MODULE_14__.DataManager(this.currentLevel);
@@ -5548,7 +6494,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // Check if win or lose
   _onContOrRestart() {
-    if (this.resultUI.messageText.text === "You lose") {
+    if (this.resultUI.messageText.text === "You lose" || this.currentLevel === 4) {
       this._onRestartGame();
     } else {
       this._onContGame();
@@ -5557,19 +6503,22 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   // Xử lí click tiếp tục
   _onContGame() {
     this.currentLevel++;
+    this.winGame.stop();
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
-    this._initGamePlay();
     this.removeChild(this.playUI, this.tutorialUI, this.resultUI);
     this.playUI.destroy();
     this.tutorialUI.destroy();
     this.resultUI.destroy();
+    this._initGamePlay();
     this._initUI();
     console.log("tiep tuc");
+    this.boardZoom();
   }
   // xử lí click restart
   _onRestartGame() {
     this.currentLevel = 1;
+    this.loseGame.stop();
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
     this.score = 0;
@@ -5580,6 +6529,38 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.resultUI.destroy();
     this._initUI();
     console.log("choi lai");
+  }
+  _backHome(e) {
+    this.parent.norToHome();
+  }
+  _initParticles() {
+    this.particleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.gameplay.addChild(this.particleContainer);
+  }
+  _initParticlesResultgame() {
+    this.particleContainerResult = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.particleContainerResult);
+  }
+  _initSound() {
+    this.kHitKSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_knife);
+    this.kHitKSound.volume = 0.3;
+    this.kHitWSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_wood);
+    this.kHitApple = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_apple);
+    this.boardBroken = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.brokenBoard);
+    this.boardBroken.volume = 100;
+    this.winGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.winGame);
+    this.loseGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.loseGame);
+  }
+  update(dt) {
+    this.currentDt += dt;
+    this.knifeManager.update(dt);
+    this.appleManager.update(dt);
+    this.board.update(dt);
+    this._onCollision();
+    this._syncRotate();
+    if (this.state === GameState.Tutorial) {
+      this.tutorialUI.updateUI(dt);
+    }
   }
   _initCircleFlare() {
     this.whiteCircle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.circleWhite);
@@ -5593,55 +6574,27 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.circleLine.zIndex = 150;
     this.circleLine.visible = false;
   }
-  _initParticles() {
-    this.particleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-    this.gameplay.addChild(this.particleContainer);
-  }
-  _initSound() {
-    this.kHitKSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_knife);
-    this.kHitKSound.volume = 0.3;
-    this.kHitWSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_wood);
-    this.kHitApple = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_hit_apple);
-    this.boardBroken = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.brokenBoard);
-    this.boardBroken.volume = 100;
-  }
-  update(dt) {
-    this.currentDt += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.update(this.currentDt);
-    this.knifeManager.update(dt);
-    this.appleManager.update(dt);
-    this.board.update(dt);
-    this._onCollision();
-    this._syncRotate();
-    if (this.state === GameState.Playing) {
-      this.playUI.updateTime(dt);
-    }
-    if (this.state === GameState.Tutorial) {
-      this.tutorialUI.updateUI(dt);
-    }
-  }
-  // Hình tròn xuất hiện khi bảng vỡ ra
   _showCircleFlare() {
     this.whiteCircle.x = this.board.x;
     this.whiteCircle.y = this.board.y;
     this.whiteCircle.scale.set(0.8);
     this.whiteCircle.visible = true;
     this.whiteCircle.alpha = 0.2;
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.5, y: 0.5 } }, 4).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 1.5, y: 1.5 } }, 8).onComplete(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.5, y: 0.5 } }, 100).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 1.5, y: 1.5 } }, 150).onComplete(() => {
         this.whiteCircle.visible = false;
-      }).start(this.currentDt);
-    }).start(this.currentDt);
+      }).start();
+    }).start();
     this.circleLine.x = this.board.x;
     this.circleLine.y = this.board.y;
     this.circleLine.visible = true;
     this.circleLine.alpha = 0.3;
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 1.5, y: 1.5 } }, 5).onComplete(() => {
-      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 2, y: 2 } }, 8).onComplete(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 1.5, y: 1.5 } }, 100).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.circleLine).to({ scale: { x: 2, y: 2 } }, 150).onComplete(() => {
         this.circleLine.alpha = 0.01;
         this.circleLine.visible = false;
-      }).start(this.currentDt);
-    }).start(this.currentDt);
+      }).start();
+    }).start();
   }
   _showKnifeCollisionFlare(knife) {
     this.whiteCircle.x = knife.x;
@@ -5649,55 +6602,101 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.whiteCircle.scale.set(0.1);
     this.whiteCircle.visible = true;
     this.whiteCircle.alpha = 0.5;
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.7, y: 0.7 } }, 6).onComplete(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.whiteCircle).to({ scale: { x: 0.7, y: 0.7 } }, 60).onComplete(() => {
       this.whiteCircle.visible = false;
-    }).start(this.currentDt);
+    }).start();
     let sceneFilter = new _pixi_filter_adjustment__WEBPACK_IMPORTED_MODULE_13__.AdjustmentFilter();
     this.gameplay.filters = [sceneFilter];
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.gameplay).to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 8).yoyo(true).repeat(1).onUpdate(() => {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.gameplay).to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 150).yoyo(true).repeat(1).onUpdate(() => {
       sceneFilter.gamma = 2;
     }).onComplete(() => {
       sceneFilter.gamma = 1;
-    }).start(this.currentDt);
+    }).start();
+  }
+  // Bảng zoom ra khi qua màn mới
+  boardZoom() {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.board).to({ scale: { x: 0.05, y: 0.05 } }, 9).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.board).to({ scale: { x: 1, y: 1 } }, 15).start();
+    }).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.appleManager).to({ scale: { x: 0.05, y: 0.05 } }, 9).onComplete(() => {
+      new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_15__.Tween(this.appleManager).to({ scale: { x: 1, y: 1 } }, 15).start();
+    }).start();
   }
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
     this._onClicky(e);
   }
+  _onWin() {
+    this.boardBroken.play();
+    this.board.breakUp();
+    this.knifeManager.setObsFall();
+    this.appleManager.setApplesFall();
+    setTimeout(() => {
+      this.winGame.play();
+    }, 1e3);
+    setTimeout(() => {
+      this.state = GameState.Win;
+      this.resultUI.show();
+      let winGameParticle = new _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_6__.Emitter(
+        this.particleContainerResult,
+        (0,_pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_6__.upgradeConfig)(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.winGameParticle, [
+          _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particleStar,
+          _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.particle
+        ])
+      );
+      winGameParticle.updateSpawnPos(
+        this.resultUI.messageText.x + this.resultUI.messageText.width / 2,
+        this.resultUI.messageText.y
+      );
+      winGameParticle.playOnceAndDestroy();
+    }, 1500);
+    this._showCircleFlare();
+  }
+  _onLose() {
+    this.kHitKSound.play();
+    this.knifeManager.knives[0].setFall();
+    this._showKnifeCollisionFlare(this.knifeManager.knives[0]);
+    this.board.setStop();
+    this.board.onHit();
+    this.knifeManager.onBoardHit();
+    this.appleManager.onBoardHit();
+    setTimeout(() => {
+      this.loseGame.play();
+    }, 500);
+    setTimeout(() => {
+      this.state = GameState.Lose;
+      this.resultUI.showLoseBox();
+    }, 1500);
+  }
   _onCollision() {
     if (this.knifeManager.knives[0] != null) {
       if (this.knifeManager.knives[0].state === "move") {
         if (this.knifeManager.knives[0].y >= 590) {
           this.knifeManager.obsKnives.forEach((knife) => {
-            if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.find4Vertex(knife))) {
-              console.log("aaaaa");
-              this.kHitKSound.play();
-              this.knifeManager.knives[0].setFall();
-              this._showKnifeCollisionFlare(this.knifeManager.knives[0]);
-              this.board.setStop();
-              this.board.onHit();
-              this.knifeManager.onBoardHit();
-              this.appleManager.onBoardHit();
-              setTimeout(() => {
-                this.state = GameState.Lose;
-                this.resultUI.show();
-                this.resultUI.messageText.text = "You lose";
-                this.resultUI.buttonText.text = "Ch\u01A1i l\u1EA1i";
-                this.resultUI.messageText.style.fill = "red";
-              }, 1500);
+            if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.SATPolygonPolygon(
+              this._cal4PointKnife(this.knifeManager.knives[0]),
+              _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.find4Vertex(knife)
+            )) {
+              this._onLose();
             }
           });
         }
         this.appleManager.apples.forEach((apple) => {
-          if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.find4Vertex(apple))) {
+          if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.SATPolygonPolygon(
+            this._cal4PointKnife(this.knifeManager.knives[0]),
+            _helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.find4Vertex(apple)
+          )) {
             console.log("xuyen tao");
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
             this.playUI.updateAppleScore(++this.appleScore);
           }
         });
-        if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
+        if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.AABBCheck(
+          this.knifeManager.knives[0].collider,
+          this.board.collider
+        )) {
           this.kHitWSound.play();
           let logParticle = new _pixi_particle_emitter__WEBPACK_IMPORTED_MODULE_6__.Emitter(
             this.particleContainer,
@@ -5721,15 +6720,8 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
           }
           this.knifeManager.numOfKnife--;
           if (this.knifeNumber === 0) {
-            this.boardBroken.play();
-            this.board.breakUp();
-            this.knifeManager.setObsFall();
-            this.appleManager.setApplesFall();
-            setTimeout(() => {
-              this.state = GameState.Win;
-              this.resultUI.show();
-            }, 1500);
-            this._showCircleFlare();
+            this._onWin();
+            this.board.setBroken();
           }
         }
       }
@@ -5756,10 +6748,454 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     if (this.state === GameState.Playing) {
       if (this.knifeNumber > 0) {
         if (this.knifeManager.onClicky(e)) {
-          this.playUI.updateKnifeIcon(this.dataManager.numOfKnife() - this.knifeNumber--);
+          this.playUI.updateKnifeIcon(
+            this.dataManager.numOfKnife() - this.knifeNumber--
+          );
         }
       }
     }
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/scenes/sceneManager.js":
+/*!********************************************!*\
+  !*** ./src/objects/scenes/sceneManager.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SceneManager: () => (/* binding */ SceneManager)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _ui_menuUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ui/menuUI */ "./src/objects/ui/menuUI.js");
+/* harmony import */ var _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../backgrounds/background */ "./src/objects/backgrounds/background.js");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _playScene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./playScene */ "./src/objects/scenes/playScene.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+/* harmony import */ var _dualScene__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./dualScene */ "./src/objects/scenes/dualScene.js");
+
+
+
+
+
+
+
+
+class SceneManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor() {
+    super();
+    this.currentDt = 0;
+    this._initAssetContainer();
+    this._initUI();
+    this._initKnifeUI();
+    this._initKnifeHitButton();
+  }
+  _initAssetContainer() {
+    this.assetContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.assetContainer);
+    this._initBackground();
+    this._initLogo();
+  }
+  _initBackground() {
+    this.background = new _backgrounds_background__WEBPACK_IMPORTED_MODULE_2__.Background(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.background);
+    this.background.x = 0;
+    this.background.y = 0;
+    this.assetContainer.addChild(this.background);
+  }
+  _initLogo() {
+    this.knifeLogo = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife_logo);
+    this.knifeLogo.anchor.set(0.5, 2.2);
+    this.knifeLogo.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_WIDTH / 2;
+    this.knifeLogo.y = 480;
+    this.assetContainer.addChild(this.knifeLogo);
+    this.flyKnifeLogo = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.flying_knife_logo);
+    this.flyKnifeLogo.anchor.set(0.5);
+    this.flyKnifeLogo.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_WIDTH / 2;
+    this.flyKnifeLogo.y = 290;
+    this.assetContainer.addChild(this.flyKnifeLogo);
+    this.hitLogo = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.hit_logo);
+    this.hitLogo.anchor.set(0.5, 1.2);
+    this.hitLogo.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_WIDTH / 2;
+    this.hitLogo.y = 480;
+    this.assetContainer.addChild(this.hitLogo);
+    this._addTweenLogo();
+  }
+  _initKnifeUI() {
+    this.knifeUI = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
+    this.addChild(this.knifeUI);
+    this.knifeUI.scale.set(1.2);
+    this.knifeUI.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_WIDTH / 2 - this.knifeUI.width / 2;
+    this.knifeUI.y = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_HEIGHT / 2 - this.knifeUI.height / 2;
+  }
+  _initKnifeHitButton() {
+    this.knifeHitButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.knife);
+    this.knifeHitButton.scale.set(0.5);
+    this.knifeHitButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_WIDTH / 2 - 160;
+    this.knifeHitButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_5__.GameConstant.GAME_HEIGHT - 150;
+    this.addChild(this.knifeHitButton);
+    this.knifeHitButton.visible = false;
+  }
+  _initUI() {
+    this.menuUI = new _ui_menuUI__WEBPACK_IMPORTED_MODULE_1__.MenuUI();
+    this.addChild(this.menuUI);
+    this.menuUI.on("normal button tapped", (e) => this._initNorMode(e));
+    this.menuUI.on("dual button tapped", (e) => this._initDualMode(e));
+  }
+  update(dt) {
+    this.currentDt += dt;
+    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.update();
+    if (this.playScene != null) {
+      this.playScene.update(dt);
+    }
+    if (this.dualScene != null) {
+      this.dualScene.update(dt);
+    }
+  }
+  _initNorMode(e) {
+    console.log("normal button tapped");
+    this.playScene = new _playScene__WEBPACK_IMPORTED_MODULE_4__.PlayScene();
+    this.addChild(this.playScene);
+  }
+  _initDualMode(e) {
+    console.log("dual button tapped");
+    this.dualScene = new _dualScene__WEBPACK_IMPORTED_MODULE_7__.DualScene();
+    this.addChild(this.dualScene);
+  }
+  hideUI() {
+    this.assetContainer.destroy();
+    this.menuUI.hide();
+  }
+  norToHome() {
+    this.removeChild(this.playScene);
+    this.playScene.destroy();
+  }
+  dualToHome() {
+    this.removeChild(this.dualScene);
+    this.dualScene.destroy();
+  }
+  _addTweenLogo() {
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.knifeLogo).to({ rotation: -Math.PI / 30 }, 1e3).yoyo(true).repeat(Infinity).start();
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_6__.Tween(this.hitLogo).to({ rotation: Math.PI / 40 }, 1e3).yoyo(true).repeat(Infinity).start();
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/ui/dualUI.js":
+/*!**********************************!*\
+  !*** ./src/objects/ui/dualUI.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DualUI: () => (/* binding */ DualUI)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+
+
+
+
+class DualUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor(data, score, appleScore, score2, appleScore2) {
+    super();
+    this.playTime = 0;
+    this.levelData = data;
+    this.score = score;
+    this.score2 = score2;
+    this.appleScore = appleScore;
+    this.appleScore2 = appleScore2;
+    this._initScore();
+    this._initScore2();
+    this._initIconPlayer();
+    this._initAppleCount();
+    this._initAppleCount2();
+    this._initKnifeCount();
+    this._initKnifeCount2();
+    this._initBackHomeButton();
+    this.resize();
+  }
+  _initScore() {
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 45,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.scoreText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.score}`, textStyle);
+    this.scoreText.anchor.set(0);
+    this.addChild(this.scoreText);
+  }
+  _initBackHomeButton() {
+    this.backHomeButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.backHomeButton);
+    this.backHomeButton.scale.set(0.3);
+    this.backHomeButton.rotation = Math.PI / 4;
+    this.addChild(this.backHomeButton);
+    _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.registerOnPointerDown(
+      this.backHomeButton,
+      this._onTapBackHomeButton,
+      this
+    );
+  }
+  _onTapBackHomeButton() {
+    this.emit("backHome");
+  }
+  _initScore2() {
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 45,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.scoreText2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.score2}`, textStyle);
+    this.scoreText2.anchor.set(0);
+    this.scoreText2.rotation = Math.PI;
+    this.addChild(this.scoreText2);
+  }
+  _initIconPlayer() {
+    this.iconPlayer1Cont = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.iconPlayer1 = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.iconPlayer);
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 18,
+      align: "center",
+      fill: 16777215,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.player1Text = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`Player1`, textStyle);
+    this.player1Text.anchor.set(0, 1);
+    this.iconPlayer1Cont.addChild(this.iconPlayer1, this.player1Text);
+    this.iconPlayer1.scale.set(0.3);
+    this.iconPlayer1Cont.rotation = Math.PI;
+    this.iconPlayer2Cont = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.iconPlayer2 = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.iconPlayer);
+    this.player2Text = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`Player2`, textStyle);
+    this.player2Text.anchor.set(0, 1);
+    this.iconPlayer2Cont.addChild(this.iconPlayer2, this.player2Text);
+    this.iconPlayer2.scale.set(0.3);
+    this.addChild(this.iconPlayer1Cont, this.iconPlayer2Cont);
+  }
+  _initAppleCount() {
+    this.appleScoreContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.appleScoreContainer);
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 40,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.appleText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.appleScore}`, textStyle);
+    this.appleText.anchor.set(1, 0);
+    this.appleText.position.set(0, 7);
+    this.appleSprite = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.apple_slice_1);
+    this.appleSprite.scale.set(0.8);
+    this.appleSprite.position.set(60, 10);
+    this.appleSprite.angle = 90;
+    this.appleScoreContainer.addChild(this.appleText);
+    this.appleScoreContainer.addChild(this.appleSprite);
+  }
+  _initAppleCount2() {
+    this.appleScoreContainer2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.appleScoreContainer2);
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 40,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.appleText2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.appleScore2}`, textStyle);
+    this.appleText2.anchor.set(1, 0);
+    this.appleText2.position.set(0, 7);
+    this.appleSprite = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.apple_slice_1);
+    this.appleSprite.scale.set(0.8);
+    this.appleSprite.position.set(60, 10);
+    this.appleSprite.angle = 90;
+    this.appleScoreContainer2.addChild(this.appleText2);
+    this.appleScoreContainer2.addChild(this.appleSprite);
+    this.appleScoreContainer2.rotation = Math.PI;
+  }
+  _initKnifeCount() {
+    this.knifeIcons = [];
+    this.knifeIconsContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.addChild(this.knifeIconsContainer);
+    for (let i = 0; i < this.levelData.numOfKnife(); i++) {
+      let knife = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_white_icon);
+      knife.y = i * 45;
+      this.knifeIcons.push(knife);
+      this.knifeIconsContainer.addChild(knife);
+    }
+  }
+  _initKnifeCount2() {
+    this.knifeIcons2 = [];
+    this.knifeIconsContainer2 = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+    this.knifeIconsContainer2.rotation = Math.PI;
+    this.addChild(this.knifeIconsContainer2);
+    for (let i = 0; i < this.levelData.numOfKnife(); i++) {
+      let knife2 = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_white_icon);
+      knife2.y = i * 45;
+      this.knifeIcons2.push(knife2);
+      this.knifeIconsContainer2.addChild(knife2);
+    }
+  }
+  updateScore(score) {
+    this.scoreText.text = `${score}`;
+  }
+  updateScore2(score2) {
+    this.scoreText2.text = `${score2}`;
+  }
+  updateAppleScore(apple) {
+    this.appleText.text = `${apple}`;
+  }
+  updateAppleScore2(apple2) {
+    this.appleText2.text = `${apple2}`;
+  }
+  updateKnifeIcon(index) {
+    this.knifeIcons.at(index).texture = _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_black_icon;
+  }
+  updateKnifeIcon2(index) {
+    this.knifeIcons2.at(index).texture = _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_black_icon;
+  }
+  updateTime(dt) {
+    this.playTime += dt;
+    this.timerText.text = `${this._formatTime(this.playTime)}`;
+  }
+  hide() {
+    this.visible = false;
+  }
+  show() {
+    this.visible = true;
+  }
+  resize() {
+    this.scoreText.x = 50;
+    this.iconPlayer1Cont.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 50;
+    this.iconPlayer1Cont.y = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_HEIGHT - 131;
+    this.scoreText.y = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_HEIGHT - 70;
+    this.appleScoreContainer.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 110;
+    this.appleScoreContainer.y = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_HEIGHT - 70;
+    this.knifeIconsContainer.x = 30;
+    this.knifeIconsContainer.y = 1150 - this.knifeIconsContainer.height;
+    this.backHomeButton.y = 300;
+    this.backHomeButton.x = 80;
+    this.scoreText2.x = 80;
+    this.scoreText2.y = 75;
+    this.iconPlayer2Cont.x = 50;
+    this.iconPlayer2Cont.y = 150;
+    this.appleScoreContainer2.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 80;
+    this.appleScoreContainer2.y = 75;
+    this.knifeIconsContainer2.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 30;
+    this.knifeIconsContainer2.y = this.knifeIconsContainer2.height + this.knifeIconsContainer2.height / 2;
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/objects/ui/menuUI.js":
+/*!**********************************!*\
+  !*** ./src/objects/ui/menuUI.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MenuUI: () => (/* binding */ MenuUI)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../game */ "./src/game.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
+/* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
+/* harmony import */ var _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @tweenjs/tween.js */ "./node_modules/@tweenjs/tween.js/dist/tween.esm.js");
+
+
+
+
+
+class MenuUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
+  constructor() {
+    super();
+    this.currentTime = 0;
+    this._initNormalModeButton();
+    this._initDualModeButton();
+    this.resize();
+    this.sortableChildren = true;
+  }
+  _initNormalModeButton() {
+    this.norModeButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.greenButton);
+    this.norModeButton.width = 240;
+    this.norModeButton.height = 90;
+    this.norModeButton.eventMode = "static";
+    this.norModeButton.zIndex = 0;
+    this.norModeButtonText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("PLAY", {
+      fontSize: 50,
+      fill: "#FFFFFF",
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.norModeButtonText.zIndex = 100;
+    this.norModeButtonText.anchor.set(0.5);
+    this.addChild(this.norModeButton);
+    this.addChild(this.norModeButtonText);
+    _helper_utils__WEBPACK_IMPORTED_MODULE_2__.Util.registerOnPointerDown(this.norModeButton, this._onTapNorModeButton, this);
+  }
+  _initDualModeButton() {
+    this.dualModeButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.redpinkButton);
+    this.dualModeButton.width = 240;
+    this.dualModeButton.height = 90;
+    this.dualModeButton.eventMode = "static";
+    this.dualModeButton.zIndex = 0;
+    this.dualModeButtonText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("PvP", {
+      fontSize: 50,
+      fill: "#FFFFFF",
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.dualModeButtonText.zIndex = 100;
+    this.dualModeButtonText.anchor.set(0.5);
+    this.addChild(this.dualModeButton);
+    this.addChild(this.dualModeButtonText);
+    _helper_utils__WEBPACK_IMPORTED_MODULE_2__.Util.registerOnPointerDown(this.dualModeButton, this._onTapDualModeButton, this);
+  }
+  updateUI(dt) {
+    this.currentTime += dt;
+    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.update(this.currentTime);
+  }
+  _onTapDualModeButton() {
+    this.emit("dual button tapped");
+  }
+  _onTapNorModeButton() {
+    this.emit("normal button tapped");
+  }
+  resize() {
+    this.norModeButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 2 - this.norModeButton.width - 30;
+    this.norModeButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
+    this.norModeButtonText.x = this.norModeButton.x + this.norModeButton.width / 2;
+    this.norModeButtonText.y = this.norModeButton.y + this.norModeButton.height / 2;
+    this.dualModeButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 2 + 30;
+    this.dualModeButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
+    this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width / 2;
+    this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height / 2;
+  }
+  hide() {
+    this.visible = false;
+  }
+  show() {
+    this.visible = true;
   }
 }
 
@@ -5780,7 +7216,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../game */ "./src/game.js");
 /* harmony import */ var _gameConstant__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../gameConstant */ "./src/gameConstant.js");
-/* harmony import */ var _scenes_playScene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../scenes/playScene */ "./src/objects/scenes/playScene.js");
+/* harmony import */ var _helper_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../helper/utils */ "./src/helper/utils.js");
 
 
 
@@ -5793,39 +7229,62 @@ class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.score = score;
     this.appleScore = appleScore;
     this._initLevel();
-    this._initTimer();
     this._initScore();
     this._initAppleCount();
     this._initKnifeCount();
+    this._initBackHomeButton();
     this.resize();
   }
   _initLevel() {
-    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 45, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
-    this.levelText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`Level ${this.levelData.currentLevel}`, textStyle);
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 45,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.levelText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(
+      `Level ${this.levelData.currentLevel}`,
+      textStyle
+    );
     this.levelText.anchor.set(0.5, 0);
     this.addChild(this.levelText);
   }
-  _initTimer() {
-    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 45, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
-    this.timerText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this._formatTime(0)}`, textStyle);
-    this.timerText.anchor.set(0.5, 0);
-  }
-  _formatTime(totalSeconds) {
-    var minutes = Math.floor(totalSeconds / 60);
-    var seconds = Math.floor(totalSeconds % 60);
-    var milliseconds = Math.floor(totalSeconds % 1 * 100);
-    return (minutes < 10 ? "" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-  }
   _initScore() {
-    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 45, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 45,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
     this.scoreText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.score}`, textStyle);
     this.scoreText.anchor.set(0);
     this.addChild(this.scoreText);
   }
+  _initBackHomeButton() {
+    this.backHomeButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.backHomeButton);
+    this.backHomeButton.scale.set(0.3);
+    this.addChild(this.backHomeButton);
+    _helper_utils__WEBPACK_IMPORTED_MODULE_3__.Util.registerOnPointerDown(
+      this.backHomeButton,
+      this._onTapBackHomeButton,
+      this
+    );
+  }
+  _onTapBackHomeButton() {
+    this.emit("backHome");
+  }
   _initAppleCount() {
     this.appleScoreContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
     this.addChild(this.appleScoreContainer);
-    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 40, align: "center", fill: 15120479, fontWeight: "bold", fontFamily: "Comic Sans MS" });
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 40,
+      align: "center",
+      fill: 15120479,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
     this.appleText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text(`${this.appleScore}`, textStyle);
     this.appleText.anchor.set(1, 0);
     this.appleText.position.set(0, 7);
@@ -5856,10 +7315,6 @@ class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   updateKnifeIcon(index) {
     this.knifeIcons.at(index).texture = _game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.knife_black_icon;
   }
-  updateTime(dt) {
-    this.playTime += dt;
-    this.timerText.text = `${this._formatTime(this.playTime)}`;
-  }
   hide() {
     this.visible = false;
   }
@@ -5867,12 +7322,12 @@ class PlayUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.visible = true;
   }
   resize() {
-    this.timerText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH / 2;
-    this.timerText.y = 10;
     this.levelText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH / 2;
     this.levelText.y = 10;
     this.scoreText.x = 50;
     this.scoreText.y = 10;
+    this.backHomeButton.y = 100;
+    this.backHomeButton.x = 20;
     this.appleScoreContainer.x = _gameConstant__WEBPACK_IMPORTED_MODULE_2__.GameConstant.GAME_WIDTH - 70;
     this.appleScoreContainer.y = 10;
     this.knifeIconsContainer.x = 30;
@@ -5913,16 +7368,21 @@ class ResultGameUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initBox();
     this._initMessage();
     this._initButton();
+    this._initHomeButton();
     this.resize();
     this.sortableChildren = true;
   }
   _initOverLay() {
     this.overlay = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
     this.overlay.beginFill(0, 0.5);
-    this.overlay.drawRect(0, 0, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_WIDTH, _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_HEIGHT);
+    this.overlay.drawRect(
+      0,
+      0,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_WIDTH,
+      _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_HEIGHT
+    );
     this.overlay.endFill();
     this.overlay.eventMode = "static";
-    this.overlay.buttonMode = true;
     this.addChild(this.overlay);
   }
   _initBox() {
@@ -5937,31 +7397,55 @@ class ResultGameUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
       fontSize: 80,
       fill: "#ADFF2F",
       fontWeight: "bold",
-      textAlign: "center",
-      fontFamily: "verdana"
+      align: "center",
+      fontFamily: "Comic Sans MS"
     });
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
   }
   _initButton() {
-    this.button = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.bgButton);
-    this.button.width = 300;
+    this.button = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.greenButton);
+    this.button.width = 200;
     this.button.height = 80;
+    this.button.anchor.set(0.5);
     this.button.eventMode = "static";
-    this.button.buttonMode = true;
     this.button.zIndex = 0;
-    this.buttonText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("Ti\u1EBFp t\u1EE5c", {
+    this.buttonText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("Next", {
       fontSize: 40,
       fill: "#FFFFFF",
-      fontWeight: "bold"
+      fontWeight: "bold",
+      align: "center",
+      fontFamily: "Comic Sans MS"
     });
     this.buttonText.zIndex = 100;
+    this.buttonText.anchor.set(0.5);
     this.addChild(this.button);
     this.addChild(this.buttonText);
     _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.registerOnPointerDown(this.button, this._onTapButton, this);
   }
   _onTapButton() {
     this.emit("tapped");
+  }
+  _initHomeButton() {
+    this.homeButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.blueButton);
+    this.homeButton.width = 200;
+    this.homeButton.height = 80;
+    this.homeButton.anchor.set(0.5);
+    this.homeButton.eventMode = "static";
+    this.homeButton.zIndex = 0;
+    this.homeButtonText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("Home", {
+      fontSize: 40,
+      fill: "#FFFFFF",
+      fontWeight: "bold"
+    });
+    this.homeButtonText.zIndex = 100;
+    this.homeButtonText.anchor.set(0.5);
+    this.addChild(this.homeButton);
+    this.addChild(this.homeButtonText);
+    _helper_utils__WEBPACK_IMPORTED_MODULE_5__.Util.registerOnPointerDown(this.homeButton, this._onTapHomeButton, this);
+  }
+  _onTapHomeButton() {
+    this.emit("home");
   }
   hide() {
     this.visible = false;
@@ -5972,12 +7456,23 @@ class ResultGameUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   resize() {
     this.box.x = _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_WIDTH - this.box.width - 60;
     this.box.y = (_gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_HEIGHT - this.box.height) / 2 - this.box.height / 6;
-    this.messageText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_WIDTH / 2 - this.messageText.width / 2;
+    this.messageText.x = this.box.width / 2 - this.messageText.width / 3.2;
     this.messageText.y = this.box.y + this.box.y / 4;
-    this.button.x = this.box.x / 2 + this.button.width / 1.6;
-    this.button.y = 2 * this.box.y - 1.5 * this.button.height;
-    this.buttonText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_WIDTH / 2 - this.buttonText.width / 2;
-    this.buttonText.y = _gameConstant__WEBPACK_IMPORTED_MODULE_1__.GameConstant.GAME_HEIGHT / 2;
+    this.homeButton.x = this.box.x / 2 + this.homeButton.width;
+    this.homeButton.y = this.box.y + this.box.height / 2 + this.homeButton.height + 30;
+    this.homeButtonText.x = this.homeButton.x;
+    this.homeButtonText.y = this.homeButton.y;
+    this.button.x = this.box.x / 2 + this.box.width / 2 + this.button.width - 50;
+    this.button.y = this.box.y + this.box.height / 2 + this.button.height + 30;
+    this.buttonText.x = this.button.x;
+    this.buttonText.y = this.button.y;
+  }
+  showLoseBox() {
+    this.show();
+    this.messageText.text = "You lose";
+    this.buttonText.text = "Replay";
+    this.messageText.style.fill = "red";
+    this.button.texture = _game__WEBPACK_IMPORTED_MODULE_3__.Game.bundle.redpinkButton;
   }
 }
 
@@ -6024,7 +7519,15 @@ class TutorialUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.emit("tapped");
   }
   _initText() {
-    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({ fontSize: 50, align: "center", fill: 16777215, fontFamily: "Comic Sans MS", fontWeight: "bold" });
+    let textStyle = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TextStyle({
+      fontSize: 50,
+      align: "center",
+      fill: 16777215,
+      fontFamily: "Comic Sans MS",
+      fontWeight: "bold",
+      dropShadow: true,
+      dropShadowColor: "black"
+    });
     this.tutorialText = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Text("TAP TO PLAY", textStyle);
     this.tutorialText.anchor.set(0.5);
     this.addChild(this.tutorialText);
@@ -6032,16 +7535,15 @@ class TutorialUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   updateUI(dt) {
     this.currentTime += dt;
-    _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.update(this.currentTime);
   }
   _startBlink() {
-    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this.tutorialText).to({ alpha: 0 }, 35).yoyo(true).repeat(Infinity).start(this.currentTime);
+    new _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_4__.Tween(this.tutorialText).to({ alpha: 0 }, 750).yoyo(true).repeat(Infinity).start();
   }
   resize() {
     this.fakeBg.width = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH;
     this.fakeBg.height = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT;
     this.tutorialText.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 2;
-    this.tutorialText.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT / 2 + 70;
+    this.tutorialText.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT / 2;
   }
   hide() {
     this.visible = false;
