@@ -156,10 +156,10 @@ export class Board extends Sprite {
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: 400, y: 60, rotation:this.fragments3.rotation -3 },30)
+      .to({ x: 400, y: 60, rotation:this.fragments3.rotation -3 },200)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: 980, y: 450, rotation:this.fragments3.rotation -5 },50)
+          .to({ x: 980, y: 450, rotation:this.fragments3.rotation -5 },350)
           .start();
       })
       .start();
