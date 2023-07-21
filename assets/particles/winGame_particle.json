@@ -13,8 +13,8 @@
 		"end": "#ffee00"
 	},
 	"speed": {
-		"start": 250,
-		"end": 260,
+		"start": 350,
+		"end": 460,
 		"minimumSpeedMultiplier": 0.91
 	},
 	"acceleration": {
@@ -38,7 +38,7 @@
 	"blendMode": "normal",
 	"frequency": 0.21,
 	"emitterLifetime": 0.6,
-	"maxParticles": 2000,
+	"maxParticles": 3000,
 	"pos": {
 		"x": 1,
 		"y": 0
