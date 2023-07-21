@@ -32,7 +32,7 @@ export const manifest = {
             },
             {
                 name: 'knife2',
-                srcs: 'assets/images/knife2.png'
+                srcs: 'assets/images/knife2_reverse.png'
             },
             {
                 name: 'apple',

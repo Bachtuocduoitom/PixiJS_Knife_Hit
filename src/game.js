@@ -18,10 +18,6 @@ export class Game {
             this._loadGameDataLevel().then((data) => {
                 this.dataLevel = data.level;
 
-                // this._initSceneManager();
-                
-                // this.app.ticker.add(this.update, this);
-
                 this._initSceneManager();
                 
                 this.app.ticker.add(this.update, this);
@@ -42,14 +38,7 @@ export class Game {
     }
 
     static update(dt) {
-        //this.playScene.update(dt);
         this.sceneManager.update(dt);
-    }
-
-    static _initPlayScene() {
-        this.playScene = new PlayScene();
-        this.app.stage.addChild(this.playScene);
-        console.log(this.playScene);
     }
 
     static _initSceneManager() {

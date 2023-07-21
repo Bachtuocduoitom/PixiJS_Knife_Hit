@@ -5,12 +5,12 @@ import { Game } from "../../game";
 
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
+import { KnifeP2 } from "./knifeP2";
 
 export class KnifeManager2 extends Container {
     constructor(data) {
         super();
         this.knifeData = data;
-        console.log(this.knifeData);
         this.knives = [];
         this.obsKnives = [];
         this.numOfKnife = this.knifeData.knifeNumber - 1; //so dao trong pool
@@ -29,9 +29,9 @@ export class KnifeManager2 extends Container {
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new Knife(Game.bundle.knife2);
+        let knife = new KnifeP2(Game.bundle.knife2);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = 170;
+        knife.y = GameConstant.KNIFE_P2_Y_POSITION;
         knife.state = KnifeState.ACTIVATED;
         this.knives.push(knife);
         this.addChild(knife);
@@ -39,9 +39,9 @@ export class KnifeManager2 extends Container {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new Knife(Game.bundle.knife2);
+        let knife = new KnifeP2(Game.bundle.knife2);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = -1080;
+        knife.y = 0;
         knife.visible = false;
         knife.state = KnifeState.DEFAULT;
         //knife.alpha = 0;
@@ -115,7 +115,7 @@ export class KnifeManager2 extends Container {
 
     onClicky(e) {
         if (this.knives[0].state === "activated") {
-            this.knives[0].move2();
+            this.knives[0].move();
             return true;
         } else {return false;}
         

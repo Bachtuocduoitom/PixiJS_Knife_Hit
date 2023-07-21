@@ -32,7 +32,6 @@ export class PlayScene extends Container {
     this.currentLevel = 1;
     this._initGamePlay();
     this._initUI();
-    this._initParticlesResultgame();
   }
 
   _initGamePlay() {
@@ -69,10 +68,10 @@ export class PlayScene extends Container {
     } else {
       this.state = GameState.Playing;
     }
-
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
     this.resultUI.on("home", (e) => this._backHome(e));
+    this._initParticlesResultgame();
   }
 
   _initDataManager() {
@@ -133,10 +132,7 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
-    if (
-      this.resultUI.messageText.text === "You lose" ||
-      this.currentLevel === 4
-    ) {
+    if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 4) {
       this._onRestartGame();
     } else {
       this._onContGame();
@@ -162,8 +158,6 @@ export class PlayScene extends Container {
     //init new UI and gameplay
     this._initGamePlay();
     this._initUI();
-    console.log("tiep tuc");
-    this.boardZoom();
   }
 
   // xử lí click restart
@@ -183,7 +177,6 @@ export class PlayScene extends Container {
     this.tutorialUI.destroy();
     this.resultUI.destroy();
     this._initUI();
-    console.log("choi lai");
   }
 
   _backHome(e) {
@@ -262,10 +255,8 @@ export class PlayScene extends Container {
           .to({ scale: { x: 1.5, y: 1.5 } }, 150)
           .onComplete(() => {
             this.whiteCircle.visible = false;
-          })
-          .start();
-      })
-      .start();
+          }).start();
+      }).start();
 
     //vong tron loe sang
     this.circleLine.x = this.board.x;
@@ -281,10 +272,8 @@ export class PlayScene extends Container {
           .onComplete(() => {
             this.circleLine.alpha = 0.01;
             this.circleLine.visible = false;
-          })
-          .start();
-      })
-      .start();
+          }).start();
+      }).start();
   }
 
   _showKnifeCollisionFlare(knife) {
@@ -299,44 +288,22 @@ export class PlayScene extends Container {
       .to({ scale: { x: 0.7, y: 0.7 } }, 60)
       .onComplete(() => {
         this.whiteCircle.visible = false;
-      })
-      .start();
+      }).start();
 
     //man hinh loe sang
     let sceneFilter = new AdjustmentFilter();
     this.gameplay.filters = [sceneFilter];
     new TWEEN.Tween(this.gameplay)
       .to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 150)
-      .yoyo(true)
-      .repeat(1)
+      .yoyo(true).repeat(1)
       .onUpdate(() => {
         sceneFilter.gamma = 2;
       })
       .onComplete(() => {
         sceneFilter.gamma = 1;
-      })
-      .start();
+      }).start();
   }
-
-  // Bảng zoom ra khi qua màn mới
-  boardZoom() {
-    new TWEEN.Tween(this.board)
-      .to({ scale: { x: 0.05, y: 0.05 } }, 9)
-      .onComplete(() => {
-        new TWEEN.Tween(this.board).to({ scale: { x: 1, y: 1 } }, 15).start();
-      })
-      .start();
-
-    new TWEEN.Tween(this.appleManager)
-      .to({ scale: { x: 0.05, y: 0.05 } }, 9)
-      .onComplete(() => {
-        new TWEEN.Tween(this.appleManager)
-          .to({ scale: { x: 1, y: 1 } }, 15)
-          .start();
-      })
-      .start();
-  }
-
+  
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
@@ -415,13 +382,7 @@ export class PlayScene extends Container {
 
         //va cham tao
         this.appleManager.apples.forEach((apple) => {
-          if (
-            Util.SATPolygonPolygon(
-              this._cal4PointKnife(this.knifeManager.knives[0]),
-              Util.find4Vertex(apple)
-            )
-          ) {
-            console.log("xuyen tao");
+          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]),Util.find4Vertex(apple))) {
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
             //tang diem
@@ -430,12 +391,7 @@ export class PlayScene extends Container {
         });
 
         //va cham go
-        if (
-          Util.AABBCheck(
-            this.knifeManager.knives[0].collider,
-            this.board.collider
-          )
-        ) {
+        if (Util.AABBCheck(this.knifeManager.knives[0].collider,this.board.collider)) {
           //tao am thanh
           this.kHitWSound.play();
 
@@ -457,7 +413,6 @@ export class PlayScene extends Container {
 
           //tang diem
           this.playUI.updateScore(++this.score);
-          console.log("va roi!");
 
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();

@@ -30,6 +30,8 @@ export class AppleManager extends Container {
         apple.y = GameConstant.BOARD_Y_POSITION;
         apple.anchor.set(0.5, -2.7);
         apple.collider.anchor.set(0.5, -3);
+        apple.scale.set(0.5);
+        apple.zoomOut();
         this._setAppleAng(apple, avaiAngle);
         this.apples.push(apple);
         this.addChild(apple);

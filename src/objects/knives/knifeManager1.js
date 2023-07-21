@@ -5,6 +5,7 @@ import { Game } from "../../game";
 
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
+import { KnifeP1 } from "./knifeP1";
 
 
 
@@ -12,7 +13,6 @@ export class KnifeManager1 extends Container {
     constructor(data) {
         super();
         this.knifeData = data;
-        console.log(this.knifeData);
         this.knives = [];
         this.obsKnives = [];
         this.numOfKnife = this.knifeData.knifeNumber - 1; //so dao trong pool
@@ -31,9 +31,9 @@ export class KnifeManager1 extends Container {
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new KnifeP1(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = GameConstant.KNIFE_Y_POSITION  + 170;
+        knife.y = GameConstant.KNIFE_P1_Y_POSITION;
         knife.state = KnifeState.ACTIVATED;
         this.knives.push(knife);
         this.addChild(knife);
@@ -41,9 +41,9 @@ export class KnifeManager1 extends Container {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new KnifeP1(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = 1080;
+        knife.y = 1280;
         knife.visible = false;
         knife.state = KnifeState.DEFAULT;
         //knife.alpha = 0;
