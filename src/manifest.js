@@ -119,6 +119,10 @@ export const manifest = {
                 srcs: 'assets/images/blueButton.png'
             },
             {
+                name: 'backHomeButton',
+                srcs: 'assets/images/backHomeIcon.png'
+            },
+            {
                 name: 'victoryParticle',
                 srcs: 'assets/particles/victory.json'
             },

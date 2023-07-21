@@ -18,7 +18,7 @@ export class ResultGameUI extends Container {
     this._initBox();
     this._initMessage();
     this._initButton();
-    this._initHomeButton()
+    this._initHomeButton();
     this.resize();
     this.sortableChildren = true;
   }
@@ -26,11 +26,17 @@ export class ResultGameUI extends Container {
   _initOverLay() {
     this.overlay = new Graphics();
     this.overlay.beginFill(0x000000, 0.5);
-    this.overlay.drawRect(0,0,GameConstant.GAME_WIDTH,GameConstant.GAME_HEIGHT);
+    this.overlay.drawRect(
+      0,
+      0,
+      GameConstant.GAME_WIDTH,
+      GameConstant.GAME_HEIGHT
+    );
     this.overlay.endFill();
-    this.overlay.eventMode = 'static';
+    this.overlay.eventMode = "static";
     this.addChild(this.overlay);
   }
+
   _initBox() {
     // Hộp chính
     this.box = new Sprite(Game.bundle.resultGameBg);
@@ -52,20 +58,21 @@ export class ResultGameUI extends Container {
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
   }
+  
   _initButton() {
     // option 1
     this.button = new Sprite(Game.bundle.greenButton);
     this.button.width = 200;
-    this.button.height = 80;   
+    this.button.height = 80;
     this.button.anchor.set(0.5);
-    this.button.eventMode = 'static';
+    this.button.eventMode = "static";
     this.button.zIndex = 0;
     // Thêm văn bản cho option 1
     this.buttonText = new Text("Next", {
       fontSize: 40,
       fill: "#FFFFFF",
       fontWeight: "bold",
-      align : "center",
+      align: "center",
       fontFamily: "Comic Sans MS",
     });
     this.buttonText.zIndex = 100;
@@ -73,7 +80,7 @@ export class ResultGameUI extends Container {
     this.addChild(this.button);
     this.addChild(this.buttonText);
     Util.registerOnPointerDown(this.button, this._onTapButton, this);
- }
+  }
 
   _onTapButton() {
     this.emit("tapped");
@@ -83,9 +90,9 @@ export class ResultGameUI extends Container {
     // option 1
     this.homeButton = new Sprite(Game.bundle.blueButton);
     this.homeButton.width = 200;
-    this.homeButton.height = 80;   
+    this.homeButton.height = 80;
     this.homeButton.anchor.set(0.5);
-    this.homeButton.eventMode = 'static';
+    this.homeButton.eventMode = "static";
     this.homeButton.zIndex = 0;
     // Thêm văn bản cho option 1
     this.homeButtonText = new Text("Home", {
@@ -98,12 +105,11 @@ export class ResultGameUI extends Container {
     this.addChild(this.homeButton);
     this.addChild(this.homeButtonText);
     Util.registerOnPointerDown(this.homeButton, this._onTapHomeButton, this);
- }
+  }
 
   _onTapHomeButton() {
     this.emit("home");
   }
-
 
   hide() {
     this.visible = false;
@@ -113,7 +119,7 @@ export class ResultGameUI extends Container {
     this.visible = true;
   }
 
-  resize(){
+  resize() {
     this.box.x = GameConstant.GAME_WIDTH - this.box.width - 60;
     this.box.y =
       (GameConstant.GAME_HEIGHT - this.box.height) / 2 - this.box.height / 6;
@@ -121,14 +127,16 @@ export class ResultGameUI extends Container {
     this.messageText.x = this.box.width / 2 - this.messageText.width / 3.2;
     this.messageText.y = this.box.y + this.box.y / 4;
 
-    this.homeButton.x = this.box.x/2 + this.homeButton.width  ;
-    this.homeButton.y = this.box.y + this.box.height/2 +  this.homeButton.height + 30;
+    this.homeButton.x = this.box.x / 2 + this.homeButton.width;
+    this.homeButton.y =
+      this.box.y + this.box.height / 2 + this.homeButton.height + 30;
 
     this.homeButtonText.x = this.homeButton.x;
     this.homeButtonText.y = this.homeButton.y;
-    
-    this.button.x = this.box.x/2 + this.box.width/2 +  this.button.width - 50;
-    this.button.y = this.box.y + this.box.height/2 +  this.button.height + 30;
+
+    this.button.x =
+      this.box.x / 2 + this.box.width / 2 + this.button.width - 50;
+    this.button.y = this.box.y + this.box.height / 2 + this.button.height + 30;
 
     this.buttonText.x = this.button.x;
     this.buttonText.y = this.button.y;

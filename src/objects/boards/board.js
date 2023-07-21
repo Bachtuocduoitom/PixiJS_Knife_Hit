@@ -67,7 +67,7 @@ export class Board extends Sprite {
     // mảnh vụn
     this.fragmentsMin = Sprite.from('../assets/images/minFrg.png');
     this.fragmentsMin.anchor.set(0.5);
-    this.fragmentsMin.scale.set(0.8);
+    this.fragmentsMin.scale.set(1.5);
     this.fragmentsMin.visible = false;
     this.addChild(this.fragments1, this.fragments2, this.fragments3,  this.fragmentsMin);
     
@@ -138,37 +138,37 @@ export class Board extends Sprite {
     this.isBroken = true;
     // set rơi manh 1
     new TWEEN.Tween(this.fragments1)
-      .to({ x: -120, y: -170, rotation: this.fragments1.rotation + 3},350)
+      .to({ x: -220, y: -170, rotation: this.fragments1.rotation + 1},350)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments1)
-          .to({ x: -680, y: -320, rotation:this.fragments1.rotation + 4 },300)
+          .to({ x: -680, y: -320, rotation:this.fragments1.rotation + 2 },300)
           .start();
       })
       .start();
 
     // set rơi manh 2
     new TWEEN.Tween(this.fragments2)
-      .to({ x: 200, y: -230, rotation:this.fragments2.rotation + 2 },350)
+      .to({ x: 200, y: -130, rotation:this.fragments2.rotation + 2 },350)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments2)
-        .to({ x: 380, y: 1250, rotation: this.fragments2.rotation + 3 },850)
+        .to({ x: 500, y: -350, rotation: this.fragments2.rotation + 3 },300)
         .start();
       })
       .start();
 
     // set rơi manh 3
     new TWEEN.Tween(this.fragments3)
-      .to({ x: 400, y: 60, rotation:this.fragments3.rotation -3 },200)
+      .to({ x: 200, y: 60, rotation:this.fragments3.rotation -3 },200)
       .onComplete(() => {
         new TWEEN.Tween(this.fragments3)
-          .to({ x: 980, y: 450, rotation:this.fragments3.rotation -5 },350)
+          .to({ x: 680, y: 450, rotation:this.fragments3.rotation -4 },350)
           .start();
       })
       .start();
 
       // set rơi mảnh vụn
       new TWEEN.Tween(this.fragmentsMin)
-      .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },800)
+      .to({ x: -200, y: 1500, rotation:this.fragmentsMin.rotation -0.005 },600)
       .start();
   }
   setStop() {

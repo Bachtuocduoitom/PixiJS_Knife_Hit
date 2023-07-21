@@ -13,6 +13,7 @@ export class SceneManager extends Container {
         this.currentDt = 0;
         this._initAssetContainer();
         this._initUI();
+        this._initKnifeUI();
     }
 
     _initAssetContainer() {
@@ -57,6 +58,14 @@ export class SceneManager extends Container {
         this._addTweenLogo();
     }
 
+    _initKnifeUI() {
+        this.knifeUI = new Sprite(Game.bundle.knife);
+        this.addChild(this.knifeUI);
+        this.knifeUI.scale.set(1.2);
+        this.knifeUI.x = GameConstant.GAME_WIDTH /2 - this.knifeUI.width / 2;
+        this.knifeUI.y = GameConstant.GAME_HEIGHT /2 -this.knifeUI.height /2;
+    }
+
     _initUI() {
         this.menuUI = new MenuUI();
         this.addChild(this.menuUI);
@@ -96,7 +105,6 @@ export class SceneManager extends Container {
     norToHome() {
         this.removeChild(this.playScene);
         this.playScene.destroy();
-        
     }
 
     dualToHome() {

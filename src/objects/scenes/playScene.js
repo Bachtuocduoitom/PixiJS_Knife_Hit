@@ -56,6 +56,7 @@ export class PlayScene extends Container {
     //tao play UI
     this.playUI = new PlayUI(this.dataManager, this.score, this.appleScore);
     this.addChild(this.playUI);
+    this.playUI.on("backHome", (e) => this._backHome(e));
     // result UI
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
@@ -67,13 +68,10 @@ export class PlayScene extends Container {
     } else {
       this.state = GameState.Playing;
     }
-
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onContOrRestart(e));
     this.resultUI.on("home", (e) => this._backHome(e));
-    
     this._initParticlesResultgame();
-
   }
 
   _initDataManager() {
@@ -115,9 +113,8 @@ export class PlayScene extends Container {
     // create dao can tren board
     if (this.dataManager.haveKnifeOnBoard()) {
       this.knifeManager.spawnObsKnives(this.avaiAngle);
-      
     }
-    
+
     // create tao can tren board
     this._initAppleManager();
     if (this.dataManager.haveAppleOnBoard()) {
@@ -135,11 +132,11 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
-      if(this.resultUI.messageText.text === "You lose" || this.currentLevel === 4) {
-        this._onRestartGame(); 
-      } else {
-        this._onContGame();
-      }
+    if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 4) {
+      this._onRestartGame();
+    } else {
+      this._onContGame();
+    }
   }
 
   // Xử lí click tiếp tục
@@ -161,7 +158,6 @@ export class PlayScene extends Container {
     //init new UI and gameplay
     this._initGamePlay();
     this._initUI();
-    console.log("tiep tuc");
   }
 
   // xử lí click restart
@@ -181,8 +177,6 @@ export class PlayScene extends Container {
     this.tutorialUI.destroy();
     this.resultUI.destroy();
     this._initUI();
-    console.log("choi lai");
-
   }
 
   _backHome(e) {
@@ -215,7 +209,7 @@ export class PlayScene extends Container {
     // tiếng lose game
     this.loseGame = Sound.from(Game.bundle.loseGame);
   }
-  
+
   update(dt) {
     this.currentDt += dt;
     // /TWEEN.update(this.currentDt);
@@ -255,120 +249,118 @@ export class PlayScene extends Container {
     this.whiteCircle.alpha = 0.2;
 
     new TWEEN.Tween(this.whiteCircle)
-    .to({scale: {x:0.5, y: 0.5}}, 100)
-    .onComplete(() => {
-      new TWEEN.Tween(this.whiteCircle)
-      .to({scale: {x:1.5 ,y: 1.5}}, 150)
-      .onComplete(() => {this.whiteCircle.visible = false})
-      .start()
-    })
-    .start();
+      .to({ scale: { x: 0.5, y: 0.5 } }, 100)
+      .onComplete(() => {
+        new TWEEN.Tween(this.whiteCircle)
+          .to({ scale: { x: 1.5, y: 1.5 } }, 150)
+          .onComplete(() => {
+            this.whiteCircle.visible = false;
+          }).start();
+      }).start();
 
     //vong tron loe sang
     this.circleLine.x = this.board.x;
     this.circleLine.y = this.board.y;
     this.circleLine.visible = true;
     this.circleLine.alpha = 0.3;
-    
+
     new TWEEN.Tween(this.circleLine)
-    .to({scale: {x:1.5, y: 1.5}}, 100)
-    .onComplete(() => {
-      new TWEEN.Tween(this.circleLine)
-      .to({scale: {x:2 ,y: 2}}, 150)
+      .to({ scale: { x: 1.5, y: 1.5 } }, 100)
       .onComplete(() => {
-        this.circleLine.alpha = 0.01;
-        this.circleLine.visible = false;
-      })
-      .start()
-    })
-    .start();
+        new TWEEN.Tween(this.circleLine)
+          .to({ scale: { x: 2, y: 2 } }, 150)
+          .onComplete(() => {
+            this.circleLine.alpha = 0.01;
+            this.circleLine.visible = false;
+          }).start();
+      }).start();
   }
 
   _showKnifeCollisionFlare(knife) {
     //hinh tron loe sang
     this.whiteCircle.x = knife.x;
-    this.whiteCircle.y = knife.y - knife.height/4;
+    this.whiteCircle.y = knife.y - knife.height / 4;
     this.whiteCircle.scale.set(0.1);
     this.whiteCircle.visible = true;
     this.whiteCircle.alpha = 0.5;
 
     new TWEEN.Tween(this.whiteCircle)
-    .to({scale: {x:0.7, y: 0.7}}, 60)
-    .onComplete(() => {
-      this.whiteCircle.visible = false;
-    })
-    .start();
+      .to({ scale: { x: 0.7, y: 0.7 } }, 60)
+      .onComplete(() => {
+        this.whiteCircle.visible = false;
+      }).start();
 
     //man hinh loe sang
     let sceneFilter = new AdjustmentFilter();
     this.gameplay.filters = [sceneFilter];
     new TWEEN.Tween(this.gameplay)
-    .to({alpha : 1,scale: {x:1.05, y: 1.05}}, 150)
-    .yoyo(true).repeat(1)
-    .onUpdate(() => {
-      sceneFilter.gamma = 2;
-
-    })
-    .onComplete(() => {
-      sceneFilter.gamma = 1;
-    })
-    .start();
+      .to({ alpha: 1, scale: { x: 1.05, y: 1.05 } }, 150)
+      .yoyo(true).repeat(1)
+      .onUpdate(() => {
+        sceneFilter.gamma = 2;
+      })
+      .onComplete(() => {
+        sceneFilter.gamma = 1;
+      }).start();
   }
-    
+  
   _onStart(e) {
     this.state = GameState.Playing;
     this.tutorialUI.hide();
     this._onClicky(e);
   }
   _onWin() {
-        // tạo âm thanh
-        this.boardBroken.play();
-        // Hiện và xử lí các mảnh vỡ bay ra
-        this.board.breakUp();
-        this.knifeManager.setObsFall();
-        this.appleManager.setApplesFall();
-        // Hiện UI result và sound
-        setTimeout(() => {
-          this.winGame.play();
-        }, 1000);
-        setTimeout(() => {
-          this.state = GameState.Win;
-          this.resultUI.show();
-          //tao hiệu ứng chiến thắng
-          let winGameParticle = new Emitter(
-            this.particleContainerResult,
-            upgradeConfig(Game.bundle.winGameParticle, [Game.bundle.particleStar, Game.bundle.particle])
-          );
-          winGameParticle.updateSpawnPos(
-            this.resultUI.messageText.x + this.resultUI.messageText.width /2 ,
-            this.resultUI.messageText.y
+    // tạo âm thanh
+    this.boardBroken.play();
+    // Hiện và xử lí các mảnh vỡ bay ra
+    this.board.breakUp();
+    this.knifeManager.setObsFall();
+    this.appleManager.setApplesFall();
+    // Hiện UI result và sound
+    setTimeout(() => {
+      this.winGame.play();
+    }, 1000);
+    setTimeout(() => {
+      this.state = GameState.Win;
+      this.resultUI.show();
+      //tao hiệu ứng chiến thắng
+      let winGameParticle = new Emitter(
+        this.particleContainerResult,
+        upgradeConfig(Game.bundle.winGameParticle, [
+          Game.bundle.particleStar,
+          Game.bundle.particle,
+        ])
       );
-        winGameParticle.playOnceAndDestroy();
-        }, 1500);
-      // hình tròn và vòng tròn xuất hiện
-      this._showCircleFlare();        
+      winGameParticle.updateSpawnPos(
+        this.resultUI.messageText.x + this.resultUI.messageText.width / 2,
+        this.resultUI.messageText.y
+      );
+      winGameParticle.playOnceAndDestroy();
+    }, 1200);
+    // hình tròn và vòng tròn xuất hiện
+    this._showCircleFlare();
   }
 
   _onLose() {
-       // Tạo âm thanh va dao
-        this.kHitKSound.play();
-      // Dao rơi
-        this.knifeManager.knives[0].setFall();
-        this._showKnifeCollisionFlare(this.knifeManager.knives[0]); // Tạo hiệu ứng
-        this.board.setStop();
+    // Tạo âm thanh va dao
+    this.kHitKSound.play();
+    // Dao rơi
+    this.knifeManager.knives[0].setFall();
+    this._showKnifeCollisionFlare(this.knifeManager.knives[0]); // Tạo hiệu ứng
+    this.board.setStop();
 
-        //dich chuyen nhe go tao va  dao
-        this.board.onHit();
-        this.knifeManager.onBoardHit();
-        this.appleManager.onBoardHit();
-        
-        setTimeout(() => {
-          this.loseGame.play(); // âm thanh thua
-        }, 500);
-        setTimeout(() => {
-          this.state = GameState.Lose;
-          this.resultUI.showLoseBox();// Hiện result UI
-        }, 1500);
+    //dich chuyen nhe go tao va  dao
+    this.board.onHit();
+    this.knifeManager.onBoardHit();
+    this.appleManager.onBoardHit();
+
+    setTimeout(() => {
+      this.loseGame.play(); // âm thanh thua
+    }, 500);
+    setTimeout(() => {
+      this.state = GameState.Lose;
+      this.resultUI.showLoseBox(); // Hiện result UI
+    }, 1500);
   }
 
   _onCollision() {
@@ -376,18 +368,21 @@ export class PlayScene extends Container {
       if (this.knifeManager.knives[0].state === "move") {
         //va cham dao
         if (this.knifeManager.knives[0].y >= 590) {
-            this.knifeManager.obsKnives.forEach((knife) => {
-                if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(knife))) {
-                  this._onLose();
-                  
-                }
-              });
+          this.knifeManager.obsKnives.forEach((knife) => {
+            if (
+              Util.SATPolygonPolygon(
+                this._cal4PointKnife(this.knifeManager.knives[0]),
+                Util.find4Vertex(knife)
+              )
+            ) {
+              this._onLose();
+            }
+          });
         }
-        
+
         //va cham tao
         this.appleManager.apples.forEach((apple) => {
-          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]), Util.find4Vertex(apple))) {
-            console.log("xuyen tao");
+          if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]),Util.find4Vertex(apple))) {
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
             //tang diem
@@ -396,7 +391,7 @@ export class PlayScene extends Container {
         });
 
         //va cham go
-        if (Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
+        if (Util.AABBCheck(this.knifeManager.knives[0].collider,this.board.collider)) {
           //tao am thanh
           this.kHitWSound.play();
 
@@ -418,8 +413,7 @@ export class PlayScene extends Container {
 
           //tang diem
           this.playUI.updateScore(++this.score);
-          console.log("va roi!");
-  
+
           //bien dao thanh vat can
           this.knifeManager.knives[0].beObs();
 
@@ -452,7 +446,7 @@ export class PlayScene extends Container {
     this.knifeManager.boardAngleRotation = this.board.angleRotation;
     this.appleManager.boardAngleRotation = this.board.angleRotation;
   }
-  
+
   _cal4PointKnife(knife) {
     let w = knife.collider.getBounds().width;
     let h = knife.collider.getBounds().height;
@@ -463,13 +457,13 @@ export class PlayScene extends Container {
 
   _onClicky(e) {
     if (this.state === GameState.Playing) {
-        if (this.knifeNumber > 0) {
-            
-            if (this.knifeManager.onClicky(e)) {
-            this.playUI.updateKnifeIcon(this.dataManager.numOfKnife() - this.knifeNumber--);
-            }
-          }
+      if (this.knifeNumber > 0) {
+        if (this.knifeManager.onClicky(e)) {
+          this.playUI.updateKnifeIcon(
+            this.dataManager.numOfKnife() - this.knifeNumber--
+          );
+        }
+      }
     }
-    
   }
 }
