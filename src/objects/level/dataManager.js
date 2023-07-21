@@ -4,7 +4,12 @@ export class DataManager {
 
     constructor(currentLevel) {
       this.currentLevel = currentLevel;
+      if (this.currentLevel === "dual") {
+        this.dataLevel = Game.dataLevel[Game.dataLevel.length - 1];
+        console.log(this.dataLevel);
+      } else {
       this.dataLevel = Game.dataLevel[currentLevel - 1];
+      }
     }
   
     getDataLevel() {

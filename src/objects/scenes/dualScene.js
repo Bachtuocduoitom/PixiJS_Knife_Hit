@@ -26,7 +26,7 @@ export class DualScene extends Container {
     this.appleScore1 = 0;
     this.score2 = 0;
     this.appleScore2 = 0;
-    this.currentLevel = 1;
+    this.currentMode = "dual";
     this._initGamePlay();
     this._initUI();
   }
@@ -51,7 +51,7 @@ export class DualScene extends Container {
   }
 
   _initDataManager() {
-    this.dataManager = new DataManager(this.currentLevel);
+    this.dataManager = new DataManager(this.currentMode);
   }
 
   _initContKnifeManager1() {
@@ -188,10 +188,13 @@ export class DualScene extends Container {
     this.score1 = 0; //reset score
     this.score2 = 0; //reset score
     this._initGamePlay();
+    
     //destroy UI and initial new ones
-    this.removeChild(this.multipleUI, this.resultUI);
+    this.removeChild(this.multipleUI, this.resultUI, this.tutorialUI);
     this.multipleUI.destroy();
     this.resultUI.destroy();
+    this.tutorialUI.destroy();
+
     this._initUI();
     console.log("choi lai");
     this._initParticlesResultgame();

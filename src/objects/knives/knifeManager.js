@@ -12,7 +12,6 @@ export class KnifeManager extends Container {
     constructor(data) {
         super();
         this.knifeData = data;
-        console.log(this.knifeData);
         this.knives = [];
         this.obsKnives = [];
         this.numOfKnife = this.knifeData.knifeNumber - 1; //so dao trong pool

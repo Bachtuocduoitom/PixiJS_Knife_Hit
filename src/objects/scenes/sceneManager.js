@@ -96,12 +96,14 @@ export class SceneManager extends Container {
     norToHome() {
         this.removeChild(this.playScene);
         this.playScene.destroy();
+        this.playScene = null;
         
     }
 
     dualToHome() {
         this.removeChild(this.dualScene);
         this.dualScene.destroy();
+        this.dualScene = null;
     }
 
     _addTweenLogo() {
