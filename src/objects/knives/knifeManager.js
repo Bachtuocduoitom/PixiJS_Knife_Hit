@@ -33,8 +33,10 @@ export class KnifeManager extends Container {
     _spawnFirstKnife() {
         let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.KNIFE_X_POSITION;
-        knife.y = GameConstant.KNIFE_Y_POSITION;
-        knife.state = KnifeState.ACTIVATED;
+        // knife.y = GameConstant.KNIFE_Y_POSITION;
+        // knife.state = KnifeState.ACTIVATED;
+        knife.y = 1320;
+        knife.firstToActive();
         this.knives.push(knife);
         this.addChild(knife);
     }

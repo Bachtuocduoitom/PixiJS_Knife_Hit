@@ -3,36 +3,49 @@ import { GameConstant } from "../../gameConstant";
 import { Collider } from "../physics/collider";
 import { Util } from "../../helper/utils";
 import * as TWEEN from "@tweenjs/tween.js";
-import { KnifePrototype } from "./knifePrototype";
+import { KnifePrototype, KnifeState } from "./knifePrototype";
 
-export const KnifeState = Object.freeze({
-    DEFAULT: "default",
-    ACTIVATED: "activated",
-    ACTIVATING: "activating",
-    ACTIVE: "active",
-    MOVE: "move",
-    OBSTACLE: "obstacle",
-    FALL: "fall",
-  });
 
-export class Knife extends KnifePrototype{
+export class KnifeP1 extends KnifePrototype {
     constructor(texture) {
         super(texture);
-        
-    }
-
-    firstToActive() {
-        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION }, 200).onComplete(() => {
-            this.state = KnifeState.ACTIVATED;
-        }).start();
     }
     
     _toActive() {
         super._toActive();
-        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_Y_POSITION }, 1).onComplete(() => {
+        new TWEEN.Tween(this).to({y: GameConstant.KNIFE_P1_Y_POSITION}, 20).onComplete(() => {
             this.state = KnifeState.ACTIVATED;
         }).start();
     }
+
+    setAnotherObsFall() {
+        this.setFall();
+        if ((this.angle%360) <= 180) {
+            if((this.angle%360) >= 90) {
+                this.isFallUpLeft = true;
+            } else {
+                this.isFallDownLeft = true;
+            }
+        } else {
+            if((this.angle%360) <= 270) {
+                this.isFallUpRight = true;
+            } else {
+                this.isFallDownRight = true;
+            }
+        }
+        this.fallRotation = Util.random(0.05, 0.08);
+        this.fallX = Util.random(8,15);
+        this.fallY = Util.random(20,25);
+    }
+
+    setLastObsFall() {
+        this.setFall();
+        this.isLastOne = true;
+        this.fallRotation = Util.random(0.05, 0.85);
+        this.fallX = Util.random(-5,5);
+        this.fallY = Util.random(15,20);
+    }
+
 
     update(dt) {
         super.update(dt);
@@ -47,27 +60,24 @@ export class Knife extends KnifePrototype{
             case "fall":
                 if (this.isFallDownLeft) {
                     this.x += this.fallX*dt;
-                    this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                    this.y -= this.fallY*dt;
                     this.rotation += this.fallRotation;
                 } else if (this.isFallDownRight) {
                     this.x -= this.fallX*dt;
-                    this.y += this.fallY*dt + 1/2 * 9.8 * dt * dt;
+                    this.y -= this.fallY*dt;
                     this.rotation -= this.fallRotation;
                 } else if(this.isFallUpLeft) {
                     this.x += this.fallX*dt;
-                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.y += this.fallY*dt;
                     this.rotation -= this.fallRotation;
-                    this.pushForce --;
                 } else if(this.isFallUpRight) {
                     this.x -= this.fallX*dt;
-                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.y += this.fallY*dt;
                     this.rotation -= this.fallRotation;
-                    this.pushForce --;
                 } else if(this.isLastOne) {
-                    this.x -= this.fallX*dt;;
-                    this.y += this.fallY*dt + 1/2*9.8*dt*dt - this.pushForce*dt;
+                    this.x -= this.fallX*dt;
+                    this.y += this.fallY*dt;
                     this.rotation -= this.fallRotation;
-                    this.pushForce --;
                 } else {
                     this.y += 20 + 1/2 * 9.8 * dt * dt;
                     this.rotation += 0.1;
@@ -82,5 +92,4 @@ export class Knife extends KnifePrototype{
 
     }
    
-    
 }
