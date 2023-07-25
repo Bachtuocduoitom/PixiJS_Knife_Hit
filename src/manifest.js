@@ -32,6 +32,10 @@ export const manifest = {
             },
             {
                 name: 'knife2',
+                srcs: 'assets/images/knife2.png'
+            },
+            {
+                name: 'knife2_reverse',
                 srcs: 'assets/images/knife2_reverse.png'
             },
             {
@@ -117,6 +121,10 @@ export const manifest = {
             {
                 name: 'blueButton',
                 srcs: 'assets/images/blueButton.png'
+            },
+            {
+                name: 'backHomeButton',
+                srcs: 'assets/images/backHomeIcon.png'
             },
             {
                 name: 'victoryParticle',

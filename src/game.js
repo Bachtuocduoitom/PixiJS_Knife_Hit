@@ -16,7 +16,7 @@ export class Game {
             this.bundle = bundle;
 
             this._loadGameDataLevel().then((data) => {
-                this.dataLevel = data.level;
+                this.data = data;
 
                 this._initSceneManager();
                 

@@ -13,6 +13,7 @@ export class SceneManager extends Container {
         this.currentDt = 0;
         this._initAssetContainer();
         this._initUI();
+        this._initKnifeUI();
     }
 
     _initAssetContainer() {
@@ -33,7 +34,6 @@ export class SceneManager extends Container {
         //knife logo
         this.knifeLogo = new Sprite(Game.bundle.knife_logo);
         this.knifeLogo.anchor.set(0.5, 2.2);
-        //this.knifeLogo.rotation = Math.PI/30;
         this.knifeLogo.x = GameConstant.GAME_WIDTH/2;
         this.knifeLogo.y = 480;
         this.assetContainer.addChild(this.knifeLogo);
@@ -41,7 +41,6 @@ export class SceneManager extends Container {
         //fly knife logo
         this.flyKnifeLogo = new Sprite(Game.bundle.flying_knife_logo);
         this.flyKnifeLogo.anchor.set(0.5);
-        //this.flyKnifeLogo.rotation = Math.PI/30;
         this.flyKnifeLogo.x = GameConstant.GAME_WIDTH/2;
         this.flyKnifeLogo.y = 290;
         this.assetContainer.addChild(this.flyKnifeLogo);
@@ -49,12 +48,19 @@ export class SceneManager extends Container {
         //hit logo
         this.hitLogo = new Sprite(Game.bundle.hit_logo);
         this.hitLogo.anchor.set(0.5, 1.2);
-        //this.knifeLogo.rotation = Math.PI/30;
         this.hitLogo.x = GameConstant.GAME_WIDTH/2;
         this.hitLogo.y = 480;
         this.assetContainer.addChild(this.hitLogo);
 
         this._addTweenLogo();
+    }
+
+    _initKnifeUI() {
+        this.knifeUI = new Sprite(Game.bundle.knife);
+        this.addChild(this.knifeUI);
+        this.knifeUI.scale.set(1.2);
+        this.knifeUI.x = GameConstant.GAME_WIDTH /2 - this.knifeUI.width / 2;
+        this.knifeUI.y = GameConstant.GAME_HEIGHT /2 -this.knifeUI.height /2;
     }
 
     _initUI() {
