@@ -43,6 +43,10 @@ export const manifest = {
                 srcs: 'assets/images/hit_logo.png'
             },
             {
+                name: 'square',
+                srcs: 'assets/images/square.png'
+            },
+            {
                 name: 'knife',
                 srcs: 'assets/images/knife.png'
             },
