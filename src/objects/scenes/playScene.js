@@ -14,7 +14,6 @@ import { ResultGameUI } from "../ui/resultGameUI";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
-import { MenuUI } from "../ui/menuUI";
 
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
@@ -64,14 +63,18 @@ export class PlayScene extends Container {
   _initUI() {
     //tao play UI
     this.playUI = new PlayUI(this.dataManager, this.score, this.appleScore);
+    this.playUI.zIndex = 301;
     this.addChild(this.playUI);
     this.playUI.on("backHome", (e) => this._backHome(e));
+
     // result UI
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
+    
     //tao tutorial UI
     if (this.currentLevel === 1) {
       this.tutorialUI = new TutorialUI();
+      this.tutorialUI.zIndex = 200;
       this.addChild(this.tutorialUI);
       this.tutorialUI.on("tapped", (e) => this._onStart(e));
     } else {
@@ -218,6 +221,9 @@ export class PlayScene extends Container {
     this.winGame = Sound.from(Game.bundle.winGame);
     // tiếng lose game
     this.loseGame = Sound.from(Game.bundle.loseGame);
+    //tieng pop
+    this.popSound = Sound.from(Game.bundle.pop);
+    this.popSound.play();
   }
 
   update(dt) {

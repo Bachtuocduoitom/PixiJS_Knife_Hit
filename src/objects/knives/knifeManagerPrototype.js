@@ -118,5 +118,11 @@ export class KnifeManagerPrototype extends Container {
         })
     }
 
+    onBoardHitExtra() {
+        this.obsKnives.forEach(obs => {
+           obs.moveUpABitExtra();
+        })
+    }
+
 
 }

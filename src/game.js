@@ -4,28 +4,36 @@ import { PlayScene } from './objects/scenes/playScene'
 import { manifest } from "./manifest";
 import { SceneManager } from "./objects/scenes/sceneManager";
 import { LoadingScene } from "./objects/scenes/loadingScene";
+import * as TWEEN from "@tweenjs/tween.js";
 
 export class Game {
     static init() {
         this.app = new Application({
             width: GameConstant.GAME_WIDTH,
             height: GameConstant.GAME_HEIGHT,
-            backgroundColor: 0x1099bb,
+            backgroundColor: 0x000000,
         });
         document.body.appendChild(this.app.view);
+
+        this._initLoadingScene();
+
         this._loadGameAssets().then((bundle) => {
             this.bundle = bundle;
 
             this._loadGameDataLevel().then((data) => {
                 this.data = data;
 
-                this._initSceneManager();
+                this.loadingScene.on("finish show ads", () => {
+                    this._onLoaded();
+                })
                 
-                this.app.ticker.add(this.update, this);
             })
           
-        })
+        });
+        this.app.ticker.add(this.update, this);
+
         this.resize();
+
         window.addEventListener("resize", this.resize);
     }
 
@@ -39,8 +47,10 @@ export class Game {
     }
 
     static update(dt) {
-        // this.loadingScene.update(dt);
-        this.sceneManager.update(dt);
+        this.loadingScene.update(dt);
+        if (this.sceneManager != null) {
+            this.sceneManager.update(dt);
+        }
     }
 
     static _initSceneManager() {
@@ -51,6 +61,17 @@ export class Game {
     static _initLoadingScene() {
         this.loadingScene = new LoadingScene();
         this.app.stage.addChild(this.loadingScene);
+    }
+
+    static _onLoaded() {
+        this.loadingScene.onLoaded();
+        this.loadingScene.on("loaded", () => {
+            this.app.stage.removeChild(this.loadingScene);
+            this.loadingScene.destroy();
+
+            this._initSceneManager();
+        })
+
     }
 
     static resize() {

@@ -54,10 +54,10 @@ export const manifest = {
                 name: 'knife1',
                 srcs: 'assets/images/knife1.png'
             },
-            // {
-            //     name: 'knife2',
-            //     srcs: 'assets/images/knife2.png'
-            // },
+            {
+                name: 'knife2',
+                srcs: 'assets/images/knife2.png'
+            },
             {
                 name: 'knife3',
                 srcs: 'assets/images/knife3.png'
@@ -103,12 +103,12 @@ export const manifest = {
                 srcs: 'assets/images/knife13.png'
             },
             {
-                name: 'knife2',
-                srcs: 'assets/images/knife2.png'
+                name: 'knifeP2',
+                srcs: 'assets/images/knifeP2.png'
             },
             {
-                name: 'knife2_reverse',
-                srcs: 'assets/images/knife2_reverse.png'
+                name: 'knifeP2_reverse',
+                srcs: 'assets/images/knifeP2_reverse.png'
             },
             {
                 name: 'knifeLoad',
@@ -165,6 +165,14 @@ export const manifest = {
             {
                 name: 'knife_hit_knife',
                 srcs: 'assets/sounds/knife_hit_knife.wav'
+            },
+            {
+                name: 'knife_swoosh',
+                srcs: 'assets/sounds/swoosh.wav'
+            },
+            {
+                name: 'pop',
+                srcs: 'assets/sounds/pop.wav'
             },
             {
                 name: 'knife_hit_apple',

@@ -105,16 +105,13 @@ export class DualScene extends Container {
     this.dualUI = new DualUI(this.dataManager,this.score1,this.score2);
     this.dualUI.on("backHome", (e) => this._backHome(e));
     this.addChild(this.dualUI);
+
     // result UI
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
     this.resultUI.messageText.x = GameConstant.GAME_WIDTH / 2 - this.resultUI.messageText.width / 1.3;
-    // tao tutorial UI
-    this.tutorialUI = new TutorialUI();
-    this.addChild(this.tutorialUI);
-    this.tutorialUI.on("tapped", (e) => {
-      this.tutorialUI.hide();
-    });
+
+    
     this.resultUI.hide();
     this.resultUI.on("tapped", (e) => this._onRestartGame(e));
     this.resultUI.on("home", (e) => this._backHome(e));
@@ -176,10 +173,10 @@ export class DualScene extends Container {
     this._initGamePlay();
     
     //destroy UI and initial new ones
-    this.removeChild(this.dualUI, this.resultUI, this.tutorialUI);
+    this.removeChild(this.dualUI, this.resultUI);
     this.dualUI.destroy();
     this.resultUI.destroy();
-    this.tutorialUI.destroy();
+    
 
     this._initUI();
     this._initParticlesResultgame();
@@ -214,6 +211,9 @@ export class DualScene extends Container {
     this.winGame = Sound.from(Game.bundle.winGame);
     // tiếng lose game
     this.loseGame = Sound.from(Game.bundle.loseGame);
+    //tieng pop
+    this.popSound = Sound.from(Game.bundle.pop);
+    this.popSound.play();
   }
 
   update(dt) {
@@ -424,6 +424,7 @@ export class DualScene extends Container {
           //dich chuyen nhe go va dao
           this.board.onHit();
           this.knifeManager1.onBoardHit();
+          this.knifeManager2.onBoardHit();
 
           //tang diem
           this.dualUI.updateScore(++this.score1);
@@ -485,8 +486,9 @@ export class DualScene extends Container {
           logParticle.playOnceAndDestroy();
 
           //dich chuyen nhe go tao va  dao
-          this.board.onHit();
-          this.knifeManager2.onBoardHit();
+          this.board.onHitExtra();
+          this.knifeManager1.onBoardHitExtra();
+          this.knifeManager2.onBoardHitExtra();
 
           //tang diem
           this.dualUI.updateScore2(++this.score2);

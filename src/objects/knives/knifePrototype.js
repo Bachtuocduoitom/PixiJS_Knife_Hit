@@ -92,6 +92,10 @@ export class KnifePrototype extends Sprite {
         new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
     }
 
+    moveUpABitExtra() {
+        new TWEEN.Tween(this).to({y: this.y + GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
+    }
+
     zoomOut() {
         new TWEEN.Tween(this).to({scale: {x:1 ,y: 1}}, 200).start(); 
     }
