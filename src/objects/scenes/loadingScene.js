@@ -10,7 +10,7 @@ export class LoadingScene extends Container {
     super();
     // Tạo một biến giả lập để cập nhật giá trị của thanh loading
     this.progress = 0;
-    this.speed = 1.5;
+    this.speed =0.75;
     this.currentTime = 0;
     this._initProgressbar();
     this._initKnifeLoad(); 
@@ -81,7 +81,7 @@ export class LoadingScene extends Container {
     this.currentTime += dt;
     // TWEEN.update(this.currentTime);
     this.boardBg.rotation += 0.03;
-    this.progress +=0.5;
+    this.progress += 0.5;
     this.knifeLoad.x += this.speed *dt;
     this.loadingBar.scale.x = this.progress;
     if (this.progress >= 100) {
