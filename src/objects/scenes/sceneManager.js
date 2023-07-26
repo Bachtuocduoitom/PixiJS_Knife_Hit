@@ -6,20 +6,19 @@ import { PlayScene } from "./playScene";
 import { GameConstant } from "../../gameConstant";
 import * as TWEEN from "@tweenjs/tween.js";
 import { DualScene } from "./dualScene";
-
 export class SceneManager extends Container {
     constructor() {
         super();
         this.currentDt = 0;
         this._initAssetContainer();
         this._initUI();
-        this._initKnifeUI();
     }
-
+    
     _initAssetContainer() {
         this.assetContainer = new Container();
         this.addChild(this.assetContainer);
         this._initBackground();
+        this._initKnifeUI();
         this._initLogo();
     }
 
@@ -60,7 +59,7 @@ export class SceneManager extends Container {
 
     _initKnifeUI() {
         this.knifeUI = new Sprite(Game.bundle.knife);
-        this.addChild(this.knifeUI);
+        this.assetContainer.addChild(this.knifeUI);
         this.knifeUI.scale.set(1.2);
         this.knifeUI.x = GameConstant.GAME_WIDTH /2 - this.knifeUI.width / 2;
         this.knifeUI.y = GameConstant.GAME_HEIGHT /2 -this.knifeUI.height /2;
@@ -72,7 +71,10 @@ export class SceneManager extends Container {
 
         this.menuUI.on("normal button tapped", (e) => this._initNorMode(e));
         this.menuUI.on("dual button tapped", (e) => this._initDualMode(e));
+        // this.menuUI.on("shop mode tapped", (e) => this._initShopMode(e));
     }
+
+
 
     update(dt) {
         this.currentDt += dt;
@@ -96,10 +98,14 @@ export class SceneManager extends Container {
         this.dualScene = new DualScene();
         this.addChild(this.dualScene);
     }
-
+    
     hideUI() {
         this.assetContainer.destroy();
         this.menuUI.hide();
+    }
+
+    showUI() {
+        
     }
 
     norToHome() {
@@ -111,6 +117,8 @@ export class SceneManager extends Container {
         this.removeChild(this.dualScene);
         this.dualScene.destroy();
     }
+
+
 
     _addTweenLogo() {
         new TWEEN.Tween(this.knifeLogo).to({rotation: -Math.PI/30}, 1000).yoyo(true).repeat(Infinity).start();
