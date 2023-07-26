@@ -28,28 +28,28 @@ export class PlayScene extends Container {
     super();
     this.state = GameState.Tutorial;
     this.score = 0;
-    this.appleScore = 0;
-    this.currentLevel = 1;
+    this.currentLevel = 1; 
+    this._initAppleScore();
     this._initGamePlay();
     this._initUI();
   }
 
   _initAppleScore() {
-    if (localStorage.getItem("appleScore") === null) {
+    if (localStorage.getItem('appleScore') === null) {
       this.appleScore = 0;
-      localStorage.setItem("appleScore", 0)
+      localStorage.setItem('appleScore', this.appleScore);
+
     } else {
-      this.appleScore = localStorage.getItem("appleScore");
+      this.appleScore = localStorage.getItem('appleScore');
     }
   }
 
-  _initGamePlay() {
+  _initGamePlay() {  
     this._initDataManager();
     this.gameplay = new Container();
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
     this.knifeNumber = this.dataManager.numOfKnife();
-    this.currentDt = 0;
     this.addChild(this.gameplay);
     this._initBackground();
     this._initBoard();
@@ -141,6 +141,7 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
+    localStorage.setItem('appleScore', this.appleScore);
     if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 4) {
       this._onRestartGame();
     } else {
@@ -220,8 +221,6 @@ export class PlayScene extends Container {
   }
 
   update(dt) {
-    this.currentDt += dt;
-    // /TWEEN.update(this.currentDt);
     this.knifeManager.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);

@@ -59,11 +59,6 @@ export class MenuUI extends Container{
 
       Util.registerOnPointerDown(this.dualModeButton, this._onTapDualModeButton, this);
     }
-  
-    updateUI(dt) {
-      this.currentTime += dt;
-      TWEEN.update(this.currentTime);
-    }
 
     _onTapDualModeButton() {
       this.emit("dual button tapped");
@@ -85,6 +80,7 @@ export class MenuUI extends Container{
 
       this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width/2;
       this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height/2;
+
     }
   
     hide() {

@@ -102,7 +102,7 @@ export class DualScene extends Container {
 
   _initUI() {
     //tao multiple UI
-    this.dualUI = new DualUI(this.dataManager,this.score1,this.appleScore1,this.score2,this.appleScore2);
+    this.dualUI = new DualUI(this.dataManager,this.score1,this.score2);
     this.dualUI.on("backHome", (e) => this._backHome(e));
     this.addChild(this.dualUI);
     // result UI

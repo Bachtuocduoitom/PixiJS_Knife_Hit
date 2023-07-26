@@ -41,7 +41,7 @@ export class KnifeP1 extends KnifePrototype {
     setLastObsFall() {
         this.setFall();
         this.isLastOne = true;
-        this.fallRotation = Util.random(0.05, 0.85);
+        this.fallRotation = Util.random(0.05, 0.08);
         this.fallX = Util.random(-5,5);
         this.fallY = Util.random(15,20);
     }

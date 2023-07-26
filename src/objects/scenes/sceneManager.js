@@ -83,13 +83,11 @@ export class SceneManager extends Container {
     }
 
     _initNorMode(e) {
-        console.log("normal button tapped");
         this.playScene = new PlayScene();
         this.addChild(this.playScene);
     }
 
     _initDualMode(e) {
-        console.log("dual button tapped");
         this.dualScene = new DualScene();
         this.addChild(this.dualScene);
     }

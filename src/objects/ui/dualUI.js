@@ -4,19 +4,15 @@ import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 
 export class DualUI extends Container {
-  constructor(data, score, appleScore, score2, appleScore2) {
+  constructor(data, score, score2) {
     super();
     this.playTime = 0;
     this.data = data;
     this.score = score;
     this.score2 = score2;
-    this.appleScore = appleScore;
-    this.appleScore2 = appleScore2;
     this._initScore();
     this._initScore2();
     this._initIconPlayer();
-    this._initAppleCount();
-    this._initAppleCount2();
     this._initKnifeCount();
     this._initKnifeCount2();
     this._initBackHomeButton();
@@ -92,49 +88,6 @@ export class DualUI extends Container {
     this.addChild(this.iconPlayer1Cont, this.iconPlayer2Cont);
   }
 
-  _initAppleCount() {
-    this.appleScoreContainer = new Container();
-    this.addChild(this.appleScoreContainer);
-    let textStyle = new TextStyle({
-      fontSize: 40,
-      align: "center",
-      fill: 0xe6b85f,
-      fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
-    });
-    this.appleText = new Text(`${this.appleScore}`, textStyle);
-    this.appleText.anchor.set(1, 0);
-    this.appleText.position.set(0, 7);
-    this.appleSprite = Sprite.from(Game.bundle.apple_slice_1);
-    this.appleSprite.scale.set(0.8);
-    this.appleSprite.position.set(60, 10);
-    this.appleSprite.angle = 90;
-    this.appleScoreContainer.addChild(this.appleText);
-    this.appleScoreContainer.addChild(this.appleSprite);
-  }
-
-  _initAppleCount2() {
-    this.appleScoreContainer2 = new Container();
-    this.addChild(this.appleScoreContainer2);
-    let textStyle = new TextStyle({
-      fontSize: 40,
-      align: "center",
-      fill: 0xe6b85f,
-      fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
-    });
-    this.appleText2 = new Text(`${this.appleScore2}`, textStyle);
-    this.appleText2.anchor.set(1, 0);
-    this.appleText2.position.set(0, 7);
-    this.appleSprite = Sprite.from(Game.bundle.apple_slice_1);
-    this.appleSprite.scale.set(0.8);
-    this.appleSprite.position.set(60, 10);
-    this.appleSprite.angle = 90;
-    this.appleScoreContainer2.addChild(this.appleText2);
-    this.appleScoreContainer2.addChild(this.appleSprite);
-    this.appleScoreContainer2.rotation = Math.PI;
-  }
-
   _initKnifeCount() {
     this.knifeIcons = [];
     this.knifeIconsContainer = new Container();
@@ -168,14 +121,6 @@ export class DualUI extends Container {
     this.scoreText2.text = `${score2}`;
   }
 
-  updateAppleScore(apple) {
-    this.appleText.text = `${apple}`;
-  }
-
-  updateAppleScore2(apple2) {
-    this.appleText2.text = `${apple2}`;
-  }
-
   updateKnifeIcon(index) {
     this.knifeIcons.at(index).texture = Game.bundle.knife_black_icon;
   }
@@ -199,25 +144,26 @@ export class DualUI extends Container {
 
   resize() {
     this.scoreText.x = 50;
-    this.iconPlayer1Cont.x = GameConstant.GAME_WIDTH - 50;
-    this.iconPlayer1Cont.y = GameConstant.GAME_HEIGHT - 131;
     this.scoreText.y = GameConstant.GAME_HEIGHT - 70;
-    this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 110;
-    this.appleScoreContainer.y = GameConstant.GAME_HEIGHT - 70;
+
+    this.iconPlayer1Cont.x = GameConstant.GAME_WIDTH - 50;
+    this.iconPlayer1Cont.y = GameConstant.GAME_HEIGHT - 30;
+    // this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 110;
+    // this.appleScoreContainer.y = GameConstant.GAME_HEIGHT - 70;
     this.knifeIconsContainer.x = 30;
     this.knifeIconsContainer.y = 1150 - this.knifeIconsContainer.height;
-    // this.backHomeButton.y = GameConstant.GAME_HEIGHT /2 - 50;
-    this.backHomeButton.y = 300;
-    this.backHomeButton.x = 80;
+
+    this.backHomeButton.y = 150;
+    this.backHomeButton.x = 50;
 
     this.scoreText2.x = 80;
     this.scoreText2.y = 75;
-    this.iconPlayer2Cont.x = 50;
-    this.iconPlayer2Cont.y = 150;
-    this.appleScoreContainer2.x = GameConstant.GAME_WIDTH - 80;
-    this.appleScoreContainer2.y = 75;
+
+    this.iconPlayer2Cont.x = GameConstant.GAME_WIDTH - this.iconPlayer2Cont.width - 50;
+    this.iconPlayer2Cont.y = 30;
+    // this.appleScoreContainer2.x = GameConstant.GAME_WIDTH - 80;
+    // this.appleScoreContainer2.y = 75;
     this.knifeIconsContainer2.x = GameConstant.GAME_WIDTH - 30;
-    this.knifeIconsContainer2.y =
-      this.knifeIconsContainer2.height + this.knifeIconsContainer2.height / 2;
+    this.knifeIconsContainer2.y = this.knifeIconsContainer2.height + this.knifeIconsContainer2.height / 2;
   }
 }
