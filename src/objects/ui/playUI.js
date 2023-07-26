@@ -50,11 +50,7 @@ export class PlayUI extends Container {
     this.backHomeButton = new Sprite(Game.bundle.backHomeButton);
     this.backHomeButton.scale.set(0.3);
     this.addChild(this.backHomeButton);
-    Util.registerOnPointerDown(
-      this.backHomeButton,
-      this._onTapBackHomeButton,
-      this
-    );
+    Util.registerOnPointerDown(this.backHomeButton,this._onTapBackHomeButton,this);
   }
 
   _onTapBackHomeButton() {
