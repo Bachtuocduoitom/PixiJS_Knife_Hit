@@ -3,6 +3,7 @@ import { GameConstant } from "./gameConstant";
 import { PlayScene } from './objects/scenes/playScene'
 import { manifest } from "./manifest";
 import { SceneManager } from "./objects/scenes/sceneManager";
+import { LoadingScene } from "./objects/scenes/loadingScene";
 
 export class Game {
     static init() {
@@ -38,12 +39,18 @@ export class Game {
     }
 
     static update(dt) {
+        // this.loadingScene.update(dt);
         this.sceneManager.update(dt);
     }
 
     static _initSceneManager() {
         this.sceneManager = new SceneManager();
         this.app.stage.addChild(this.sceneManager);
+    }
+
+    static _initLoadingScene() {
+        this.loadingScene = new LoadingScene();
+        this.app.stage.addChild(this.loadingScene);
     }
 
     static resize() {

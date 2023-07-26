@@ -37,11 +37,7 @@ export class DualUI extends Container {
     this.backHomeButton.scale.set(0.3);
     this.backHomeButton.rotation = Math.PI / 4;
     this.addChild(this.backHomeButton);
-    Util.registerOnPointerDown(
-      this.backHomeButton,
-      this._onTapBackHomeButton,
-      this
-    );
+    Util.registerOnPointerDown(this.backHomeButton,this._onTapBackHomeButton,this);
   }
 
   _onTapBackHomeButton() {

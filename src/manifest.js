@@ -11,8 +11,24 @@ export const manifest = {
                 srcs: 'assets/images/bg.png'
             },
             {
+                name: 'backgroundLoading',
+                srcs: 'assets/images/bgLoading.png'
+            },
+            {
                 name: 'logo',
                 srcs: 'assets/images/bang1.png'
+            },
+            {
+                name: 'shopIcon',
+                srcs: 'assets/images/shopIcon.png'
+            },
+            {
+                name: 'settingIcon',
+                srcs: 'assets/images/settingIcon.png'
+            },
+            {
+                name: 'bgShop',
+                srcs: 'assets/images/bgShop.jpg'
             },
             {
                 name: 'knife_logo',
@@ -31,12 +47,72 @@ export const manifest = {
                 srcs: 'assets/images/knife.png'
             },
             {
+                name: 'knife0',
+                srcs: 'assets/images/knife0.png'
+            },
+            {
+                name: 'knife1',
+                srcs: 'assets/images/knife1.png'
+            },
+            // {
+            //     name: 'knife2',
+            //     srcs: 'assets/images/knife2.png'
+            // },
+            {
+                name: 'knife3',
+                srcs: 'assets/images/knife3.png'
+            },
+            {
+                name: 'knife4',
+                srcs: 'assets/images/knife4.png'
+            },
+            {
+                name: 'knife5',
+                srcs: 'assets/images/knife5.png'
+            },
+            {
+                name: 'knife6',
+                srcs: 'assets/images/knife6.png'
+            },
+            {
+                name: 'knife7',
+                srcs: 'assets/images/knife7.png'
+            },
+            {
+                name: 'knife8',
+                srcs: 'assets/images/knife8.png'
+            },
+            {
+                name: 'knife9',
+                srcs: 'assets/images/knife9.png'
+            },
+            {
+                name: 'knife10',
+                srcs: 'assets/images/knife10.png'
+            },
+            {
+                name: 'knife11',
+                srcs: 'assets/images/knife11.png'
+            },
+            {
+                name: 'knife12',
+                srcs: 'assets/images/knife12.png'
+            },
+            {
+                name: 'knife13',
+                srcs: 'assets/images/knife13.png'
+            },
+            {
                 name: 'knife2',
                 srcs: 'assets/images/knife2.png'
             },
             {
                 name: 'knife2_reverse',
                 srcs: 'assets/images/knife2_reverse.png'
+            },
+            {
+                name: 'knifeLoad',
+                srcs: 'assets/images/knifeLoad.png'
             },
             {
                 name: 'apple',

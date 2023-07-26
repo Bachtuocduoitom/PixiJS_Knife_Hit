@@ -17,7 +17,7 @@ export class KnifeManager1 extends KnifeManagerPrototype {
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new KnifeP1(Game.bundle.knife);
+        let knife = new KnifeP1(Game.bundle.knife13);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = GameConstant.KNIFE_P1_Y_POSITION;
         knife.state = KnifeState.ACTIVATED;
@@ -27,7 +27,7 @@ export class KnifeManager1 extends KnifeManagerPrototype {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new KnifeP1(Game.bundle.knife);
+        let knife = new KnifeP1(Game.bundle.knife13);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = 1280;
         knife.visible = false;

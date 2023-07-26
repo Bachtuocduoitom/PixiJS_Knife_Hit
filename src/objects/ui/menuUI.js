@@ -2,6 +2,7 @@ import { Container, Sprite, Text, TextStyle, Texture, FederatedPointerEvent } fr
 import { Game } from "../../game";
 import { Util } from "../../helper/utils";
 import { GameConstant } from "../../gameConstant";
+import { KnifeShopUI } from "./shopUI/knifeShopUI";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export class MenuUI extends Container{
@@ -10,8 +11,11 @@ export class MenuUI extends Container{
       this.currentTime = 0;
       this._initNormalModeButton();
       this._initDualModeButton();
+      this._initShopButton();
+      this._initSettingButton();
       this.resize();
       this.sortableChildren = true;
+      this._initShopUI();
     }
 
     _initNormalModeButton() {
@@ -51,13 +55,43 @@ export class MenuUI extends Container{
         fontWeight: "bold",
         fontFamily: "Comic Sans MS"
       });
-      this.dualModeButtonText.zIndex = 100;
+      this.dualModeButtonText.zIndex = 10;
       this.dualModeButtonText.anchor.set(0.5);
       
       this.addChild(this.dualModeButton);
       this.addChild(this.dualModeButtonText);
 
       Util.registerOnPointerDown(this.dualModeButton, this._onTapDualModeButton, this);
+    }
+
+    _initShopUI() {
+      this.shopUI = new KnifeShopUI();
+      this.addChild(this.shopUI);
+      this.shopUI.hide();
+      this.shopUI.zIndex = 100;
+    }
+
+  _initShopButton () {
+   
+      this.shopButton = new Sprite(Game.bundle.shopIcon);
+      this.addChild(this.shopButton);
+      this.shopButton.alpha = 0.8;
+      Util.registerOnPointerDown(this.shopButton, this._onTapShopButton, this);
+  }
+
+  _onTapShopButton() {
+    this.shopUI.show();
+    this._initShopUI();
+  }
+  
+  _initSettingButton() {
+    this.settingButton = new Sprite(Game.bundle.settingIcon);
+    this.settingButton.alpha = 0.8;
+    this.addChild(this.settingButton);
+  }
+    updateUI(dt) {
+      this.currentTime += dt;
+      TWEEN.update(this.currentTime);
     }
 
     _onTapDualModeButton() {
@@ -67,6 +101,8 @@ export class MenuUI extends Container{
     _onTapNorModeButton() {
       this.emit("normal button tapped");
     }
+
+
 
     resize() {
       this.norModeButton.x = GameConstant.GAME_WIDTH / 2 - this.norModeButton.width - 30;
@@ -81,6 +117,11 @@ export class MenuUI extends Container{
       this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width/2;
       this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height/2;
 
+      this.shopButton.x = GameConstant.GAME_WIDTH /2 - this.shopButton.width / 2;
+      this.shopButton.y = GameConstant.GAME_HEIGHT -  250;
+
+      this.settingButton.x = GameConstant.GAME_WIDTH /4;
+      this.settingButton.y = GameConstant.GAME_HEIGHT -  250;
     }
   
     hide() {
