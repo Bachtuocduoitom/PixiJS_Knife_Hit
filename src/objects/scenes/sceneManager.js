@@ -6,12 +6,14 @@ import { PlayScene } from "./playScene";
 import { GameConstant } from "../../gameConstant";
 import * as TWEEN from "@tweenjs/tween.js";
 import { DualScene } from "./dualScene";
+import { Sound } from "@pixi/sound";
+
 export class SceneManager extends Container {
     constructor() {
         super();
-        this.currentDt = 0;
         this._initAssetContainer();
         this._initUI();
+        this._initStartAnimation();
     }
     
     _initAssetContainer() {
@@ -33,6 +35,7 @@ export class SceneManager extends Container {
         //knife logo
         this.knifeLogo = new Sprite(Game.bundle.knife_logo);
         this.knifeLogo.anchor.set(0.5, 2.2);
+        this.knifeLogo.scale.set(0.5);
         this.knifeLogo.x = GameConstant.GAME_WIDTH/2;
         this.knifeLogo.y = 480;
         this.assetContainer.addChild(this.knifeLogo);
@@ -40,30 +43,33 @@ export class SceneManager extends Container {
         //fly knife logo
         this.flyKnifeLogo = new Sprite(Game.bundle.flying_knife_logo);
         this.flyKnifeLogo.anchor.set(0.5);
-        this.flyKnifeLogo.x = GameConstant.GAME_WIDTH/2;
+        this.flyKnifeLogo.x = - this.knifeLogo.width/2;
         this.flyKnifeLogo.y = 290;
+        this.flyKnifeLogo.rotation = -Math.PI / 20;
         this.assetContainer.addChild(this.flyKnifeLogo);
 
         //hit logo
         this.hitLogo = new Sprite(Game.bundle.hit_logo);
         this.hitLogo.anchor.set(0.5, 1.2);
+        this.hitLogo.scale.set(0.5);
         this.hitLogo.x = GameConstant.GAME_WIDTH/2;
         this.hitLogo.y = 480;
         this.assetContainer.addChild(this.hitLogo);
 
-        this._addTweenLogo();
+        //this._addTweenLogo();
     }
 
     _initKnifeUI() {
-        this.knifeUI = new Sprite(Game.bundle.knife);
-        this.assetContainer.addChild(this.knifeUI);
-        this.knifeUI.scale.set(1.2);
-        this.knifeUI.x = GameConstant.GAME_WIDTH /2 - this.knifeUI.width / 2;
-        this.knifeUI.y = GameConstant.GAME_HEIGHT /2 -this.knifeUI.height /2;
+        this.knife = new Sprite(Game.bundle.knife);
+        this.assetContainer.addChild(this.knife);
+        this.knife.scale.set(1.2);
+        this.knife.x = GameConstant.GAME_WIDTH /2 - this.knife.width / 2;
+        this.knife.y = GameConstant.GAME_HEIGHT;
     }
 
     _initUI() {
         this.menuUI = new MenuUI();
+        this.menuUI.hide();
         this.addChild(this.menuUI);
 
         this.menuUI.on("normal button tapped", (e) => this._initNorMode(e));
@@ -71,10 +77,18 @@ export class SceneManager extends Container {
         // this.menuUI.on("shop mode tapped", (e) => this._initShopMode(e));
     }
 
+    _initStartAnimation() {
+        new TWEEN.Tween(this.knifeLogo).to({scale: {x:1 ,y: 1}}, 1000).easing(TWEEN.Easing.Elastic.Out).start();
+        new TWEEN.Tween(this.hitLogo).to({scale: {x:1 ,y: 1}}, 1000).easing(TWEEN.Easing.Elastic.Out).start();
+        new TWEEN.Tween(this.flyKnifeLogo).to({x: GameConstant.GAME_WIDTH/2, rotation: 0}, 1000).easing(TWEEN.Easing.Elastic.Out).start();
+        new TWEEN.Tween(this.knife).to({y: GameConstant.GAME_HEIGHT /2 -this.knife.height /2}, 400).onComplete(() => {
+            this._addTweenLogo();
+            this.menuUI.show();
+        }).start();
 
+    }
 
     update(dt) {
-        this.currentDt += dt;
         TWEEN.update();
         if (this.playScene != null) {
             this.playScene.update(dt);
@@ -87,6 +101,7 @@ export class SceneManager extends Container {
     _initNorMode(e) {
         this.playScene = new PlayScene();
         this.addChild(this.playScene);
+
     }
 
     _initDualMode(e) {
