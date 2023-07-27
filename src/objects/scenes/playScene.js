@@ -29,6 +29,7 @@ export class PlayScene extends Container {
     this.score = 0;
     this.currentLevel = 1; 
     this._initAppleScore();
+    this._initSound();
     this._initGamePlay();
     this._initUI();
   }
@@ -55,7 +56,6 @@ export class PlayScene extends Container {
     this._initKnifeManager();
     this._initObstacle();
     this._initParticles();
-    this._initSound();
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
   }

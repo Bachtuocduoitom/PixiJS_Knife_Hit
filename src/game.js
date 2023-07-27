@@ -15,6 +15,9 @@ export class Game {
         });
         document.body.appendChild(this.app.view);
 
+        this.readyState = false;
+        this.start = false;
+
         this._initLoadingScene();
 
         this._loadGameAssets().then((bundle) => {
@@ -22,11 +25,7 @@ export class Game {
 
             this._loadGameDataLevel().then((data) => {
                 this.data = data;
-
-                this.loadingScene.on("finish show ads", () => {
-                    this._onLoaded();
-                })
-                
+                this.readyState = true;            
             })
           
         });
@@ -34,7 +33,6 @@ export class Game {
 
         this.resize();
 
-        window.addEventListener("resize", this.resize);
     }
 
     static async _loadGameAssets() {
@@ -51,6 +49,7 @@ export class Game {
         if (this.sceneManager != null) {
             this.sceneManager.update(dt);
         }
+        this._checkLoaded();
     }
 
     static _initSceneManager() {
@@ -61,6 +60,16 @@ export class Game {
     static _initLoadingScene() {
         this.loadingScene = new LoadingScene();
         this.app.stage.addChild(this.loadingScene);
+    }
+
+    static _checkLoaded() {
+        if(this.readyState && !this.start) {
+            this.start = true;
+            setTimeout(() => {
+                this._onLoaded();
+            }, 100)
+            
+        }
     }
 
     static _onLoaded() {
@@ -100,4 +109,7 @@ export class Game {
 
 window.onload = function () {
     Game.init();
+    window.onresize = () => {
+        Game.resize();
+    }
 }

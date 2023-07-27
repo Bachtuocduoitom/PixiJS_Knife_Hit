@@ -19,11 +19,7 @@ export class LoadingScene extends Container {
     this.ads.alpha = 0;
     this.addChild(this.ads);
 
-    new TWEEN.Tween(this.ads).to({ alpha: 1 }, 50).onComplete(() => {
-      setTimeout(() => {
-      this.emit("finish show ads");
-      }, 1000)
-    }).start(this.currentDt);
+    new TWEEN.Tween(this.ads).to({ alpha: 1 }, 50).start(this.currentDt);
   }
  
   update(dt) {

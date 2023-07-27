@@ -27,6 +27,7 @@ export class DualScene extends Container {
     this.score2 = 0;
     this.appleScore2 = 0;
     this.currentMode = "dual";
+    this._initSound();
     this._initGamePlay();
     this._initUI();
   }
@@ -46,7 +47,6 @@ export class DualScene extends Container {
     this._initContKnifeManager2();
     this._initObstacle();
     this._initParticles();
-    this._initSound();
     this._initCircleFlare();
   }
 

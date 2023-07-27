@@ -15,7 +15,6 @@ export class MenuUI extends Container{
       this._initSettingButton();
       this.resize();
       this.sortableChildren = true;
-      this._initShopUI();
     }
 
     _initNormalModeButton() {
@@ -32,7 +31,7 @@ export class MenuUI extends Container{
         fontWeight: "bold",
         fontFamily: "Comic Sans MS"
       });
-      this.norModeButtonText.zIndex = 100;
+      this.norModeButtonText.zIndex = 10;
       this.norModeButtonText.anchor.set(0.5);
       
       this.addChild(this.norModeButton);
@@ -72,16 +71,25 @@ export class MenuUI extends Container{
     }
 
   _initShopButton () {
-   
-      this.shopButton = new Sprite(Game.bundle.shopIcon);
-      this.addChild(this.shopButton);
-      this.shopButton.alpha = 0.8;
-      Util.registerOnPointerDown(this.shopButton, this._onTapShopButton, this);
+    this.shopButton = new Sprite(Game.bundle.shopIcon);
+    this.shopButton.zIndex = 10;
+    this.addChild(this.shopButton);
+    this.shopButton.alpha = 0.8;
+    Util.registerOnPointerDown(this.shopButton, this._onTapShopButton, this);
+
+    this._initShopUI();
   }
 
   _onTapShopButton() {
+    this.norModeButton.visible = false;
+    this.dualModeButton.visible = false;
     this.shopUI.show();
     this._initShopUI();
+  }
+
+  onShopUIBack() {
+    this.norModeButton.visible = true;
+    this.dualModeButton.visible = true;
   }
   
   _initSettingButton() {
@@ -89,46 +97,45 @@ export class MenuUI extends Container{
     this.settingButton.alpha = 0.8;
     this.addChild(this.settingButton);
   }
-    updateUI(dt) {
-      this.currentTime += dt;
-      TWEEN.update(this.currentTime);
-    }
 
-    _onTapDualModeButton() {
-      this.emit("dual button tapped");
-    }
-
-    _onTapNorModeButton() {
-      this.emit("normal button tapped");
-    }
-
-
-
-    resize() {
-      this.norModeButton.x = GameConstant.GAME_WIDTH / 2 - this.norModeButton.width - 30;
-      this.norModeButton.y = GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
-
-      this.norModeButtonText.x = this.norModeButton.x + this.norModeButton.width/2;
-      this.norModeButtonText.y = this.norModeButton.y + this.norModeButton.height/2;
-
-      this.dualModeButton.x = GameConstant.GAME_WIDTH / 2 + 30;
-      this.dualModeButton.y = GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
-
-      this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width/2;
-      this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height/2;
-
-      this.shopButton.x = GameConstant.GAME_WIDTH /2 - this.shopButton.width / 2;
-      this.shopButton.y = GameConstant.GAME_HEIGHT -  250;
-
-      this.settingButton.x = GameConstant.GAME_WIDTH /4;
-      this.settingButton.y = GameConstant.GAME_HEIGHT -  250;
-    }
-  
-    hide() {
-      this.visible = false;
-    }
-  
-    show() {
-      this.visible = true;
-    }
+  updateUI(dt) {
+    this.currentTime += dt;
+    TWEEN.update(this.currentTime);
   }
+
+  _onTapDualModeButton() {
+    this.emit("dual button tapped");
+  }
+
+  _onTapNorModeButton() {
+    this.emit("normal button tapped");
+  }
+
+  resize() {
+    this.norModeButton.x = GameConstant.GAME_WIDTH / 2 - this.norModeButton.width - 30;
+    this.norModeButton.y = GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
+
+    this.norModeButtonText.x = this.norModeButton.x + this.norModeButton.width/2;
+    this.norModeButtonText.y = this.norModeButton.y + this.norModeButton.height/2;
+
+    this.dualModeButton.x = GameConstant.GAME_WIDTH / 2 + 30;
+    this.dualModeButton.y = GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
+
+    this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width/2;
+    this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height/2;
+
+    this.shopButton.x = GameConstant.GAME_WIDTH /2 - this.shopButton.width / 2;
+    this.shopButton.y = GameConstant.GAME_HEIGHT -  250;
+
+    this.settingButton.x = GameConstant.GAME_WIDTH /4;
+    this.settingButton.y = GameConstant.GAME_HEIGHT -  250;
+  }
+
+  hide() {
+    this.visible = false;
+  }
+
+  show() {
+    this.visible = true;
+  }
+}
