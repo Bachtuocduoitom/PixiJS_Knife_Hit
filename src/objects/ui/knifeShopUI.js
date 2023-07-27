@@ -74,14 +74,13 @@ export class KnifeShopUI extends Container {
     this.chooseItem = Sound.from(Game.bundle.chooseItem);
     this.chooseItem.volume = 1;
     this.noChooseItem = Sound.from(Game.bundle.noChooseItem);
-
   }
   _initLighting() {
     this.lighting = new Sprite(Game.bundle.light);
-    this.lighting.scale.set(0.35);
+    this.lighting.scale.set(0.6);
     this.lighting.anchor.set(0.5);
     this.lighting.zIndex= 90;
-    this.lighting.alpha = 0.6;
+    this.lighting.alpha = 0.7;
     this.addChild(this.lighting);
   }
 
@@ -188,7 +187,7 @@ export class KnifeShopUI extends Container {
   
     }
   }
-
+  
   hide() {
     this.visible = false;
   }

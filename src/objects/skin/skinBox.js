@@ -13,7 +13,7 @@ export class SkinBox extends Container {
     this.cost = this.data.cost;
     this.width = 170;
     this.height = 170;
-    this.alpha = 0.5;   
+    this.alpha = 0.7;   
     this.eventMode = 'static';
     this._initBackGround();
     this._initSkin();
