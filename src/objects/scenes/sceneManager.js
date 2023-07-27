@@ -1,4 +1,4 @@
-import { Container, Sprite } from "pixi.js";
+import { Assets, Container, Sprite } from "pixi.js";
 import { MenuUI } from "../ui/menuUI";
 import { Background } from "../backgrounds/background";
 import { Game } from "../../game";
@@ -60,7 +60,7 @@ export class SceneManager extends Container {
     }
 
     _initKnifeUI() {
-        this.knife = new Sprite(Game.bundle.knife);
+        this.knife = new Sprite(Assets.get(localStorage.getItem('currentSkin')));
         this.assetContainer.addChild(this.knife);
         this.knife.scale.set(1.2);
         this.knife.x = GameConstant.GAME_WIDTH /2 - this.knife.width / 2;
@@ -74,7 +74,7 @@ export class SceneManager extends Container {
 
         this.menuUI.on("normal button tapped", (e) => this._initNorMode(e));
         this.menuUI.on("dual button tapped", (e) => this._initDualMode(e));
-        // this.menuUI.on("shop mode tapped", (e) => this._initShopMode(e));
+        this.menuUI.on("change skin", () => this._changeKnifeUISkin());
     }
 
     _initStartAnimation() {
@@ -107,6 +107,10 @@ export class SceneManager extends Container {
     _initDualMode(e) {
         this.dualScene = new DualScene();
         this.addChild(this.dualScene);
+    }
+
+    _changeKnifeUISkin() {
+        this.knife.texture = Assets.get(localStorage.getItem('currentSkin'));
     }
     
     hideUI() {

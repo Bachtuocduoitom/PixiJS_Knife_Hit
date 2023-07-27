@@ -3,6 +3,12 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 
+export const SkinBoxState = Object.freeze({
+  LOCK: "lock",
+  UNLOCK: "unlock",
+  SELECTED: "selected",
+});
+
 export class SkinBox extends Container {
   constructor(position) {
     super();
@@ -12,13 +18,12 @@ export class SkinBox extends Container {
     this.skin = this.data.skin;
     this.cost = this.data.cost;
     this.width = 170;
-    this.height = 170;
-    this.alpha = 0.5;   
+    this.height = 170; 
     this.eventMode = 'static';
     this._initBackGround();
     this._initSkin();
-    //Util.registerOnPointerDown(this, this._onTap, this);
-    
+    this._initCost();
+    this._setState();
   }
 
   _initBackGround() {
@@ -36,18 +41,29 @@ export class SkinBox extends Container {
     this.addChild(this.skinKnife);
   }
 
-  _onTap() {
-    this.alpha = 1;
-    this.onSelected();
+  _initCost() {
+    this.textCost = new Text (`${this.cost}`, {
+      fontSize: 30,
+      fill: 0xe6b85f,
+      fontWeight: "bold",
+      align: "center",
+      fontFamily: "Comic Sans MS",
+    })
+    this.textCost.anchor.set(0.5);
+    this.textCost.x = 140;
+    this.textCost.y = 145;
+    this.addChild(this.textCost)
   }
 
   onBuy() {
-    this.alpha = 1;
+    this.textCost.visible = false;
+    this.background.alpha = 1;
+    this.skinKnife.alpha = 1;
     this.onSelected();
   }
 
   onSelected() {
-    this.state = "selected";
+    this.state = SkinBoxState.SELECTED;
     this.background.texture = Game.bundle.squareSelected;
 
     //change state on localstorage
@@ -56,7 +72,7 @@ export class SkinBox extends Container {
   }
 
   onDeselect() {
-    this.state = "unlock";
+    this.state = SkinBoxState.UNLOCK;
     this.background.texture = Game.bundle.square;
 
     //change state on localstorage
@@ -69,6 +85,28 @@ export class SkinBox extends Container {
       return true;
     } else {
       return false;
+    }
+  }
+
+  _setState() {
+    switch (this.state) {
+      case SkinBoxState.LOCK:
+        this.background.alpha = 0.3;
+        this.skinKnife.alpha = 0.3;
+        this.background.texture = Game.bundle.square;
+        break;
+      case SkinBoxState.UNLOCK:
+        this.textCost.visible = false;
+        this.background.alpha = 1;
+        this.skinKnife.alpha = 1;
+        this.background.texture = Game.bundle.square;
+        break;
+      case SkinBoxState.SELECTED:
+        this.textCost.visible = false;
+        this.background.alpha = 1;
+        this.skinKnife.alpha = 1;
+        this.background.texture = Game.bundle.squareSelected;
+        break;
     }
   }
 

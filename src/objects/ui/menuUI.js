@@ -6,69 +6,69 @@ import { KnifeShopUI } from "./knifeShopUI";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export class MenuUI extends Container{
-    constructor() {
-      super();
-      this.currentTime = 0;
-      this._initNormalModeButton();
-      this._initDualModeButton();
-      this._initShopButton();
-      this._initSettingButton();
-      this.resize();
-      this.sortableChildren = true;
-    }
+  constructor() {
+    super();
+    this.currentTime = 0;
+    this._initNormalModeButton();
+    this._initDualModeButton();
+    this._initShopButton();
+    this._initSettingButton();
+    this.resize();
+    this.sortableChildren = true;
+  }
 
-    _initNormalModeButton() {
-      this.norModeButton = new Sprite(Game.bundle.greenButton);
-      this.norModeButton.width = 240;
-      this.norModeButton.height = 90; 
-      this.norModeButton.eventMode = 'static';
-      this.norModeButton.zIndex = 0;
-      
-      // Text
-      this.norModeButtonText = new Text("PLAY", {
-        fontSize: 50,
-        fill: "#FFFFFF",
-        fontWeight: "bold",
-        fontFamily: "Comic Sans MS"
-      });
-      this.norModeButtonText.zIndex = 10;
-      this.norModeButtonText.anchor.set(0.5);
-      
-      this.addChild(this.norModeButton);
-      this.addChild(this.norModeButtonText);
+  _initNormalModeButton() {
+    this.norModeButton = new Sprite(Game.bundle.greenButton);
+    this.norModeButton.width = 240;
+    this.norModeButton.height = 90; 
+    this.norModeButton.eventMode = 'static';
+    this.norModeButton.zIndex = 0;
+    
+    // Text
+    this.norModeButtonText = new Text("PLAY", {
+      fontSize: 50,
+      fill: "#FFFFFF",
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.norModeButtonText.zIndex = 10;
+    this.norModeButtonText.anchor.set(0.5);
+    
+    this.addChild(this.norModeButton);
+    this.addChild(this.norModeButtonText);
 
-      Util.registerOnPointerDown(this.norModeButton, this._onTapNorModeButton, this);
-    }
+    Util.registerOnPointerDown(this.norModeButton, this._onTapNorModeButton, this);
+  }
 
-    _initDualModeButton() {
-      this.dualModeButton = new Sprite(Game.bundle.redpinkButton);
-      this.dualModeButton.width = 240;
-      this.dualModeButton.height = 90; 
-      this.dualModeButton.eventMode = 'static';
-      this.dualModeButton.zIndex = 0;
+  _initDualModeButton() {
+    this.dualModeButton = new Sprite(Game.bundle.redpinkButton);
+    this.dualModeButton.width = 240;
+    this.dualModeButton.height = 90; 
+    this.dualModeButton.eventMode = 'static';
+    this.dualModeButton.zIndex = 0;
 
-      // Text
-      this.dualModeButtonText = new Text("PvP", {
-        fontSize: 50,
-        fill: "#FFFFFF",
-        fontWeight: "bold",
-        fontFamily: "Comic Sans MS"
-      });
-      this.dualModeButtonText.zIndex = 10;
-      this.dualModeButtonText.anchor.set(0.5);
-      
-      this.addChild(this.dualModeButton);
-      this.addChild(this.dualModeButtonText);
+    // Text
+    this.dualModeButtonText = new Text("PvP", {
+      fontSize: 50,
+      fill: "#FFFFFF",
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS"
+    });
+    this.dualModeButtonText.zIndex = 10;
+    this.dualModeButtonText.anchor.set(0.5);
+    
+    this.addChild(this.dualModeButton);
+    this.addChild(this.dualModeButtonText);
 
-      Util.registerOnPointerDown(this.dualModeButton, this._onTapDualModeButton, this);
-    }
+    Util.registerOnPointerDown(this.dualModeButton, this._onTapDualModeButton, this);
+  }
 
-    _initShopUI() {
-      this.shopUI = new KnifeShopUI();
-      this.addChild(this.shopUI);
-      this.shopUI.hide();
-      this.shopUI.zIndex = 100;
-    }
+  _initShopUI() {
+    this.shopUI = new KnifeShopUI();
+    this.addChild(this.shopUI);
+    this.shopUI.hide();
+    this.shopUI.zIndex = 100;
+  }
 
   _initShopButton () {
     this.shopButton = new Sprite(Game.bundle.shopIcon);
@@ -89,6 +89,7 @@ export class MenuUI extends Container{
   onShopUIBack() {
     this.norModeButton.visible = true;
     this.dualModeButton.visible = true;
+    this.emit("change skin");
   }
   
   _initSettingButton() {
