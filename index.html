@@ -4724,6 +4724,10 @@ const manifest = {
         srcs: "assets/images/apple_slice_2.png"
       },
       {
+        name: "minFrg",
+        srcs: "assets/images/minFrg.png"
+      },
+      {
         name: "knife_white_icon",
         srcs: "assets/images/knife_white_icon.png"
       },
@@ -5200,7 +5204,7 @@ class Board extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite {
     this.fragments3.anchor.set(0.5);
     this.fragments3.scale.set(0.8);
     this.fragments3.visible = false;
-    this.fragmentsMin = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from("../assets/images/minFrg.png");
+    this.fragmentsMin = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(_game__WEBPACK_IMPORTED_MODULE_2__.Game.bundle.minFrg);
     this.fragmentsMin.anchor.set(0.5);
     this.fragmentsMin.scale.set(1.5);
     this.fragmentsMin.visible = false;
@@ -6759,18 +6763,10 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.state = GameState.Tutorial;
     this.score = 0;
     this.currentLevel = 1;
-    this._initAppleScore();
+    this.appleScore = localStorage.getItem("appleScore");
     this._initSound();
     this._initGamePlay();
     this._initUI();
-  }
-  _initAppleScore() {
-    if (localStorage.getItem("appleScore") === null) {
-      this.appleScore = 0;
-      localStorage.setItem("appleScore", this.appleScore);
-    } else {
-      this.appleScore = localStorage.getItem("appleScore");
-    }
   }
   _initGamePlay() {
     this._initDataManager();
@@ -6855,7 +6851,6 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // Check if win or lose
   _onContOrRestart() {
-    localStorage.setItem("appleScore", this.appleScore);
     if (this.resultUI.messageText.text === "You lose" || this.currentLevel === 10) {
       this._onRestartGame();
     } else {
@@ -7038,6 +7033,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
             this.playUI.updateAppleScore(++this.appleScore);
+            localStorage.setItem("appleScore", this.appleScore);
           }
         });
         if (_helper_utils__WEBPACK_IMPORTED_MODULE_7__.Util.AABBCheck(this.knifeManager.knives[0].collider, this.board.collider)) {
@@ -7135,14 +7131,23 @@ __webpack_require__.r(__webpack_exports__);
 class SceneManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   constructor() {
     super();
-    this._initcurrentSkin();
+    this._initLocalStorageData();
     this._initAssetContainer();
     this._initUI();
     this._initStartAnimation();
   }
-  _initcurrentSkin() {
+  _initLocalStorageData() {
     if (localStorage.getItem("currentSkin") === null) {
       localStorage.setItem("currentSkin", "knife");
+    }
+    for (let i = 0; i < 12; i++) {
+      if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
+        let skinBoxData = { state: "lock", skin: `knife${i + 1}`, cost: 10 };
+        localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
+      }
+    }
+    if (localStorage.getItem("appleScore") === null) {
+      localStorage.setItem("appleScore", 0);
     }
   }
   _initAssetContainer() {
@@ -7225,8 +7230,6 @@ class SceneManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   hideUI() {
     this.assetContainer.destroy();
     this.menuUI.hide();
-  }
-  showUI() {
   }
   norToHome() {
     this.removeChild(this.playScene);
@@ -7555,7 +7558,6 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.columns = 3;
     this.tablePadding = 8;
     this.skinBoxes = [];
-    this._initShopData();
     this._initSound();
     this._initBackGround();
     this._initKnifeCurrent();
@@ -7566,14 +7568,6 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initAppleCount();
     this.resize();
     this.sortableChildren = true;
-  }
-  _initShopData() {
-    for (let i = 0; i < this.columns * this.rows; i++) {
-      if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
-        let skinBoxData = { state: "lock", skin: `knife${i + 1}`, cost: 10 };
-        localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
-      }
-    }
   }
   _initOverLay() {
     this.overlay = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
@@ -7745,6 +7739,8 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.visible = false;
   }
   show() {
+    this.appleScore = localStorage.getItem("appleScore");
+    this.appleText.text = `${this.appleScore}`;
     this.visible = true;
   }
   resize() {
