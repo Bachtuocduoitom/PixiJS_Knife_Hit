@@ -7135,9 +7135,15 @@ __webpack_require__.r(__webpack_exports__);
 class SceneManager extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   constructor() {
     super();
+    this._initcurrentSkin();
     this._initAssetContainer();
     this._initUI();
     this._initStartAnimation();
+  }
+  _initcurrentSkin() {
+    if (localStorage.getItem("currentSkin") === null) {
+      localStorage.setItem("currentSkin", "knife");
+    }
   }
   _initAssetContainer() {
     this.assetContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
@@ -7567,9 +7573,6 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
         let skinBoxData = { state: "lock", skin: `knife${i + 1}`, cost: 10 };
         localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
       }
-    }
-    if (localStorage.getItem("currentSkin") === null) {
-      localStorage.setItem("currentSkin", "knife");
     }
   }
   _initOverLay() {
