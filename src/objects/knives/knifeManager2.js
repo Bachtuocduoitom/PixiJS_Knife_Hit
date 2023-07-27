@@ -6,30 +6,16 @@ import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 import { KnifeP2 } from "./knifeP2";
+import { KnifeManagerPrototype } from "./knifeManagerPrototype";
 
-export class KnifeManager2 extends Container {
+export class KnifeManager2 extends KnifeManagerPrototype {
     constructor(data) {
-        super();
-        this.knifeData = data;
-        this.knives = [];
-        this.obsKnives = [];
-        this.numOfKnife = this.knifeData.knifeNumber - 1; //so dao trong pool
-        this.boardAngleRotation = 0;
-        this.graphic = new Graphics();
-        this.addChild(this.graphic);
-        this._spawnKnives(); // sinh dao
-    }
-
-    _spawnKnives() {
-        this._spawnFirstKnife();
-        for ( let i = 0; i < this.numOfKnife; i++) {
-            this._spawnAnotherKnife();
-        }
+        super(data);    
     }
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new KnifeP2(Game.bundle.knife2);
+        let knife = new KnifeP2(Game.bundle.knifeP2);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = GameConstant.KNIFE_P2_Y_POSITION;
         knife.state = KnifeState.ACTIVATED;
@@ -39,7 +25,7 @@ export class KnifeManager2 extends Container {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new KnifeP2(Game.bundle.knife2);
+        let knife = new KnifeP2(Game.bundle.knifeP2);
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = 0;
         knife.visible = false;
@@ -49,81 +35,22 @@ export class KnifeManager2 extends Container {
         this.addChild(knife);
     }
 
-    //sinh obstacle knife
-    // spawnObsKnives(avaiAngle) {
-    //     let numOfDefautObs = Util.randomInteger(this.knifeData.minOnBoard, this.knifeData.maxOnBoard);
-    //     for (let i = 0; i < numOfDefautObs; i++) {
-    //         this._spawnObs(avaiAngle);
-    //     }        
-    // }
-
-
-    // _spawnObs(avaiAngle) {
-    //     let knife = new Knife(Game.bundle.knife2);
-    //     knife.x = GameConstant.BOARD_X_POSITION;
-    //     knife.y = GameConstant.BOARD_Y_POSITION;
-    //     knife.anchor.set(0.5, -0.5);
-    //     knife.collider.anchor.set(0.5, -0.5);
-    //     this._setObsAng(knife, avaiAngle);
-    //     knife.beObs();
-    //     this.obsKnives.push(knife);
-    //     this.addChild(knife);
-    // }
-
-    //dat goc ban dau cho dao gam tren go
-    // _setObsAng(obs, avaiAngle) {
-    //     let i = Util.randomInteger(0, 17);
-    //     while (!avaiAngle[i].available) {
-    //         if (i === 17) {
-    //             i = 0;
-    //         } else {
-    //             ++i;
-    //         }
-    //     }
-    //     obs.angle = avaiAngle[i].angle;
-    //     avaiAngle[i].available = false;
-    // }
+    // sinh dao gam tren go
+    _spawnObs(avaiAngle) {
+        let knife = new KnifeP2(Game.bundle.knifeP2_reverse);     
+        knife.x = GameConstant.BOARD_X_POSITION;
+        knife.y = GameConstant.BOARD_DUAL_Y_POSITION;
+        knife.anchor.set(0.5, -0.5);
+        knife.collider.anchor.set(0.5, -0.5);
+        knife.scale.set(0.5);
+        knife.zoomOut();
+        this._setObsAng(knife, avaiAngle);
+        knife.beObs();
+        this.obsKnives.push(knife);
+        this.addChild(knife);
+    }
 
     update(dt) {
-        this.graphic.clear();
-        this.knives.forEach(knife => {
-            knife.update(dt);
-            //ve bound
-            // this.graphic.beginFill(0x880808, 1);
-            // this.graphic.drawRect(knife.collider.getBounds().x, knife.collider.getBounds().y, knife.collider.getBounds().width, knife.collider.getBounds().height);
-            // this.graphic.endFill();
-        });
-        this.obsKnives.forEach(obs => {
-            obs.angleRotation = this.boardAngleRotation;
-            obs.update(dt);
-        })
-    }
-
-    setObsFall() {
-        this.obsKnives.forEach(obs => {
-            obs.x = obs.collider.getBounds().x + obs.collider.getBounds().width/2;
-            obs.y = obs.collider.getBounds().y + obs.collider.getBounds().height/2;
-            obs.anchor.set(0.5);
-            obs.collider.anchor.set(0.5);
-            if (this.obsKnives.indexOf(obs) === (this.obsKnives.length - 1)) {
-                obs.setLastObsFall();
-            } else {
-                obs.setAnotherObsFall();
-            }
-        })
-    }
-
-    onClicky(e) {
-        if (this.knives[0].state === "activated") {
-            this.knives[0].move();
-            return true;
-        } else {return false;}
-        
-    }
-
-    onBoardHit() {
-        this.obsKnives.forEach(obs => {
-           obs.moveUpABit();
-        })
+        super.update(dt);
     }
 }

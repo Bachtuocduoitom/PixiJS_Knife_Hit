@@ -236,6 +236,14 @@ export class Board extends Sprite {
     }).start();
   }
 
+  onHitExtra() {
+    new TWEEN.Tween(this).to({y: this.y + GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).onUpdate(() => {
+      this.boardFilter.gamma = 1.5;
+    }).onComplete(() => {
+      this.boardFilter.gamma = 1;
+    }).start();
+  }
+
   randomRotationToChange() {
     this.numRotationToChange = Util.random(0.5, 1);
   }

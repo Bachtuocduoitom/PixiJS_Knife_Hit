@@ -65,7 +65,7 @@ export class KnifePrototype extends Sprite {
                 this.isFallDownRight = true;
             }
         }
-        this.fallRotation = Util.random(0.1, 0.3);
+        this.fallRotation = Util.random(0.05, 0.1);
         this.fallX = Util.random(8,15);
         this.fallY = Util.random(15,20);
         this.pushForce = 50;
@@ -90,6 +90,10 @@ export class KnifePrototype extends Sprite {
    
     moveUpABit() {
         new TWEEN.Tween(this).to({y: this.y - GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
+    }
+
+    moveUpABitExtra() {
+        new TWEEN.Tween(this).to({y: this.y + GameConstant.JUMP_DISTANCE}, GameConstant.JUMP_TIMER).yoyo(true).repeat(1).start();
     }
 
     zoomOut() {

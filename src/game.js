@@ -4,30 +4,35 @@ import { PlayScene } from './objects/scenes/playScene'
 import { manifest } from "./manifest";
 import { SceneManager } from "./objects/scenes/sceneManager";
 import { LoadingScene } from "./objects/scenes/loadingScene";
+import * as TWEEN from "@tweenjs/tween.js";
 
 export class Game {
     static init() {
         this.app = new Application({
             width: GameConstant.GAME_WIDTH,
             height: GameConstant.GAME_HEIGHT,
-            backgroundColor: 0x1099bb,
+            backgroundColor: 0x000000,
         });
         document.body.appendChild(this.app.view);
+
+        this.readyState = false;
+        this.start = false;
+
+        this._initLoadingScene();
+
         this._loadGameAssets().then((bundle) => {
             this.bundle = bundle;
 
             this._loadGameDataLevel().then((data) => {
-                this.dataLevel = data.level;
-                
-                // this._initLoadingScene();
-                this._initSceneManager();
-                
-                this.app.ticker.add(this.update, this);
+                this.data = data;
+                this.readyState = true;            
             })
           
-        })
+        });
+        this.app.ticker.add(this.update, this);
+
         this.resize();
-        window.addEventListener("resize", this.resize);
+
     }
 
     static async _loadGameAssets() {
@@ -40,8 +45,11 @@ export class Game {
     }
 
     static update(dt) {
-        // this.loadingScene.update(dt);
-        this.sceneManager.update(dt);
+        this.loadingScene.update(dt);
+        if (this.sceneManager != null) {
+            this.sceneManager.update(dt);
+        }
+        this._checkLoaded();
     }
 
     static _initSceneManager() {
@@ -52,6 +60,27 @@ export class Game {
     static _initLoadingScene() {
         this.loadingScene = new LoadingScene();
         this.app.stage.addChild(this.loadingScene);
+    }
+
+    static _checkLoaded() {
+        if(this.readyState && !this.start) {
+            this.start = true;
+            setTimeout(() => {
+                this._onLoaded();
+            }, 100)
+            
+        }
+    }
+
+    static _onLoaded() {
+        this.loadingScene.onLoaded();
+        this.loadingScene.on("loaded", () => {
+            this.app.stage.removeChild(this.loadingScene);
+            this.loadingScene.destroy();
+
+            this._initSceneManager();
+        })
+
     }
 
     static resize() {
@@ -80,4 +109,7 @@ export class Game {
 
 window.onload = function () {
     Game.init();
+    window.onresize = () => {
+        Game.resize();
+    }
 }

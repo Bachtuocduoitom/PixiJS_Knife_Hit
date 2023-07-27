@@ -14,7 +14,6 @@ import { ResultGameUI } from "../ui/resultGameUI";
 import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import { DataManager } from "../level/dataManager";
 import * as TWEEN from "@tweenjs/tween.js";
-import { MenuUI } from "../ui/menuUI";
 
 export const GameState = Object.freeze({
   Tutorial: "tutorial",
@@ -28,26 +27,35 @@ export class PlayScene extends Container {
     super();
     this.state = GameState.Tutorial;
     this.score = 0;
-    this.appleScore = 0;
-    this.currentLevel = 1;
+    this.currentLevel = 1; 
+    this._initAppleScore();
+    this._initSound();
     this._initGamePlay();
     this._initUI();
   }
 
-  _initGamePlay() {
+  _initAppleScore() {
+    if (localStorage.getItem('appleScore') === null) {
+      this.appleScore = 0;
+      localStorage.setItem('appleScore', this.appleScore);
+
+    } else {
+      this.appleScore = localStorage.getItem('appleScore');
+    }
+  }
+
+  _initGamePlay() {  
     this._initDataManager();
     this.gameplay = new Container();
     this.gameplay.eventMode = "static";
     this.gameplay.sortableChildren = true;
     this.knifeNumber = this.dataManager.numOfKnife();
-    this.currentDt = 0;
     this.addChild(this.gameplay);
     this._initBackground();
     this._initBoard();
     this._initKnifeManager();
     this._initObstacle();
     this._initParticles();
-    this._initSound();
     this._initCircleFlare();
     this.gameplay.on("pointerdown", (e) => this._onClicky(e));
   }
@@ -55,14 +63,18 @@ export class PlayScene extends Container {
   _initUI() {
     //tao play UI
     this.playUI = new PlayUI(this.dataManager, this.score, this.appleScore);
+    this.playUI.zIndex = 301;
     this.addChild(this.playUI);
     this.playUI.on("backHome", (e) => this._backHome(e));
+
     // result UI
     this.resultUI = new ResultGameUI();
     this.addChild(this.resultUI);
+    
     //tao tutorial UI
     if (this.currentLevel === 1) {
       this.tutorialUI = new TutorialUI();
+      this.tutorialUI.zIndex = 200;
       this.addChild(this.tutorialUI);
       this.tutorialUI.on("tapped", (e) => this._onStart(e));
     } else {
@@ -86,7 +98,7 @@ export class PlayScene extends Container {
   }
 
   _initBoard() {
-    this.board = new Board(this.dataManager.getBoardData());
+    this.board = new Board(this.dataManager.getBoardDataLevel());
     this.board.x = GameConstant.BOARD_X_POSITION;
     this.board.y = GameConstant.BOARD_Y_POSITION;
     this.gameplay.addChild(this.board);
@@ -94,7 +106,7 @@ export class PlayScene extends Container {
   }
 
   _initKnifeManager() {
-    this.knifeManager = new KnifeManager(this.dataManager.getKnifeData());
+    this.knifeManager = new KnifeManager(this.dataManager.getKnifeDataLevel());
     this.knifeManager.x = 0;
     this.knifeManager.y = 0;
     this.gameplay.addChild(this.knifeManager);
@@ -123,7 +135,7 @@ export class PlayScene extends Container {
   }
 
   _initAppleManager() {
-    this.appleManager = new AppleManager(this.dataManager.getAppleData());
+    this.appleManager = new AppleManager(this.dataManager.getAppleDataLevel());
     this.appleManager.x = 0;
     this.appleManager.y = 0;
     this.gameplay.addChild(this.appleManager);
@@ -132,6 +144,7 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
+    localStorage.setItem('appleScore', this.appleScore);
     if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 4) {
       this._onRestartGame();
     } else {
@@ -208,11 +221,12 @@ export class PlayScene extends Container {
     this.winGame = Sound.from(Game.bundle.winGame);
     // tiếng lose game
     this.loseGame = Sound.from(Game.bundle.loseGame);
+    //tieng pop
+    this.popSound = Sound.from(Game.bundle.pop);
+    this.popSound.play();
   }
 
   update(dt) {
-    this.currentDt += dt;
-    // /TWEEN.update(this.currentDt);
     this.knifeManager.update(dt);
     this.appleManager.update(dt);
     this.board.update(dt);

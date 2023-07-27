@@ -1,7 +1,8 @@
-import { Container, Sprite, Text, Graphics } from "pixi.js";
+import { Container, Sprite, Text, Graphics, TextStyle } from "pixi.js";
 import { Game } from "../../../game";
 import { GameConstant } from "../../../gameConstant";
 import { Util } from "../../../helper/utils";
+import { SkinBox } from "../../skin/skinBox";
 
 export class KnifeShopUI extends Container {
   constructor() {
@@ -10,14 +11,27 @@ export class KnifeShopUI extends Container {
     this.rows = 4;
     this.columns = 3;
     this.tablePadding = 8;
+    this.skinBoxes = [];
+    this._initShopData();
     this._initBackGround();
     this._initKnifeCurrent();
     this._initContTable();
     this._initText();
     this._initBackHomeButton();
-    this._initOverLay();
+    this._initAppleCount();
     this.resize();
     this.sortableChildren = true;
+  }
+
+  _initShopData() {
+    if(localStorage.getItem('skinBoxData') === null) {
+      let dataArr = [];
+      for (let i = 0; i < this.columns*this.rows; i++) {
+        let skinBoxData = {state: "lock", skin: `knife${i}`};
+        dataArr.push(skinBoxData);
+      }
+      localStorage.setItem('skinBoxData', JSON.stringify(dataArr));
+    }
   }
 
   _initOverLay() {
@@ -48,10 +62,13 @@ export class KnifeShopUI extends Container {
     this.shopBackGround.width = GameConstant.GAME_WIDTH;
     this.shopBackGround.height = GameConstant.GAME_HEIGHT; 
     this.addChild(this.shopBackGround);
+
+    this._initOverLay();
   }
 
   _initKnifeCurrent() {
     this.knifeCurrent = new Sprite(Game.bundle.knife);
+    this.knifeCurrent.anchor.set(0.5);
     this.knifeCurrent.rotation = Math.PI / 4;
     this.knifeCurrent.zIndex= 100;
     this.addChild(this.knifeCurrent);
@@ -61,11 +78,12 @@ export class KnifeShopUI extends Container {
     this.backHomeButton = new Sprite(Game.bundle.backHomeButton);
     this.backHomeButton.scale.set(0.3);
     this.addChild(this.backHomeButton);
-    Util.registerOnPointerDown(this.backHomeButton,this._onTapBackHomeButton,this);
+    Util.registerOnPointerDown(this.backHomeButton, this._onTapBackHomeButton, this);
     this.backHomeButton.zIndex= 100;
   }
 
   _onTapBackHomeButton() {
+    this.parent.onShopUIBack();
     this.hide();
   }
 
@@ -76,20 +94,34 @@ export class KnifeShopUI extends Container {
     this.contTable.zIndex = 100;
   }
 
-  // _initItem() {
-  //   this.knifeItem = new Sprite(Game.bundle.knife10);
-  //   this.knifeItem.width = 30;
-  //   this.knifeItem.height = 100;
-  //   this.knifeItem.rotation = Math.PI / 4;
-  // }
+  _initAppleCount() {
+    this.appleScore = localStorage.getItem('appleScore');
+    this.appleScoreContainer = new Container();
+    this.appleScoreContainer.zIndex= 100;
+    this.addChild(this.appleScoreContainer);
 
-    _initListItem() {
-    //   this.shopData = [
-    //     [Game.bundle.knife1, Game.bundle.knife2, Game.bundle.knife3],
-    //     [Game.bundle.knife4, Game.bundle.knife5, Game.bundle.knife6],
-    //     [Game.bundle.knife7, Game.bundle.knife8, Game.bundle.knife9],
-    //     [Game.bundle.knife10, Game.bundle.knife11, Game.bundle.knife12],
-    // ];
+    let textStyle = new TextStyle({
+      fontSize: 40,
+      align: "center",
+      fill: 0xe6b85f,
+      fontWeight: "bold",
+      fontFamily: "Comic Sans MS",
+    });
+    //text 
+    this.appleText = new Text(`${this.appleScore}`, textStyle);
+    this.appleText.anchor.set(1, 0);
+    this.appleText.position.set(0, 7);
+
+    //sprite
+    this.appleSprite = Sprite.from(Game.bundle.apple_slice_1);
+    this.appleSprite.scale.set(0.8);
+    this.appleSprite.position.set(60, 10);
+    this.appleSprite.angle = 90;
+    this.appleScoreContainer.addChild(this.appleText);
+    this.appleScoreContainer.addChild(this.appleSprite);
+  } 
+
+  _initListItem() {
     this.shopData = [
       [Game.bundle.knife1, Game.bundle.knife2, Game.bundle.knife3],
       [Game.bundle.knife4, Game.bundle.knife5, Game.bundle.knife6],
@@ -99,38 +131,25 @@ export class KnifeShopUI extends Container {
     for(let row = 0; row < this.rows; row++) {
       // this.table[row] = [];
         for(let column = 0; column < this.columns; column++) {
-          let cell = new Sprite(Game.bundle.square);
-          cell.alpha = 0.7;
-          cell.width = 170;
-          cell.height = 170;
-          cell.eventMode = "static";
-  
-          cell.x = this.tablePadding + (column * (170 + this.tablePadding));
-          cell.y = this.tablePadding + (row * (170 + this.tablePadding));
-            this.contTable.addChild(cell);
-            cell.on("pointerdown", (e) => {
-              console.log("Cell value:", this.shopData[row][column]);
-              localStorage.removeItem('dao vừa chọn');
-              this._onChoose(cell);
-              
-            })
-            // this._initItem();
-            // cell.addChild(this.knifeItem);
+          let skinBox = new SkinBox(this.shopData[row][column]);
+          skinBox.x = this.tablePadding + (column * (170 + this.tablePadding));
+          skinBox.y = this.tablePadding + (row * (170 + this.tablePadding));
+          this.skinBoxes.push(skinBox);
+          this.contTable.addChild(skinBox);
 
-            let knifeItem = new Sprite(this.shopData[row][column]);
-            knifeItem.width = 30;
-            knifeItem.height = 120;
-            knifeItem.rotation = Math.PI / 4;
-            cell.addChild(knifeItem);
-            knifeItem.x = 140;
-            knifeItem.y = 50;
+          // skinBox.on("pointerdown", (e) => {
+          //   console.log("Cell value:", this.shopData[row][column]);
+          //   console.log(skinBox.position);
+          //   this._onChoose(skinBox);
+          // })
+          // this._initItem();
+          // this.cell.addChild(this.knifeItem);
         }
     }
   }
 
   _onChoose(cell) {
     cell.alpha =1;
-    console.log(typeof(cell));
     // localStorage.setItem("choosedKnife", JSON.stringify(cell));
   }
 
@@ -143,14 +162,19 @@ export class KnifeShopUI extends Container {
   }
 
   resize() {
-    this.knifeCurrent.x =  GameConstant.GAME_WIDTH /2 + this.knifeCurrent.width;
-    this.knifeCurrent.y = 100 ;
+    this.knifeCurrent.x =  GameConstant.GAME_WIDTH /2;
+    this.knifeCurrent.y = 200 ;
+
     this.contTable.x = GameConstant.GAME_WIDTH /2 - this.contTable.width /2;
     this.contTable.y = GameConstant.GAME_HEIGHT /2 - this.contTable.height /4;
+
     this.textLoad.x = GameConstant.GAME_WIDTH /2 - this.textLoad.width /2;
     this.textLoad.y = GameConstant.GAME_HEIGHT / 2 - 3.5 * this.textLoad.height;
-    this.backHomeButton.y =30;
+
+    this.backHomeButton.y = 25;
     this.backHomeButton.x = 20;
 
+    this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 70;
+    this.appleScoreContainer.y = 30;
   }
 }
