@@ -76,12 +76,12 @@ export class KnifeShopUI extends Container {
     this.contTable.zIndex = 100;
   }
 
-  _initItem() {
-    this.knifeItem = new Sprite(Game.bundle.knife10);
-    this.knifeItem.width = 30;
-    this.knifeItem.height = 100;
-    this.knifeItem.rotation = Math.PI / 4;
-  }
+  // _initItem() {
+  //   this.knifeItem = new Sprite(Game.bundle.knife10);
+  //   this.knifeItem.width = 30;
+  //   this.knifeItem.height = 100;
+  //   this.knifeItem.rotation = Math.PI / 4;
+  // }
 
     _initListItem() {
     //   this.shopData = [
@@ -91,42 +91,47 @@ export class KnifeShopUI extends Container {
     //     [Game.bundle.knife10, Game.bundle.knife11, Game.bundle.knife12],
     // ];
     this.shopData = [
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9],
-      [10, 11, 12],
+      [Game.bundle.knife1, Game.bundle.knife2, Game.bundle.knife3],
+      [Game.bundle.knife4, Game.bundle.knife5, Game.bundle.knife6],
+      [Game.bundle.knife7, Game.bundle.knife8, Game.bundle.knife9],
+      [Game.bundle.knife10, Game.bundle.knife11, Game.bundle.knife12],
   ];
     for(let row = 0; row < this.rows; row++) {
       // this.table[row] = [];
         for(let column = 0; column < this.columns; column++) {
-          this.cell = new Sprite(Game.bundle.square);
-          this.cell.width = 170;
-          this.cell.height = 170;
-          this.cell.eventMode = "static";
-          // this.cell.beginFill(0x000);
-          // this.cell.alpha = 0.8;
-          // this.cell.drawRoundedRect(0, 0, 170, 170);
-          // this.cell.lineStyle(10, 0xf3b23d);
-          // this.cell.endFill();
-          
-          this.cell.x = this.tablePadding + (column * (170 + this.tablePadding));
-          this.cell.y = this.tablePadding + (row * (170 + this.tablePadding));
-            this.contTable.addChild(this.cell);
-            this.cell.on("pointerdown", (e) => {
+          let cell = new Sprite(Game.bundle.square);
+          cell.alpha = 0.7;
+          cell.width = 170;
+          cell.height = 170;
+          cell.eventMode = "static";
+  
+          cell.x = this.tablePadding + (column * (170 + this.tablePadding));
+          cell.y = this.tablePadding + (row * (170 + this.tablePadding));
+            this.contTable.addChild(cell);
+            cell.on("pointerdown", (e) => {
               console.log("Cell value:", this.shopData[row][column]);
-              this._onChoose(this.cell);
+              localStorage.removeItem('dao vừa chọn');
+              this._onChoose(cell);
               
             })
             // this._initItem();
-            // this.cell.addChild(this.knifeItem);
+            // cell.addChild(this.knifeItem);
+
+            let knifeItem = new Sprite(this.shopData[row][column]);
+            knifeItem.width = 30;
+            knifeItem.height = 120;
+            knifeItem.rotation = Math.PI / 4;
+            cell.addChild(knifeItem);
+            knifeItem.x = 140;
+            knifeItem.y = 50;
         }
     }
   }
 
   _onChoose(cell) {
-  
-    cell.alpha = 0.5;
-   
+    cell.alpha =1;
+    console.log(typeof(cell));
+    // localStorage.setItem("choosedKnife", JSON.stringify(cell));
   }
 
   hide() {
@@ -146,5 +151,6 @@ export class KnifeShopUI extends Container {
     this.textLoad.y = GameConstant.GAME_HEIGHT / 2 - 3.5 * this.textLoad.height;
     this.backHomeButton.y =30;
     this.backHomeButton.x = 20;
+
   }
 }
