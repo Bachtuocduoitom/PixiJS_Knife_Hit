@@ -2,7 +2,7 @@ import { Container, Sprite, Text, TextStyle, Texture, FederatedPointerEvent } fr
 import { Game } from "../../game";
 import { Util } from "../../helper/utils";
 import { GameConstant } from "../../gameConstant";
-import { KnifeShopUI } from "./shopUI/knifeShopUI";
+import { KnifeShopUI } from "./knifeShopUI";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export class MenuUI extends Container{
@@ -84,7 +84,6 @@ export class MenuUI extends Container{
     this.norModeButton.visible = false;
     this.dualModeButton.visible = false;
     this.shopUI.show();
-    this._initShopUI();
   }
 
   onShopUIBack() {

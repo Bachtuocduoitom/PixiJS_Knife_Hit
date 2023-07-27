@@ -47,6 +47,14 @@ export const manifest = {
                 srcs: 'assets/images/square.png'
             },
             {
+                name: 'squareSelected',
+                srcs: 'assets/images/square_selected.png'
+            },
+            {
+                name: 'light',
+                srcs: 'assets/images/lighting.png'
+            },
+            {
                 name: 'knife',
                 srcs: 'assets/images/knife.png'
             },
@@ -143,6 +151,10 @@ export const manifest = {
                 srcs: 'assets/images/sao8canh.png'
             },
             {
+                name: 'light',
+                srcs: 'assets/images/light.png'
+            },
+            {
                 name: 'particle',
                 srcs: 'assets/images/particle.png'
             },
@@ -185,6 +197,14 @@ export const manifest = {
             {
                 name: 'brokenBoard',
                 srcs: 'assets/sounds/brokenBoard.mp3'
+            },
+            {
+                name: 'chooseItem',
+                srcs: 'assets/sounds/chooseItem.mp3'
+            },
+            {
+                name: 'noChooseItem',
+                srcs: 'assets/sounds/knock.mp3'
             },
             {
                 name: 'winGame',

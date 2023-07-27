@@ -1,13 +1,12 @@
-import { Container, Sprite, Text, Graphics, TextStyle } from "pixi.js";
-import { Game } from "../../../game";
-import { GameConstant } from "../../../gameConstant";
-import { Util } from "../../../helper/utils";
-import { SkinBox } from "../../skin/skinBox";
-
+import { Container, Sprite, Text, Graphics, TextStyle, Assets } from "pixi.js";
+import { Game } from "../../game";
+import { GameConstant } from "../../gameConstant";
+import { Util } from "../../helper/utils";
+import { SkinBox } from "../skin/skinBox";
+import { Sound } from "@pixi/sound";
 export class KnifeShopUI extends Container {
   constructor() {
     super();
-    
     this.rows = 4;
     this.columns = 3;
     this.tablePadding = 8;
@@ -15,22 +14,27 @@ export class KnifeShopUI extends Container {
     this._initShopData();
     this._initBackGround();
     this._initKnifeCurrent();
+    this._initLighting();
     this._initContTable();
     this._initText();
     this._initBackHomeButton();
     this._initAppleCount();
+    this._initSound();
     this.resize();
     this.sortableChildren = true;
   }
 
   _initShopData() {
-    if(localStorage.getItem('skinBoxData') === null) {
-      let dataArr = [];
-      for (let i = 0; i < this.columns*this.rows; i++) {
-        let skinBoxData = {state: "lock", skin: `knife${i}`};
-        dataArr.push(skinBoxData);
+    for (let i = 0; i < this.columns*this.rows; i++) {
+      if (localStorage.getItem(`skinBox${i + 1}}Data`) === null) {
+        let skinBoxData = {state: "lock", skin: `knife${i  + 1}`, cost: 10};
+        localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
       }
-      localStorage.setItem('skinBoxData', JSON.stringify(dataArr));
+    }
+
+    //init currentSkin in localstorage
+    if (localStorage.getItem('currentSkin') === null) {
+      localStorage.setItem('currentSkin', "knife");
     }
   }
 
@@ -66,8 +70,24 @@ export class KnifeShopUI extends Container {
     this._initOverLay();
   }
 
+  _initSound() {
+    this.chooseItem = Sound.from(Game.bundle.chooseItem);
+    this.chooseItem.volume = 1;
+    this.noChooseItem = Sound.from(Game.bundle.noChooseItem);
+
+  }
+  _initLighting() {
+    this.lighting = new Sprite(Game.bundle.light);
+    this.lighting.scale.set(0.35);
+    this.lighting.anchor.set(0.5);
+    this.lighting.zIndex= 90;
+    this.lighting.alpha = 0.6;
+    this.addChild(this.lighting);
+  }
+
+
   _initKnifeCurrent() {
-    this.knifeCurrent = new Sprite(Game.bundle.knife);
+    this.knifeCurrent = new Sprite(Assets.get(localStorage.getItem('currentSkin')));
     this.knifeCurrent.anchor.set(0.5);
     this.knifeCurrent.rotation = Math.PI / 4;
     this.knifeCurrent.zIndex= 100;
@@ -123,34 +143,50 @@ export class KnifeShopUI extends Container {
 
   _initListItem() {
     this.shopData = [
-      [Game.bundle.knife1, Game.bundle.knife2, Game.bundle.knife3],
-      [Game.bundle.knife4, Game.bundle.knife5, Game.bundle.knife6],
-      [Game.bundle.knife7, Game.bundle.knife8, Game.bundle.knife9],
-      [Game.bundle.knife10, Game.bundle.knife11, Game.bundle.knife12],
-  ];
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [10, 11, 12],
+    ];
     for(let row = 0; row < this.rows; row++) {
-      // this.table[row] = [];
-        for(let column = 0; column < this.columns; column++) {
-          let skinBox = new SkinBox(this.shopData[row][column]);
-          skinBox.x = this.tablePadding + (column * (170 + this.tablePadding));
-          skinBox.y = this.tablePadding + (row * (170 + this.tablePadding));
-          this.skinBoxes.push(skinBox);
-          this.contTable.addChild(skinBox);
+      for(let column = 0; column < this.columns; column++) {
+        let skinBox = new SkinBox(this.shopData[row][column]);
+        skinBox.x = this.tablePadding + (column * (170 + this.tablePadding));
+        skinBox.y = this.tablePadding + (row * (170 + this.tablePadding));
+        this.skinBoxes.push(skinBox);
+        this.contTable.addChild(skinBox);
 
-          // skinBox.on("pointerdown", (e) => {
-          //   console.log("Cell value:", this.shopData[row][column]);
-          //   console.log(skinBox.position);
-          //   this._onChoose(skinBox);
-          // })
-          // this._initItem();
-          // this.cell.addChild(this.knifeItem);
-        }
+        skinBox.on("pointerdown", () => {
+          this.chooseItem.play();
+          this._onClick(skinBox);
+          console.log(1);
+        });
+      }
     }
   }
 
-  _onChoose(cell) {
-    cell.alpha =1;
-    // localStorage.setItem("choosedKnife", JSON.stringify(cell));
+  _onClick(skinBox) {
+    switch (skinBox.state) {
+      case "lock":
+        if (skinBox.canBuy()) {
+          skinBox.onBuy();
+          
+          //change skin on localstorage
+          localStorage.setItem('currentSkin', skinBox.skin);
+
+          //reset currentKnife skin
+          this.knifeCurrent.texture = Assets.get(localStorage.getItem('currentSkin'));
+          
+        }
+        break;
+      case "unlock":
+        
+        break;
+      case "selected":
+        
+        break;
+  
+    }
   }
 
   hide() {
@@ -164,6 +200,9 @@ export class KnifeShopUI extends Container {
   resize() {
     this.knifeCurrent.x =  GameConstant.GAME_WIDTH /2;
     this.knifeCurrent.y = 200 ;
+
+    this.lighting.x =  GameConstant.GAME_WIDTH /2;
+    this.lighting.y = 200 ;
 
     this.contTable.x = GameConstant.GAME_WIDTH /2 - this.contTable.width /2;
     this.contTable.y = GameConstant.GAME_HEIGHT /2 - this.contTable.height /4;
