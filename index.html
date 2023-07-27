@@ -4383,12 +4383,12 @@ class Game {
     document.body.appendChild(this.app.view);
     this.readyState = false;
     this.start = false;
-    this._initLoadingScene();
     this._loadGameAssets().then((bundle) => {
       this.bundle = bundle;
       this._loadGameDataLevel().then((data) => {
         this.data = data;
         this.readyState = true;
+        this._initSceneManager();
       });
     });
     this.app.ticker.add(this.update, this);
@@ -4406,11 +4406,9 @@ class Game {
     });
   }
   static update(dt) {
-    this.loadingScene.update(dt);
     if (this.sceneManager != null) {
       this.sceneManager.update(dt);
     }
-    this._checkLoaded();
   }
   static _initSceneManager() {
     this.sceneManager = new _objects_scenes_sceneManager__WEBPACK_IMPORTED_MODULE_4__.SceneManager();
