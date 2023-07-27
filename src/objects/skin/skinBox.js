@@ -47,7 +47,7 @@ export class SkinBox extends Container {
       fill: 0xe6b85f,
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     })
     this.textCost.anchor.set(0.5);
     this.textCost.x = 140;

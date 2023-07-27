@@ -145,7 +145,7 @@ export class PlayScene extends Container {
   // Check if win or lose
   _onContOrRestart() {
     localStorage.setItem('appleScore', this.appleScore);
-    if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 4) {
+    if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 10) {
       this._onRestartGame();
     } else {
       this._onContGame();

@@ -4,6 +4,7 @@ import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
 import { SkinBox, SkinBoxState } from "../skin/skinBox";
 import * as TWEEN from "@tweenjs/tween.js";
+import { Sound } from "@pixi/sound";
 
 export class KnifeShopUI extends Container {
   constructor() {
@@ -13,8 +14,10 @@ export class KnifeShopUI extends Container {
     this.tablePadding = 8;
     this.skinBoxes = [];
     this._initShopData();
+    this._initSound();
     this._initBackGround();
     this._initKnifeCurrent();
+    this._initLightingBehind();
     this._initContTable();
     this._initText();
     this._initBackHomeButton();
@@ -53,7 +56,7 @@ export class KnifeShopUI extends Container {
       fill: "#FF8C00",
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     })
     this.addChild(this.textLoad);
     this.textLoad.zIndex= 100;
@@ -64,7 +67,7 @@ export class KnifeShopUI extends Container {
       fill: "#FF6347",
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     })
     this.textWarScore.zIndex = 100;
     this.textWarScore.anchor.set(0.5);
@@ -84,6 +87,21 @@ export class KnifeShopUI extends Container {
     this.addChild(this.shopBackGround);
 
     this._initOverLay();
+  }
+
+  _initSound() {
+    this.chooseItem = Sound.from(Game.bundle.chooseItem);
+    this.chooseItem.volume = 1;
+    this.noChooseItem = Sound.from(Game.bundle.noChooseItem);
+
+  }
+  _initLightingBehind() {
+    this.lighting = new Sprite(Game.bundle.light);
+    this.lighting.scale.set(0.35);
+    this.lighting.anchor.set(0.5);
+    this.lighting.zIndex= 90;
+    this.lighting.alpha = 0.6;
+    this.addChild(this.lighting);
   }
 
   _initKnifeCurrent() {
@@ -125,7 +143,7 @@ export class KnifeShopUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     //text 
     this.appleText = new Text(`${this.appleScore}`, textStyle);
@@ -167,6 +185,9 @@ export class KnifeShopUI extends Container {
     switch (skinBox.state) {
       case SkinBoxState.LOCK:
         if (skinBox.canBuy()) {
+          //play sound  
+          this.chooseItem.play();
+
           this.skinBoxes.forEach((box) => {
             if(box.state === SkinBoxState.SELECTED) {
               box.onDeselect();
@@ -183,10 +204,17 @@ export class KnifeShopUI extends Container {
           localStorage.setItem('appleScore', this.appleScore);
           
         } else {
+          //play sound
+          this.noChooseItem.play();
+
+          //play tween
           this._playNotEnoughMoneyTween();
         }
         break;
       case SkinBoxState.UNLOCK:
+        //play sound
+        this.chooseItem.play();
+
         this.skinBoxes.forEach((box) => {
           if(box.state === SkinBoxState.SELECTED) {
             box.onDeselect();
@@ -200,6 +228,9 @@ export class KnifeShopUI extends Container {
 
         break;
       case SkinBoxState.SELECTED:
+        //play sound
+        this.chooseItem.play();
+
         skinBox.onDeselect();
 
         //change skin on localstorage
@@ -237,6 +268,9 @@ export class KnifeShopUI extends Container {
   resize() {
     this.knifeCurrent.x =  GameConstant.GAME_WIDTH /2;
     this.knifeCurrent.y = 200 ;
+
+    this.lighting.x =  GameConstant.GAME_WIDTH /2;
+    this.lighting.y = 200 ;
 
     this.contTable.x = GameConstant.GAME_WIDTH /2 - this.contTable.width /2;
     this.contTable.y = GameConstant.GAME_HEIGHT /2 - this.contTable.height /4;

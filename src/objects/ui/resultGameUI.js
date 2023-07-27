@@ -53,7 +53,7 @@ export class ResultGameUI extends Container {
       fill: "#ADFF2F",
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.messageText.zIndex = 100;
     this.addChild(this.messageText);
@@ -73,7 +73,7 @@ export class ResultGameUI extends Container {
       fill: "#FFFFFF",
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.buttonText.zIndex = 100;
     this.buttonText.anchor.set(0.5);
@@ -99,6 +99,7 @@ export class ResultGameUI extends Container {
       fontSize: 40,
       fill: "#FFFFFF",
       fontWeight: "bold",
+      fontFamily: Game.bundle.comicSans.family
     });
     this.homeButtonText.zIndex = 100;
     this.homeButtonText.anchor.set(0.5);

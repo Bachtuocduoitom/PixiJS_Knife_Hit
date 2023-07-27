@@ -25,7 +25,7 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.scoreText = new Text(`${this.score}`, textStyle);
     this.scoreText.anchor.set(0);
@@ -50,7 +50,7 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.scoreText2 = new Text(`${this.score2}`, textStyle);
     this.scoreText2.anchor.set(0);
@@ -66,7 +66,7 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xffffff,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.player1Text = new Text(`Player1`, textStyle);
     this.player1Text.anchor.set(0, 1);

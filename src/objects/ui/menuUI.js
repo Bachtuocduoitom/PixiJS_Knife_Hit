@@ -29,7 +29,7 @@ export class MenuUI extends Container{
       fontSize: 50,
       fill: "#FFFFFF",
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS"
+      fontFamily: Game.bundle.comicSans.family
     });
     this.norModeButtonText.zIndex = 10;
     this.norModeButtonText.anchor.set(0.5);
@@ -52,7 +52,7 @@ export class MenuUI extends Container{
       fontSize: 50,
       fill: "#FFFFFF",
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS"
+      fontFamily: Game.bundle.comicSans.family
     });
     this.dualModeButtonText.zIndex = 10;
     this.dualModeButtonText.anchor.set(0.5);

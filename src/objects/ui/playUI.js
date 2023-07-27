@@ -23,7 +23,7 @@ export class PlayUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.levelText = new Text(
       `Level ${this.levelData.currentLevel}`,
@@ -39,7 +39,7 @@ export class PlayUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.scoreText = new Text(`${this.score}`, textStyle);
     this.scoreText.anchor.set(0);
@@ -66,7 +66,7 @@ export class PlayUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.appleText = new Text(`${this.appleScore}`, textStyle);
     this.appleText.anchor.set(1, 0);

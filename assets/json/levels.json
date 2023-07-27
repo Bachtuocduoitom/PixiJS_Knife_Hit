@@ -52,7 +52,7 @@
     {
         "id": 4,
         "knifeData": {
-            "knifeNumber": 10,
+            "knifeNumber": 9,
             "haveOnBoard": true,
             "minOnBoard": 2,
             "maxOnBoard" : 3
@@ -65,6 +65,110 @@
             "haveOnBoard": true,
             "minOnBoard": 1,
             "maxOnBoard": 2
+        }
+    },
+    {
+        "id": 5,
+        "knifeData": {
+            "knifeNumber": 10,
+            "haveOnBoard": true,
+            "minOnBoard": 3,
+            "maxOnBoard" : 4
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.05
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 0,
+            "maxOnBoard": 1
+        }
+    },
+    {
+        "id": 6,
+        "knifeData": {
+            "knifeNumber": 11,
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard" : 3
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.05
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 0,
+            "maxOnBoard": 1
+        }
+    },
+    {
+        "id": 7,
+        "knifeData": {
+            "knifeNumber": 11,
+            "haveOnBoard": true,
+            "minOnBoard": 2,
+            "maxOnBoard" : 4
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.06
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard": 2
+        }
+    },
+    {
+        "id": 8,
+        "knifeData": {
+            "knifeNumber": 12,
+            "haveOnBoard": false
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.065
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard": 2
+        }
+    },
+    {
+        "id": 9,
+        "knifeData": {
+            "knifeNumber": 12,
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard" : 3
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.06
+        },
+        "appleData": {
+            "haveOnBoard": true,
+            "minOnBoard": 0,
+            "maxOnBoard": 1
+        }
+    },
+    {
+        "id": 10,
+        "knifeData": {
+            "knifeNumber": 13,
+            "haveOnBoard": true,
+            "minOnBoard": 1,
+            "maxOnBoard" : 1
+        },
+        "boardData": {
+            "isChangeSpeed": true,
+            "rotationSpeed": 0.05
+        },
+        "appleData": {
+            "haveOnBoard": false
         }
     },
     {
