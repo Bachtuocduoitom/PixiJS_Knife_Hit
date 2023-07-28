@@ -4627,6 +4627,10 @@ const manifest = {
         srcs: "assets/images/facebookIcon.png"
       },
       {
+        name: "rankIcon",
+        srcs: "assets/images/rank.png"
+      },
+      {
         name: "bgShop",
         srcs: "assets/images/bgShopp.jpg"
       },
@@ -5869,7 +5873,7 @@ class KnifeP1 extends _knifePrototype__WEBPACK_IMPORTED_MODULE_5__.KnifePrototyp
           this.y += this.fallY * dt;
           this.rotation -= this.fallRotation;
         } else {
-          this.y += 20 + 1 / 2 * 9.8 * dt;
+          this.y += 20 + 1 / 2 * 9.8 * dt * dt;
           this.rotation += 0.1;
         }
         break;
@@ -5975,7 +5979,7 @@ class KnifeP2 extends _knifePrototype__WEBPACK_IMPORTED_MODULE_5__.KnifePrototyp
           this.y -= this.fallY * dt;
           this.rotation -= this.fallRotation;
         } else {
-          this.y -= 20 + 1 / 2 * 9.8 * dt;
+          this.y -= 20 - 1 / 2 * 9.8 * dt * dt;
           this.rotation += 0.1;
         }
         break;
@@ -6254,7 +6258,10 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     super();
     this.state = _playScene__WEBPACK_IMPORTED_MODULE_17__.GameState.Tutorial;
     this.score1 = 0;
+    this.appleScore1 = 0;
     this.score2 = 0;
+    this.appleScore2 = 0;
+    this.currentMode = "dual";
     this._initSound();
     this._initGamePlay();
     this._initUI();
@@ -6495,7 +6502,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.knifeManager1.onBoardHit();
     this.knifeManager2.onBoardHit();
     setTimeout(() => {
-      this.loseGame.play();
+      this.winGame.play();
     }, 500);
     setTimeout(() => {
       this.state = _playScene__WEBPACK_IMPORTED_MODULE_17__.GameState.Lose;
@@ -7565,6 +7572,7 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.columns = 3;
     this.tablePadding = 8;
     this.skinBoxes = [];
+    this._initShopData();
     this._initSound();
     this._initBackGround();
     this._initKnifeCurrent();
@@ -7575,6 +7583,17 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initAppleCount();
     this.resize();
     this.sortableChildren = true;
+  }
+  _initShopData() {
+    for (let i = 0; i < this.columns * this.rows; i++) {
+      if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
+        let skinBoxData = { state: "lock", skin: `knife${i + 1}`, cost: 10 };
+        localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
+      }
+    }
+    if (localStorage.getItem("currentSkin") === null) {
+      localStorage.setItem("currentSkin", "knife");
+    }
   }
   _initOverLay() {
     this.overlay = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
@@ -7748,8 +7767,6 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.visible = false;
   }
   show() {
-    this.appleScore = localStorage.getItem("appleScore");
-    this.appleText.text = `${this.appleScore}`;
     this.visible = true;
   }
   resize() {
@@ -7807,6 +7824,7 @@ class MenuUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initShopButton();
     this._initSettingButton();
     this._initFaceBookButton();
+    this._initRankButton();
     this.resize();
     this.sortableChildren = true;
     this.clickSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_6__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.click);
@@ -7882,6 +7900,11 @@ class MenuUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.facebookButton.alpha = 0.8;
     this.addChild(this.facebookButton);
   }
+  _initRankButton() {
+    this.rankButton = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.rankIcon);
+    this.rankButton.alpha = 0.8;
+    this.addChild(this.rankButton);
+  }
   updateUI(dt) {
     this.currentTime += dt;
     _tweenjs_tween_js__WEBPACK_IMPORTED_MODULE_5__.update(this.currentTime);
@@ -7901,12 +7924,14 @@ class MenuUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.dualModeButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - this.norModeButton.height - 300;
     this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width / 2;
     this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height / 2;
-    this.shopButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 2 - this.shopButton.width / 2;
-    this.shopButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - 250;
-    this.settingButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 4;
+    this.settingButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 8;
     this.settingButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - 250;
-    this.facebookButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 1.5;
+    this.shopButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 3;
+    this.shopButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - 250;
+    this.facebookButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 1.8;
     this.facebookButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - 250;
+    this.rankButton.x = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_WIDTH / 1.3;
+    this.rankButton.y = _gameConstant__WEBPACK_IMPORTED_MODULE_3__.GameConstant.GAME_HEIGHT - 250;
   }
   hide() {
     this.visible = false;
@@ -48018,4 +48043,4 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	var __webpack_exports__ = __webpack_require__("./src/game.js");
 /******/ 	
 /******/ })()
-;</script></head><body><div><img src="assets/images/bg_bg.jpg" id="imgLoad"/></div></body></html>
+;</script></head><body><div><img src="../assets/images/bg_bg.jpg" id="imgLoad"/></div></body></html>
