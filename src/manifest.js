@@ -242,6 +242,10 @@ export const manifest = {
                 srcs: 'assets/sounds/knock.mp3'
             },
             {
+                name: 'purchase',
+                srcs: 'assets/sounds/purchase.mp3'
+            },
+            {
                 name: 'winGame',
                 srcs: 'assets/sounds/wingame.wav'
             },
