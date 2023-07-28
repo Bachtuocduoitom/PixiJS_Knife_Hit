@@ -25,8 +25,7 @@ export class Game {
 
             this._loadGameDataLevel().then((data) => {
                 this.data = data;
-                this.readyState = true;    
-                //this._initSceneManager();        
+                this.readyState = true;         
             })
           
         });
@@ -46,13 +45,12 @@ export class Game {
     }
 
     static update(dt) {
-        if (this.loadingScene != null) {
-            this.loadingScene.update(dt);
+        this.loadingScene.update(dt);
 
-        }
         if (this.sceneManager != null) {
             this.sceneManager.update(dt);
         }
+        
         this._checkLoaded();
     }
 
@@ -82,6 +80,7 @@ export class Game {
             this.app.stage.removeChild(this.loadingScene);
             this.loadingScene.destroy();
 
+            //init scene manager
             this._initSceneManager();
         })
 

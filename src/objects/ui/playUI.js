@@ -106,10 +106,13 @@ export class PlayUI extends Container {
   resize() {
     this.levelText.x = GameConstant.GAME_WIDTH / 2;
     this.levelText.y = 10;
+
     this.scoreText.x = 50;
     this.scoreText.y = 10;
+
     this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 70;
     this.appleScoreContainer.y = 10;
+    
     this.knifeIconsContainer.x = 30;
     this.knifeIconsContainer.y = 1150 - this.knifeIconsContainer.height;
   }
