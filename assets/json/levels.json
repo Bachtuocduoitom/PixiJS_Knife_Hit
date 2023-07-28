@@ -71,9 +71,7 @@
         "id": 5,
         "knifeData": {
             "knifeNumber": 10,
-            "haveOnBoard": true,
-            "minOnBoard": 1,
-            "maxOnBoard" : 1
+            "haveOnBoard": false
         },
         "boardData": {
             "isChangeSpeed": false,
