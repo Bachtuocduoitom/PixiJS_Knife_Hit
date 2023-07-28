@@ -4839,6 +4839,10 @@ const manifest = {
         srcs: "assets/sounds/knock.mp3"
       },
       {
+        name: "purchase",
+        srcs: "assets/sounds/purchase.mp3"
+      },
+      {
         name: "winGame",
         srcs: "assets/sounds/wingame.wav"
       },
@@ -6378,6 +6382,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // xử lí click restart
   _onRestartGame() {
+    this.clickButn.play();
     this.winGame.stop();
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
@@ -6391,6 +6396,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initParticlesResultgame();
   }
   _backHome(e) {
+    this.clickButn.play();
     this.winGame.stop();
     this.parent.dualToHome();
   }
@@ -6413,6 +6419,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.loseGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.loseGame);
     this.popSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.pop);
     this.popSound.play();
+    this.clickButn = _pixi_sound__WEBPACK_IMPORTED_MODULE_2__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.click);
   }
   update(dt) {
     this.currentDt += dt;
@@ -6882,6 +6889,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // Xử lí click tiếp tục
   _onContGame() {
+    this.clickButn.play();
     this.currentLevel++;
     this.winGame.stop();
     this.removeChild(this.gameplay);
@@ -6895,6 +6903,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
   }
   // xử lí click restart
   _onRestartGame() {
+    this.clickButn.play();
     this.currentLevel = 1;
     this.loseGame.stop();
     this.removeChild(this.gameplay);
@@ -6908,6 +6917,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initUI();
   }
   _backHome(e) {
+    this.clickButn.play();
     this.winGame.stop();
     this.parent.norToHome();
   }
@@ -6930,6 +6940,7 @@ class PlayScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.loseGame = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.loseGame);
     this.popSound = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.pop);
     this.popSound.play();
+    this.clickButn = _pixi_sound__WEBPACK_IMPORTED_MODULE_8__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.click);
   }
   update(dt) {
     this.knifeManager.update(dt);
@@ -7628,6 +7639,7 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.chooseItem = _pixi_sound__WEBPACK_IMPORTED_MODULE_6__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.chooseItem);
     this.chooseItem.volume = 1;
     this.noChooseItem = _pixi_sound__WEBPACK_IMPORTED_MODULE_6__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.noChooseItem);
+    this.purchaseItem = _pixi_sound__WEBPACK_IMPORTED_MODULE_6__.Sound.from(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.purchase);
   }
   _initLightingBehind() {
     this.lighting = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(_game__WEBPACK_IMPORTED_MODULE_1__.Game.bundle.light);
@@ -7708,7 +7720,7 @@ class KnifeShopUI extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     switch (skinBox.state) {
       case _skin_skinBox__WEBPACK_IMPORTED_MODULE_4__.SkinBoxState.LOCK:
         if (skinBox.canBuy()) {
-          this.chooseItem.play();
+          this.purchaseItem.play();
           this.skinBoxes.forEach((box) => {
             if (box.state === _skin_skinBox__WEBPACK_IMPORTED_MODULE_4__.SkinBoxState.SELECTED) {
               box.onDeselect();
