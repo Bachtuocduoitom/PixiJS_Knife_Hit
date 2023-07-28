@@ -79,7 +79,7 @@ export class KnifeP2 extends KnifePrototype {
                     this.y -= this.fallY*dt;
                     this.rotation -= this.fallRotation;
                 } else {
-                    this.y -= 20 - 1/2 * 9.8 * dt;
+                    this.y -= 20 + 1/2 * 9.8 * dt;
                     this.rotation += 0.1;
                 }
                 break;

@@ -340,7 +340,7 @@ export class DualScene extends Container {
       this.knifeManager1.onBoardHit();
       this.knifeManager2.onBoardHit();
 
-      setTimeout(() => {this.winGame.play();}, 500);
+      setTimeout(() => {this.loseGame.play();}, 500);
       setTimeout(() => {
         this.state = GameState.Lose;
         this.resultUI.show();
