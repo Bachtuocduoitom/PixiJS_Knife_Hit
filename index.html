@@ -5869,7 +5869,7 @@ class KnifeP1 extends _knifePrototype__WEBPACK_IMPORTED_MODULE_5__.KnifePrototyp
           this.y += this.fallY * dt;
           this.rotation -= this.fallRotation;
         } else {
-          this.y += 20 + 1 / 2 * 9.8 * dt * dt;
+          this.y += 20 + 1 / 2 * 9.8 * dt;
           this.rotation += 0.1;
         }
         break;
@@ -5975,7 +5975,7 @@ class KnifeP2 extends _knifePrototype__WEBPACK_IMPORTED_MODULE_5__.KnifePrototyp
           this.y -= this.fallY * dt;
           this.rotation -= this.fallRotation;
         } else {
-          this.y -= 20 - 1 / 2 * 9.8 * dt * dt;
+          this.y -= 20 - 1 / 2 * 9.8 * dt;
           this.rotation += 0.1;
         }
         break;
@@ -6254,10 +6254,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     super();
     this.state = _playScene__WEBPACK_IMPORTED_MODULE_17__.GameState.Tutorial;
     this.score1 = 0;
-    this.appleScore1 = 0;
     this.score2 = 0;
-    this.appleScore2 = 0;
-    this.currentMode = "dual";
     this._initSound();
     this._initGamePlay();
     this._initUI();
@@ -6498,7 +6495,7 @@ class DualScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this.knifeManager1.onBoardHit();
     this.knifeManager2.onBoardHit();
     setTimeout(() => {
-      this.winGame.play();
+      this.loseGame.play();
     }, 500);
     setTimeout(() => {
       this.state = _playScene__WEBPACK_IMPORTED_MODULE_17__.GameState.Lose;
