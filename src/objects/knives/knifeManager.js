@@ -40,7 +40,7 @@ export class KnifeManager extends KnifeManagerPrototype {
 
     // sinh dao gam tren go
     _spawnObs(avaiAngle) {
-        let knife = new Knife(Assets.get(localStorage.getItem('currentSkin')));
+        let knife = new Knife(Game.bundle.knife);
         knife.x = GameConstant.BOARD_X_POSITION;
         knife.y = GameConstant.BOARD_Y_POSITION;
         knife.anchor.set(0.5, -0.5);

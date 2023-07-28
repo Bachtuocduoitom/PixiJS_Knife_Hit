@@ -28,21 +28,13 @@ export class PlayScene extends Container {
     this.state = GameState.Tutorial;
     this.score = 0;
     this.currentLevel = 1; 
-    this._initAppleScore();
+    this.appleScore = localStorage.getItem('appleScore');
     this._initSound();
     this._initGamePlay();
     this._initUI();
   }
 
-  _initAppleScore() {
-    if (localStorage.getItem('appleScore') === null) {
-      this.appleScore = 0;
-      localStorage.setItem('appleScore', this.appleScore);
-
-    } else {
-      this.appleScore = localStorage.getItem('appleScore');
-    }
-  }
+  
 
   _initGamePlay() {  
     this._initDataManager();
@@ -143,7 +135,6 @@ export class PlayScene extends Container {
 
   // Check if win or lose
   _onContOrRestart() {
-    localStorage.setItem('appleScore', this.appleScore);
     if (this.resultUI.messageText.text === "You lose" ||this.currentLevel === 10) {
       this._onRestartGame();
     } else {
@@ -323,6 +314,7 @@ export class PlayScene extends Container {
     this.tutorialUI.hide();
     this._onClicky(e);
   }
+
   _onWin() {
     // tạo âm thanh
     this.boardBroken.play();
@@ -399,8 +391,11 @@ export class PlayScene extends Container {
           if (Util.SATPolygonPolygon(this._cal4PointKnife(this.knifeManager.knives[0]),Util.find4Vertex(apple))) {
             this.kHitApple.play();
             this.appleManager.removeApple(apple);
+
             //tang diem
             this.playUI.updateAppleScore(++this.appleScore);
+            localStorage.setItem('appleScore', this.appleScore);
+
           }
         });
 

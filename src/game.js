@@ -25,7 +25,8 @@ export class Game {
 
             this._loadGameDataLevel().then((data) => {
                 this.data = data;
-                this.readyState = true;            
+                this.readyState = true;    
+                //this._initSceneManager();        
             })
           
         });
@@ -45,7 +46,10 @@ export class Game {
     }
 
     static update(dt) {
-        this.loadingScene.update(dt);
+        if (this.loadingScene != null) {
+            this.loadingScene.update(dt);
+
+        }
         if (this.sceneManager != null) {
             this.sceneManager.update(dt);
         }
@@ -67,7 +71,7 @@ export class Game {
             this.start = true;
             setTimeout(() => {
                 this._onLoaded();
-            }, 100)
+            }, 1000)
             
         }
     }

@@ -140,6 +140,10 @@ export const manifest = {
                 srcs: 'assets/images/apple_slice_2.png'
             },
             {
+                name: 'minFrg',
+                srcs: 'assets/images/minFrg.png'
+            },
+            {
                 name: 'knife_white_icon',
                 srcs: 'assets/images/knife_white_icon.png'
             },
