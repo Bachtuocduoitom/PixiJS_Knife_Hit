@@ -65,7 +65,7 @@ export class Board extends Sprite {
     this.fragments3.visible = false;
 
     // mảnh vụn
-    this.fragmentsMin = Sprite.from('../assets/images/minFrg.png');
+    this.fragmentsMin = Sprite.from(Game.bundle.minFrg);
     this.fragmentsMin.anchor.set(0.5);
     this.fragmentsMin.scale.set(1.5);
     this.fragmentsMin.visible = false;
