@@ -14,6 +14,9 @@ export class Game {
             backgroundColor: 0x000000,
         });
         document.body.appendChild(this.app.view);
+        const viewstyle = this.app.view.style;
+        viewstyle.width = "100%";
+        viewstyle.height = "100%";
 
         this.readyState = false;
         this.start = false;
