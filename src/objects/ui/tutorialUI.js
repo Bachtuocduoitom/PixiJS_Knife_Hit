@@ -37,7 +37,7 @@ export class TutorialUI extends Container {
       fontSize: 50,
       align: "center",
       fill: 0xffffff,
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
       fontWeight: "bold",
       dropShadow: true,
       dropShadowColor: "black",

@@ -12,7 +12,7 @@ export const KnifeState = Object.freeze({
     MOVE: "move",
     OBSTACLE: "obstacle",
     FALL: "fall",
-  });
+});
 
 export class KnifePrototype extends Sprite {
     constructor(texture) {

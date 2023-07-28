@@ -28,8 +28,12 @@ export const manifest = {
                 srcs: 'assets/images/settingIcon.png'
             },
             {
+                name: 'fbIcon',
+                srcs: 'assets/images/facebookIcon.png'
+            },
+            {
                 name: 'bgShop',
-                srcs: 'assets/images/bgShop.jpg'
+                srcs: 'assets/images/bgShopp.jpg'
             },
             {
                 name: 'knife_logo',
@@ -50,6 +54,10 @@ export const manifest = {
             {
                 name: 'squareSelected',
                 srcs: 'assets/images/square_selected.png'
+            },
+            {
+                name: 'light',
+                srcs: 'assets/images/light2.png'
             },
             {
                 name: 'knife',
@@ -107,10 +115,10 @@ export const manifest = {
                 name: 'knife12',
                 srcs: 'assets/images/knife12.png'
             },
-            {
-                name: 'knife13',
-                srcs: 'assets/images/knife13.png'
-            },
+            // {
+            //     name: 'knife13',
+            //     srcs: 'assets/images/knife13.png'
+            // },
             {
                 name: 'knifeP2',
                 srcs: 'assets/images/knifeP2.png'
@@ -118,10 +126,6 @@ export const manifest = {
             {
                 name: 'knifeP2_reverse',
                 srcs: 'assets/images/knifeP2_reverse.png'
-            },
-            {
-                name: 'knifeLoad',
-                srcs: 'assets/images/knifeLoad.png'
             },
             {
                 name: 'apple',
@@ -159,7 +163,6 @@ export const manifest = {
                 name: 'particleStar',
                 srcs: 'assets/images/particleStar.png'
             },
-            
             {
                 name: 'bgButton',
                 srcs: 'assets/images/bgButton.png'
@@ -197,7 +200,7 @@ export const manifest = {
                 srcs: 'assets/images/iconPlayer.png'
             },
 
-            // Sound 
+            // sound
             {
                 name: 'knife_hit_wood',
                 srcs: 'assets/sounds/knife_hit_wood.wav'
@@ -238,8 +241,29 @@ export const manifest = {
                 name: 'loseGame',
                 srcs: 'assets/sounds/losegame.wav'
             },
+            {
+                name: 'click',
+                srcs: 'assets/sounds/click.wav'
+            },
 
-            // particle
+            // particle and spritesheet
+            {
+                name: 'logParticle',
+                srcs: 'assets/particles/log_particle.json'
+            },
+            {
+                name: 'winGameParticle',
+                srcs: 'assets/particles/winGame_particle.json'
+            },
+            {
+                name: 'loseGameParticle',
+                srcs: 'assets/particles/loseGame.json'
+            },
+            {
+                name: 'victoryParticle',
+                srcs: 'assets/particles/victory.json'
+            },
+
             {
                 name: 'frgLg',
                 srcs: 'assets/spritesheet/frgLg.json'
@@ -252,21 +276,10 @@ export const manifest = {
                 name: 'frgSm',
                 srcs: 'assets/spritesheet/frgSm.json'
             },
+            //font
             {
-                name: 'victoryParticle',
-                srcs: 'assets/particles/victory.json'
-            },
-            {
-                name: 'logParticle',
-                srcs: 'assets/particles/log_particle.json'
-            },
-            {
-                name: 'winGameParticle',
-                srcs: 'assets/particles/winGame_particle.json'
-            },
-            {
-                name: 'loseGameParticle',
-                srcs: 'assets/particles/loseGame.json'
+                name: 'comicSans',
+                srcs: 'assets/fonts/comic.ttf'
             },
         ],
     }],

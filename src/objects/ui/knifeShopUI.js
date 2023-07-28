@@ -2,8 +2,10 @@ import { Container, Sprite, Text, Graphics, TextStyle, Assets } from "pixi.js";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
-import { SkinBox } from "../skin/skinBox";
+import { SkinBox, SkinBoxState } from "../skin/skinBox";
+import * as TWEEN from "@tweenjs/tween.js";
 import { Sound } from "@pixi/sound";
+
 export class KnifeShopUI extends Container {
   constructor() {
     super();
@@ -12,21 +14,21 @@ export class KnifeShopUI extends Container {
     this.tablePadding = 8;
     this.skinBoxes = [];
     this._initShopData();
+    this._initSound();
     this._initBackGround();
     this._initKnifeCurrent();
-    this._initLighting();
+    this._initLightingBehind();
     this._initContTable();
     this._initText();
     this._initBackHomeButton();
     this._initAppleCount();
-    this._initSound();
     this.resize();
     this.sortableChildren = true;
   }
 
   _initShopData() {
     for (let i = 0; i < this.columns*this.rows; i++) {
-      if (localStorage.getItem(`skinBox${i + 1}}Data`) === null) {
+      if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
         let skinBoxData = {state: "lock", skin: `knife${i  + 1}`, cost: 10};
         localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
       }
@@ -48,15 +50,32 @@ export class KnifeShopUI extends Container {
   }
 
   _initText() {
+    //init text: knife shop
     this.textLoad = new Text("Knife Shop", {
       fontSize: 60,
       fill: "#FF8C00",
       fontWeight: "bold",
       align: "center",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     })
     this.addChild(this.textLoad);
     this.textLoad.zIndex= 100;
+
+    //init text: not enough money
+    this.textWarScore = new Text("Not enough money", {
+      fontSize: 30,
+      fill: "#FF6347",
+      fontWeight: "bold",
+      align: "center",
+      fontFamily: Game.bundle.comicSans.family,
+    })
+    this.textWarScore.zIndex = 100;
+    this.textWarScore.anchor.set(0.5);
+    this.textWarScore.alpha = 0;
+    this.addChild(this.textWarScore);
+
+    //init warning tween    
+    this._initNotEnoughMoneyTween();
   }
 
   _initBackGround() {
@@ -71,19 +90,19 @@ export class KnifeShopUI extends Container {
   }
 
   _initSound() {
+    this.clickSound = Sound.from(Game.bundle.click);
     this.chooseItem = Sound.from(Game.bundle.chooseItem);
     this.chooseItem.volume = 1;
     this.noChooseItem = Sound.from(Game.bundle.noChooseItem);
   }
-  _initLighting() {
+  _initLightingBehind() {
     this.lighting = new Sprite(Game.bundle.light);
-    this.lighting.scale.set(0.6);
+    this.lighting.scale.set(0.8);
     this.lighting.anchor.set(0.5);
     this.lighting.zIndex= 90;
-    this.lighting.alpha = 0.7;
+    this.lighting.alpha = 0.6;
     this.addChild(this.lighting);
   }
-
 
   _initKnifeCurrent() {
     this.knifeCurrent = new Sprite(Assets.get(localStorage.getItem('currentSkin')));
@@ -102,6 +121,7 @@ export class KnifeShopUI extends Container {
   }
 
   _onTapBackHomeButton() {
+    this.clickSound.play();
     this.parent.onShopUIBack();
     this.hide();
   }
@@ -124,7 +144,7 @@ export class KnifeShopUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     //text 
     this.appleText = new Text(`${this.appleScore}`, textStyle);
@@ -156,9 +176,7 @@ export class KnifeShopUI extends Container {
         this.contTable.addChild(skinBox);
 
         skinBox.on("pointerdown", () => {
-          this.chooseItem.play();
           this._onClick(skinBox);
-          console.log(1);
         });
       }
     }
@@ -166,26 +184,78 @@ export class KnifeShopUI extends Container {
 
   _onClick(skinBox) {
     switch (skinBox.state) {
-      case "lock":
+      case SkinBoxState.LOCK:
         if (skinBox.canBuy()) {
+          //play sound  
+          this.chooseItem.play();
+
+          this.skinBoxes.forEach((box) => {
+            if(box.state === SkinBoxState.SELECTED) {
+              box.onDeselect();
+            }
+          })
+
           skinBox.onBuy();
           
           //change skin on localstorage
           localStorage.setItem('currentSkin', skinBox.skin);
 
-          //reset currentKnife skin
-          this.knifeCurrent.texture = Assets.get(localStorage.getItem('currentSkin'));
+          //change appleScore
+          this._resetAppleScore(skinBox);
+          localStorage.setItem('appleScore', this.appleScore);
           
+        } else {
+          //play sound
+          this.noChooseItem.play();
+
+          //play tween
+          this._playNotEnoughMoneyTween();
         }
         break;
-      case "unlock":
-        
+      case SkinBoxState.UNLOCK:
+        //play sound
+        this.chooseItem.play();
+
+        this.skinBoxes.forEach((box) => {
+          if(box.state === SkinBoxState.SELECTED) {
+            box.onDeselect();
+          }
+        })
+
+        skinBox.onSelected();
+
+        //change skin on localstorage
+        localStorage.setItem('currentSkin', skinBox.skin);
+
         break;
-      case "selected":
-        
+      case SkinBoxState.SELECTED:
+        //play sound
+        this.chooseItem.play();
+
+        skinBox.onDeselect();
+
+        //change skin on localstorage
+        localStorage.setItem('currentSkin', "knife");
+
         break;
   
     }
+
+    //reset currentKnife skin
+    this.knifeCurrent.texture = Assets.get(localStorage.getItem('currentSkin'));
+  }
+
+  _resetAppleScore(skinBox) {
+    this.appleScore -= skinBox.cost;
+    this.appleText.text = `${this.appleScore}`;
+  }
+
+  _initNotEnoughMoneyTween() {
+    this.tween = new TWEEN.Tween(this.textWarScore).to({alpha: 1}, 500).yoyo(true).repeat(1);
+  }
+
+  _playNotEnoughMoneyTween() {
+    this.tween.start(); 
   }
   
   hide() {
@@ -208,6 +278,9 @@ export class KnifeShopUI extends Container {
 
     this.textLoad.x = GameConstant.GAME_WIDTH /2 - this.textLoad.width /2;
     this.textLoad.y = GameConstant.GAME_HEIGHT / 2 - 3.5 * this.textLoad.height;
+
+    this.textWarScore.x = GameConstant.GAME_WIDTH/2;
+    this.textWarScore.y = GameConstant.GAME_HEIGHT - 60;
 
     this.backHomeButton.y = 25;
     this.backHomeButton.x = 20;

@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Assets, Container, Graphics } from "pixi.js";
 import { Level1, PlayScene } from "../scenes/playScene";
 import { Knife, KnifeState } from "./knife";
 import { Game } from "../../game";
@@ -16,7 +16,7 @@ export class KnifeManager extends KnifeManagerPrototype {
 
     //sinh dao dau tien
     _spawnFirstKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new Knife(Assets.get(localStorage.getItem('currentSkin')));
         knife.x = GameConstant.KNIFE_X_POSITION;
         // knife.y = GameConstant.KNIFE_Y_POSITION;
         // knife.state = KnifeState.ACTIVATED;
@@ -28,7 +28,7 @@ export class KnifeManager extends KnifeManagerPrototype {
 
     //sinh cac dao con lai
     _spawnAnotherKnife() {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new Knife(Assets.get(localStorage.getItem('currentSkin')));
         knife.x = GameConstant.KNIFE_X_POSITION;
         knife.y = 1080;
         knife.visible = false;
@@ -40,7 +40,7 @@ export class KnifeManager extends KnifeManagerPrototype {
 
     // sinh dao gam tren go
     _spawnObs(avaiAngle) {
-        let knife = new Knife(Game.bundle.knife);
+        let knife = new Knife(Assets.get(localStorage.getItem('currentSkin')));
         knife.x = GameConstant.BOARD_X_POSITION;
         knife.y = GameConstant.BOARD_Y_POSITION;
         knife.anchor.set(0.5, -0.5);

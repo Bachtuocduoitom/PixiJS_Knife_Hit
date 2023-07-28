@@ -13,7 +13,10 @@ export class LoadingScene extends Container {
   }
 
   _initAdvertisement() {
-    let texture = Texture.from("../assets/images/bg_bg.jpg")
+    // let texture = Texture.from("../assets/images/bg_bg.jpg")
+    let imgLoad = document.getElementById("imgLoad");
+    let texture = Texture.from(imgLoad);
+    console.log(texture);
     this.ads = new Sprite(texture);
     this.ads.position.set(0, 0);
     this.ads.alpha = 0;

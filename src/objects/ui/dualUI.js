@@ -2,7 +2,7 @@ import { Container, Sprite, Text, TextStyle } from "pixi.js";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
-
+import { Sound } from "@pixi/sound";
 export class DualUI extends Container {
   constructor(data, score, score2) {
     super();
@@ -15,8 +15,8 @@ export class DualUI extends Container {
     this._initIconPlayer();
     this._initKnifeCount();
     this._initKnifeCount2();
-    this._initBackHomeButton();
     this.resize();
+    this.clickSound = Sound.from(Game.bundle.click);
   }
 
   _initScore() {
@@ -25,23 +25,11 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.scoreText = new Text(`${this.score}`, textStyle);
     this.scoreText.anchor.set(0);
     this.addChild(this.scoreText);
-  }
-
-  _initBackHomeButton() {
-    this.backHomeButton = new Sprite(Game.bundle.backHomeButton);
-    this.backHomeButton.scale.set(0.3);
-    this.backHomeButton.rotation = Math.PI / 4;
-    this.addChild(this.backHomeButton);
-    Util.registerOnPointerDown(this.backHomeButton,this._onTapBackHomeButton,this);
-  }
-
-  _onTapBackHomeButton() {
-    this.emit("backHome");
   }
 
   _initScore2() {
@@ -50,7 +38,7 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xe6b85f,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.scoreText2 = new Text(`${this.score2}`, textStyle);
     this.scoreText2.anchor.set(0);
@@ -66,7 +54,7 @@ export class DualUI extends Container {
       align: "center",
       fill: 0xffffff,
       fontWeight: "bold",
-      fontFamily: "Comic Sans MS",
+      fontFamily: Game.bundle.comicSans.family,
     });
     this.player1Text = new Text(`Player1`, textStyle);
     this.player1Text.anchor.set(0, 1);
@@ -148,9 +136,6 @@ export class DualUI extends Container {
     // this.appleScoreContainer.y = GameConstant.GAME_HEIGHT - 70;
     this.knifeIconsContainer.x = 30;
     this.knifeIconsContainer.y = 1150 - this.knifeIconsContainer.height;
-
-    this.backHomeButton.y = 150;
-    this.backHomeButton.x = 50;
 
     this.scoreText2.x = 80;
     this.scoreText2.y = 75;
