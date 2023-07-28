@@ -23,7 +23,7 @@
         },
         "boardData": {
             "isChangeSpeed": false,
-            "rotationSpeed": 0.05
+            "rotationSpeed": 0.04
         },
         "appleData": {
             "haveOnBoard": true,
@@ -72,17 +72,17 @@
         "knifeData": {
             "knifeNumber": 10,
             "haveOnBoard": true,
-            "minOnBoard": 3,
-            "maxOnBoard" : 4
+            "minOnBoard": 1,
+            "maxOnBoard" : 1
         },
         "boardData": {
-            "isChangeSpeed": true,
+            "isChangeSpeed": false,
             "rotationSpeed": 0.05
         },
         "appleData": {
             "haveOnBoard": true,
-            "minOnBoard": 0,
-            "maxOnBoard": 1
+            "minOnBoard": 4,
+            "maxOnBoard": 8
         }
     },
     {
@@ -153,8 +153,8 @@
         },
         "appleData": {
             "haveOnBoard": true,
-            "minOnBoard": 0,
-            "maxOnBoard": 1
+            "minOnBoard": 1,
+            "maxOnBoard": 2
         }
     },
     {
@@ -174,30 +174,10 @@
             "minOnBoard": 1,
             "maxOnBoard": 2
         }
-    },
-    {
-        "mode": "dual",
-        "knifeData": {
-            "knifeNumber": 14,
-            "haveOnBoard": true,
-            "minOnBoard": 2,
-            "maxOnBoard" : 3,
-            "mode": "dual"
-        },
-        "boardData": {
-            "isChangeSpeed": true,
-            "rotationSpeed": 0.05
-        },
-        "appleData": {
-            "haveOnBoard": true,
-            "minOnBoard": 1,
-            "maxOnBoard": 2,
-            "mode": "dual"
-        }
     }],
     "dual": [{
         "knifeData": {
-            "knifeNumber": 7,
+            "knifeNumber": 8,
             "minOnBoard": 1,
             "maxOnBoard" : 2
         },
