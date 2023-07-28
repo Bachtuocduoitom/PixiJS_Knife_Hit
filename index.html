@@ -8,6 +8,9 @@
       margin: 0;
       padding: 0;
       background: black;
+    }
+    #imgLoad {
+      display: none;
     }</style><style>@import url('https://fonts.googleapis.com/css2?family=Alkatra&family=Caveat:wght@600;700&family=Dekko&family=Mulish&display=swap');</style><script defer="defer">/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -4383,12 +4386,12 @@ class Game {
     document.body.appendChild(this.app.view);
     this.readyState = false;
     this.start = false;
+    this._initLoadingScene();
     this._loadGameAssets().then((bundle) => {
       this.bundle = bundle;
       this._loadGameDataLevel().then((data) => {
         this.data = data;
         this.readyState = true;
-        this._initSceneManager();
       });
     });
     this.app.ticker.add(this.update, this);
@@ -4406,9 +4409,13 @@ class Game {
     });
   }
   static update(dt) {
+    if (this.loadingScene != null) {
+      this.loadingScene.update(dt);
+    }
     if (this.sceneManager != null) {
       this.sceneManager.update(dt);
     }
+    this._checkLoaded();
   }
   static _initSceneManager() {
     this.sceneManager = new _objects_scenes_sceneManager__WEBPACK_IMPORTED_MODULE_4__.SceneManager();
@@ -6684,8 +6691,9 @@ class LoadingScene extends pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container {
     this._initAdvertisement();
   }
   _initAdvertisement() {
-    let texture = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Texture.from("../assets/images/bg_bg.jpg");
-    this.ads = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(texture);
+    let imgLoad = document.getElementById("imgLoad");
+    let texture = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Texture.from(imgLoad);
+    this.ads = pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite.from(texture);
     this.ads.position.set(0, 0);
     this.ads.alpha = 0;
     this.addChild(this.ads);
@@ -48006,4 +48014,4 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	var __webpack_exports__ = __webpack_require__("./src/game.js");
 /******/ 	
 /******/ })()
-;</script></head><body></body></html>
+;</script></head><body><div><img src="../assets/images/bg_bg.jpg" id="imgLoad"/></div></body></html>

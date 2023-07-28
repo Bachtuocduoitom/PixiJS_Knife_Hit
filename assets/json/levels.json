@@ -72,17 +72,17 @@
         "knifeData": {
             "knifeNumber": 10,
             "haveOnBoard": true,
-            "minOnBoard": 3,
-            "maxOnBoard" : 4
+            "minOnBoard": 1,
+            "maxOnBoard" : 1
         },
         "boardData": {
-            "isChangeSpeed": true,
+            "isChangeSpeed": false,
             "rotationSpeed": 0.05
         },
         "appleData": {
             "haveOnBoard": true,
-            "minOnBoard": 0,
-            "maxOnBoard": 2
+            "minOnBoard": 4,
+            "maxOnBoard": 8
         }
     },
     {
