@@ -32,6 +32,10 @@ export const manifest = {
                 srcs: 'assets/images/facebookIcon.png'
             },
             {
+                name: 'rankIcon',
+                srcs: 'assets/images/rank.png'
+            },
+            {
                 name: 'bgShop',
                 srcs: 'assets/images/bgShopp.jpg'
             },

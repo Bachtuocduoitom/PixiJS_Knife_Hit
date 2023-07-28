@@ -14,6 +14,7 @@ export class MenuUI extends Container{
     this._initShopButton();
     this._initSettingButton();
     this._initFaceBookButton();
+    this._initRankButton();
     this.resize();
     this.sortableChildren = true;
     this.clickSound = Sound.from(Game.bundle.click);
@@ -107,6 +108,12 @@ export class MenuUI extends Container{
     this.addChild(this.facebookButton);
   }
 
+  _initRankButton() {
+    this.rankButton = new Sprite(Game.bundle.rankIcon);
+    this.rankButton.alpha = 0.8;
+    this.addChild(this.rankButton);
+  }
+
 
   updateUI(dt) {
     this.currentTime += dt;
@@ -134,14 +141,17 @@ export class MenuUI extends Container{
     this.dualModeButtonText.x = this.dualModeButton.x + this.dualModeButton.width/2;
     this.dualModeButtonText.y = this.dualModeButton.y + this.dualModeButton.height/2;
 
-    this.shopButton.x = GameConstant.GAME_WIDTH /2 - this.shopButton.width / 2;
-    this.shopButton.y = GameConstant.GAME_HEIGHT -  250;
-
-    this.settingButton.x = GameConstant.GAME_WIDTH /4;
+    this.settingButton.x = GameConstant.GAME_WIDTH /8;
     this.settingButton.y = GameConstant.GAME_HEIGHT -  250;
 
-    this.facebookButton.x = GameConstant.GAME_WIDTH /1.5;
+    this.shopButton.x = GameConstant.GAME_WIDTH /3;
+    this.shopButton.y = GameConstant.GAME_HEIGHT -  250;
+
+    this.facebookButton.x = GameConstant.GAME_WIDTH /1.8;
     this.facebookButton.y = GameConstant.GAME_HEIGHT -  250;
+
+    this.rankButton.x = GameConstant.GAME_WIDTH /1.3;
+    this.rankButton.y = GameConstant.GAME_HEIGHT -  250;
   }
 
   hide() {

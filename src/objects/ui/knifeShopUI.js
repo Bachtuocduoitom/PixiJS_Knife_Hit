@@ -13,7 +13,7 @@ export class KnifeShopUI extends Container {
     this.columns = 3;
     this.tablePadding = 8;
     this.skinBoxes = [];
-    //this._initShopData();
+    this._initShopData();
     this._initSound();
     this._initBackGround();
     this._initKnifeCurrent();
@@ -24,6 +24,20 @@ export class KnifeShopUI extends Container {
     this._initAppleCount();
     this.resize();
     this.sortableChildren = true;
+  }
+
+  _initShopData() {
+    for (let i = 0; i < this.columns*this.rows; i++) {
+      if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
+        let skinBoxData = {state: "lock", skin: `knife${i  + 1}`, cost: 10};
+        localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
+      }
+    }
+
+    //init currentSkin in localstorage
+    if (localStorage.getItem('currentSkin') === null) {
+      localStorage.setItem('currentSkin', "knife");
+    }
   }
 
   _initOverLay() {
@@ -249,8 +263,6 @@ export class KnifeShopUI extends Container {
   }
 
   show() {
-    this.appleScore = localStorage.getItem('appleScore');
-    this.appleText.text = `${this.appleScore}`;
     this.visible = true;
   }
 
