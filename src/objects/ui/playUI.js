@@ -2,6 +2,8 @@ import { Container, Sprite, Text, TextStyle } from "pixi.js";
 import { Game } from "../../game";
 import { GameConstant } from "../../gameConstant";
 import { Util } from "../../helper/utils";
+import { Sound } from "@pixi/sound";
+
 export class PlayUI extends Container {
   constructor(data, score, appleScore) {
     super();
@@ -13,8 +15,8 @@ export class PlayUI extends Container {
     this._initScore();
     this._initAppleCount();
     this._initKnifeCount();
-    this._initBackHomeButton();
     this.resize();
+    this.clickSound = Sound.from(Game.bundle.click);
   }
 
   _initLevel() {
@@ -44,17 +46,6 @@ export class PlayUI extends Container {
     this.scoreText = new Text(`${this.score}`, textStyle);
     this.scoreText.anchor.set(0);
     this.addChild(this.scoreText);
-  }
-
-  _initBackHomeButton() {
-    this.backHomeButton = new Sprite(Game.bundle.backHomeButton);
-    this.backHomeButton.scale.set(0.3);
-    this.addChild(this.backHomeButton);
-    Util.registerOnPointerDown(this.backHomeButton,this._onTapBackHomeButton,this);
-  }
-
-  _onTapBackHomeButton() {
-    this.emit("backHome");
   }
 
   _initAppleCount() {
@@ -117,8 +108,6 @@ export class PlayUI extends Container {
     this.levelText.y = 10;
     this.scoreText.x = 50;
     this.scoreText.y = 10;
-    this.backHomeButton.y = 100;
-    this.backHomeButton.x = 20;
     this.appleScoreContainer.x = GameConstant.GAME_WIDTH - 70;
     this.appleScoreContainer.y = 10;
     this.knifeIconsContainer.x = 30;

@@ -57,7 +57,6 @@ export class PlayScene extends Container {
     this.playUI = new PlayUI(this.dataManager, this.score, this.appleScore);
     this.playUI.zIndex = 301;
     this.addChild(this.playUI);
-    this.playUI.on("backHome", (e) => this._backHome(e));
 
     // result UI
     this.resultUI = new ResultGameUI();
@@ -184,6 +183,7 @@ export class PlayScene extends Container {
   }
 
   _backHome(e) {
+    this.winGame.stop();
     this.parent.norToHome();
   }
 

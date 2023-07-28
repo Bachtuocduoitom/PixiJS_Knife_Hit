@@ -100,7 +100,6 @@ export class DualScene extends Container {
   _initUI() {
     //tao multiple UI
     this.dualUI = new DualUI(this.dataManager,this.score1,this.score2);
-    this.dualUI.on("backHome", (e) => this._backHome(e));
     this.addChild(this.dualUI);
 
     // result UI
@@ -162,6 +161,7 @@ export class DualScene extends Container {
 
   // xử lí click restart
   _onRestartGame() {
+    this.winGame.stop();
     //destroy gameplay and initial new one
     this.removeChild(this.gameplay);
     this.gameplay.destroy();
@@ -180,6 +180,7 @@ export class DualScene extends Container {
   }
 
   _backHome(e) {
+    this.winGame.stop();
     this.parent.dualToHome();
   }
 

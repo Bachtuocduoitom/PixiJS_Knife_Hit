@@ -4,7 +4,7 @@ import { Util } from "../../helper/utils";
 import { GameConstant } from "../../gameConstant";
 import { KnifeShopUI } from "./knifeShopUI";
 import * as TWEEN from "@tweenjs/tween.js";
-
+import { Sound } from "@pixi/sound";
 export class MenuUI extends Container{
   constructor() {
     super();
@@ -13,8 +13,10 @@ export class MenuUI extends Container{
     this._initDualModeButton();
     this._initShopButton();
     this._initSettingButton();
+    this._initFaceBookButton();
     this.resize();
     this.sortableChildren = true;
+    this.clickSound = Sound.from(Game.bundle.click);
   }
 
   _initNormalModeButton() {
@@ -81,6 +83,7 @@ export class MenuUI extends Container{
   }
 
   _onTapShopButton() {
+    this.clickSound.play();
     this.norModeButton.visible = false;
     this.dualModeButton.visible = false;
     this.shopUI.show();
@@ -97,6 +100,13 @@ export class MenuUI extends Container{
     this.settingButton.alpha = 0.8;
     this.addChild(this.settingButton);
   }
+
+  _initFaceBookButton() {
+    this.facebookButton = new Sprite(Game.bundle.fbIcon);
+    this.facebookButton.alpha = 0.8;
+    this.addChild(this.facebookButton);
+  }
+
 
   updateUI(dt) {
     this.currentTime += dt;
@@ -129,6 +139,9 @@ export class MenuUI extends Container{
 
     this.settingButton.x = GameConstant.GAME_WIDTH /4;
     this.settingButton.y = GameConstant.GAME_HEIGHT -  250;
+
+    this.facebookButton.x = GameConstant.GAME_WIDTH /1.5;
+    this.facebookButton.y = GameConstant.GAME_HEIGHT -  250;
   }
 
   hide() {

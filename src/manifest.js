@@ -2,6 +2,7 @@ export const manifest = {
     bundles: [{
         name: 'gameBundle',
         assets: [
+            // sprite
             {
                 name: 'board',
                 srcs: 'assets/images/bang.png'
@@ -27,8 +28,12 @@ export const manifest = {
                 srcs: 'assets/images/settingIcon.png'
             },
             {
+                name: 'fbIcon',
+                srcs: 'assets/images/facebookIcon.png'
+            },
+            {
                 name: 'bgShop',
-                srcs: 'assets/images/bgShop.jpg'
+                srcs: 'assets/images/bgShopp.jpg'
             },
             {
                 name: 'knife_logo',
@@ -52,7 +57,7 @@ export const manifest = {
             },
             {
                 name: 'light',
-                srcs: 'assets/images/lighting.png'
+                srcs: 'assets/images/light2.png'
             },
             {
                 name: 'knife',
@@ -110,10 +115,10 @@ export const manifest = {
                 name: 'knife12',
                 srcs: 'assets/images/knife12.png'
             },
-            {
-                name: 'knife13',
-                srcs: 'assets/images/knife13.png'
-            },
+            // {
+            //     name: 'knife13',
+            //     srcs: 'assets/images/knife13.png'
+            // },
             {
                 name: 'knifeP2',
                 srcs: 'assets/images/knifeP2.png'
@@ -121,10 +126,6 @@ export const manifest = {
             {
                 name: 'knifeP2_reverse',
                 srcs: 'assets/images/knifeP2_reverse.png'
-            },
-            {
-                name: 'knifeLoad',
-                srcs: 'assets/images/knifeLoad.png'
             },
             {
                 name: 'apple',
@@ -156,7 +157,7 @@ export const manifest = {
             },
             {
                 name: 'light',
-                srcs: 'assets/images/light.png'
+                srcs: 'assets/images/light2.png'
             },
             {
                 name: 'particle',
@@ -167,17 +168,43 @@ export const manifest = {
                 srcs: 'assets/images/particleStar.png'
             },
             {
-                name: 'logParticle',
-                srcs: 'assets/particles/log_particle.json'
+                name: 'bgButton',
+                srcs: 'assets/images/bgButton.png'
             },
             {
-                name: 'winGameParticle',
-                srcs: 'assets/particles/winGame_particle.json'
+                name: 'greenButton',
+                srcs: 'assets/images/greenButton.png'
             },
             {
-                name: 'loseGameParticle',
-                srcs: 'assets/particles/loseGame.json'
+                name: 'redpinkButton',
+                srcs: 'assets/images/redpinkButton.png'
             },
+            {
+                name: 'blueButton',
+                srcs: 'assets/images/blueButton.png'
+            },
+            {
+                name: 'backHomeButton',
+                srcs: 'assets/images/backHomeIcon.png'
+            },
+            {
+                name: 'resultGameBg',
+                srcs: 'assets/images/victory.png'
+            },
+            {
+                name: 'circleWhite',
+                srcs: 'assets/images/circle.png'
+            },
+            {
+                name: 'circleLineWhite',
+                srcs: 'assets/images/cirleLine.png'
+            },
+            {
+                name: 'iconPlayer',
+                srcs: 'assets/images/iconPlayer.png'
+            },
+
+            // sound
             {
                 name: 'knife_hit_wood',
                 srcs: 'assets/sounds/knife_hit_wood.wav'
@@ -219,45 +246,28 @@ export const manifest = {
                 srcs: 'assets/sounds/losegame.wav'
             },
             {
-                name: 'bgButton',
-                srcs: 'assets/images/bgButton.png'
+                name: 'click',
+                srcs: 'assets/sounds/click.wav'
+            },
+
+            // particle and spritesheet
+            {
+                name: 'logParticle',
+                srcs: 'assets/particles/log_particle.json'
             },
             {
-                name: 'greenButton',
-                srcs: 'assets/images/greenButton.png'
+                name: 'winGameParticle',
+                srcs: 'assets/particles/winGame_particle.json'
             },
             {
-                name: 'redpinkButton',
-                srcs: 'assets/images/redpinkButton.png'
-            },
-            {
-                name: 'blueButton',
-                srcs: 'assets/images/blueButton.png'
-            },
-            {
-                name: 'backHomeButton',
-                srcs: 'assets/images/backHomeIcon.png'
+                name: 'loseGameParticle',
+                srcs: 'assets/particles/loseGame.json'
             },
             {
                 name: 'victoryParticle',
                 srcs: 'assets/particles/victory.json'
             },
-            {
-                name: 'resultGameBg',
-                srcs: 'assets/images/victory.png'
-            },
-            {
-                name: 'circleWhite',
-                srcs: 'assets/images/circle.png'
-            },
-            {
-                name: 'circleLineWhite',
-                srcs: 'assets/images/cirleLine.png'
-            },
-            {
-                name: 'iconPlayer',
-                srcs: 'assets/images/iconPlayer.png'
-            },
+
             {
                 name: 'frgLg',
                 srcs: 'assets/spritesheet/frgLg.json'
@@ -270,6 +280,7 @@ export const manifest = {
                 name: 'frgSm',
                 srcs: 'assets/spritesheet/frgSm.json'
             },
+            //font
             {
                 name: 'comicSans',
                 srcs: 'assets/fonts/comic.ttf'

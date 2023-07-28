@@ -76,14 +76,14 @@ export class KnifeShopUI extends Container {
   }
 
   _initSound() {
+    this.clickSound = Sound.from(Game.bundle.click);
     this.chooseItem = Sound.from(Game.bundle.chooseItem);
     this.chooseItem.volume = 1;
     this.noChooseItem = Sound.from(Game.bundle.noChooseItem);
-
   }
   _initLightingBehind() {
     this.lighting = new Sprite(Game.bundle.light);
-    this.lighting.scale.set(0.35);
+    this.lighting.scale.set(0.8);
     this.lighting.anchor.set(0.5);
     this.lighting.zIndex= 90;
     this.lighting.alpha = 0.6;
@@ -107,6 +107,7 @@ export class KnifeShopUI extends Container {
   }
 
   _onTapBackHomeButton() {
+    this.clickSound.play();
     this.parent.onShopUIBack();
     this.hide();
   }
@@ -242,7 +243,7 @@ export class KnifeShopUI extends Container {
   _playNotEnoughMoneyTween() {
     this.tween.start(); 
   }
-
+  
   hide() {
     this.visible = false;
   }
