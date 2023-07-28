@@ -23,10 +23,7 @@ export class DualScene extends Container {
     super();
     this.state = GameState.Tutorial;
     this.score1 = 0;
-    this.appleScore1 = 0;
     this.score2 = 0;
-    this.appleScore2 = 0;
-    this.currentMode = "dual";
     this._initSound();
     this._initGamePlay();
     this._initUI();
