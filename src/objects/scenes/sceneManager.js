@@ -20,21 +20,21 @@ export class SceneManager extends Container {
     _initLocalStorageData() {
         //init currentSkin in localstorage
         if (localStorage.getItem('currentSkin') === null) {
-            localStorage.setItem('currentSkin', "knife");
+          localStorage.setItem('currentSkin', "knife");
         }
 
         //init skinBoxData in shop
         for (let i = 0; i < 12; i++) {
-            if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
-                let skinBoxData = {state: "lock", skin: `knife${i  + 1}`, cost: 10};
-                localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
-            }
+          if (localStorage.getItem(`skinBox${i + 1}Data`) === null) {
+            let skinBoxData = {state: "lock", skin: `knife${i  + 1}`, cost: 10};
+            localStorage.setItem(`skinBox${i + 1}Data`, JSON.stringify(skinBoxData));
+          }
         }
 
         //init appleScore
         if (localStorage.getItem('appleScore') === null) {
-            localStorage.setItem('appleScore', 0);
-          }
+          localStorage.setItem('appleScore', 0);
+        }
     }
     
     _initAssetContainer() {
